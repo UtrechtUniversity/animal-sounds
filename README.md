@@ -90,27 +90,27 @@ Generate a representative set of annotations of the species of interest to tune 
 
 ### 1. Extraction of audio sections of interest
 Sections of interest are identified based on increased energy in certain frequencies. This results in a removal of ~85% of irrelevant sections of plain jungle background (and lowers the annotation effort). <1% of annotations of step 1 are lost in this step.
-[Instructions](1_condensation/README.md)
+[Instructions](src/1_condensation/README.md)
 
 ### 1b. Manual annotation on processed audiodata
 Continue manual annotations on the 'condensed' WAV files until a substantial set of annotations is reached (e.g 500 vocalizations) for machine learning.
 
 ### 2. Processing of raw data to annotations
-Create WAV files of the species and background annotations only. [Instructions](2_wav_processing/README.md)
+Create WAV files of the species and background annotations only. [Instructions](src/2_wav_processing/README.md)
 
 ### 3. Data augmentation
-Generate synthetic data by adding background signal to annotations in varying proportions. [Instructions](3_synthetic_data/README.md)
+Generate synthetic data by adding background signal to annotations in varying proportions. [Instructions](src/3_synthetic_data/README.md)
 
 ### 4. Feature extraction
 Extract features (e.g. MFCC, RASTA-PLPC) from annotations and store in .csv format.
-[Further details and instructions](4_feature_extraction/README.md)
+[Further details and instructions](src/4_feature_extraction/README.md)
 
 ### 5. Modelling
 Separate train, validation and test sets and optimize performance of CNN and SVM models. The SVM model uses a subset of the most important features from step 4 for training and testing. CNN is trained on audio data from step 3 and uses CNN features.
-[Further details and instructions](5_classifier/README.md)
+[Further details and instructions](src/5_classifier/README.md)
 
 ### 6. Prediction
-[Instructions](6_prediction/README.md)
+[Instructions](src/6_prediction/README.md)
 
 
 <!-- LINKS -->
