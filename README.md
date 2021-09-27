@@ -42,9 +42,9 @@ Description of this (technical) project and of the project itself.
 
 ### Built with
 
-- [Python 3.8]
-- [librosa]
-- [sklearn]
+- [Python 3.8](https://www.python.org/)
+- [librosa](https://librosa.org/)
+- [scikit-learn](https://scikit-learn.org/stable/index.html)
 
 <!-- Do not forget to also include the license in a separate file(LICENSE[.txt/.md]) and link it properly. -->
 ### License
@@ -116,10 +116,6 @@ Separate train, validation and test sets and optimize performance of CNN and SVM
 <!-- LINKS -->
 ## Links
 
-An overview of interesting links related to the project.
-
-- [Install R and Rstudio on MAC](https://medium.com/@GalarnykMichael/install-r-and-rstudio-on-mac-e911606ce4f4)
-- [Install Anaconda Python](https://www.anaconda.com/download/)
 
 <!-- CONTRIBUTING -->
 ## Contributing
@@ -144,4 +140,4 @@ Additional notes on the project can be left here.
 
 Contact Name - [@twitterhandle](https://twitter.com/username) - contact.rse@uu.nl
 
-Project Link: [https://github.com/UtrechtUniversity/projectlink](https://github.com/UtrechtUniversity/projectlink)
+Project Link: [https://github.com/UtrechtUniversity/animal-sounds](https://github.com/UtrechtUniversity/animal-sounds)
