@@ -4,7 +4,7 @@ import librosa
 import numpy as np
 import pandas as pd
 
-import speech_features as hs
+import speech_features as sf
 
 from pathlib import Path
 from scipy.signal import butter, lfilter
@@ -69,8 +69,8 @@ class LLD:
             return signal
 
     
-    # extract Heysem features
-    def extract_heysem_features(self, frames):
+    # extract speech features
+    def extract_speech_features(self, frames):
         return np.apply_along_axis(sf.extract_speech_features, 1, frames)
 
     async def __extract_features(self, path):
