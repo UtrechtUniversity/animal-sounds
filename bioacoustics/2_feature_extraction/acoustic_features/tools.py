@@ -38,17 +38,9 @@
 
 import json
 import numpy as np
-# from os.path import isfile, isdir
-# from os import mkdir
 from sympy.ntheory import factorint
-# import matplotlib.pylab as plt
 from scipy.signal import butter, lfilter, filtfilt
-# import scipy.signal as sg
-# import matplotlib.patches as patches
-# import pandas as pd
-# import glob
-# from datetime import datetime, timedelta
-from featuresFunctions import energy, energy_u
+from svm_features.featuresFunctions import energy, energy_u
 from math import sqrt
 
 

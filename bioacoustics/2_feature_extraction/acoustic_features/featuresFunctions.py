@@ -45,8 +45,6 @@ import numpy as np
 from math import log
 from math import inf
 from numpy import histogram
-#from scipy.stats import threshold
-#from python_speech_features import mfcc
 
 
 def energy_u(signal, arg_dict={}):

@@ -7,14 +7,15 @@ import pandas as pd
 import random
 import time
 
-from config import Config
-from features import FeatureVector
-from itertools import product
-from pathlib import Path
-from tools import extract_features
-from featuresFunctions import *
 from sklearn import preprocessing
-from LLD import LLD
+from pathlib import Path
+from itertools import product
+
+from svm_features.config import Config
+from svm_features.features import FeatureVector
+from svm_features.tools import extract_features
+from svm_features.featuresFunctions import *
+from svm_features.LLD import LLD
 
 
 def parse_arguments():
