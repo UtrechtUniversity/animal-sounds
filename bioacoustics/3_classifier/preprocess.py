@@ -1,60 +1,17 @@
 import pandas as pd
 import numpy as np
 import glob
-#from torch import FloatTensor
-#from torch import tensor
-#from torch import int64
-from sklearn.preprocessing import Normalizer
+
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import LabelEncoder
 from sklearn.svm import SVC
 from sklearn.model_selection import StratifiedKFold
 from sklearn.feature_selection import RFECV
-from model.svm_model import SVM_model
-#from model.elm_model import MLP
-import sklearn.model_selection as model_selection
+
 from sklearn.ensemble import ExtraTreesClassifier
-from sklearn.datasets import make_classification
-from sklearn.model_selection import cross_val_score
-from sklearn.model_selection import RepeatedStratifiedKFold
-from sklearn.feature_selection import RFE
-from sklearn.linear_model import LogisticRegression
-from sklearn.linear_model import Perceptron
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.ensemble import GradientBoostingClassifier
-from sklearn.pipeline import Pipeline
 from matplotlib import pyplot
-#from torch.utils.data import Dataset
-#from torch.utils.data import DataLoader
-#from torchvision import transforms
-#import pytorch_lightning as pl
 
-
-# custom dataset
-class customDataset(Dataset):
-    def __init__(self, features, labels=None, transforms=None):
-        self.X = features
-        self.y = labels
-        self.transforms = transforms
-
-    def __len__(self):
-        return (len(self.X))
-
-    def __getitem__(self, i):
-        data = self.X[i, :]
-        # data = data.astype(np.uint8)
-
-        if self.transforms:
-            data = self.transforms(data)
-        else:
-            data = FloatTensor(data)
-
-        if self.y is not None:
-            return (data, tensor(self.y[i], dtype=int64))
-        else:
-            return data
-
+from model.svm_model import SVM_model
 
 def read_features(features_path, index):
     files = glob.glob(features_path)
@@ -78,56 +35,6 @@ def feature_selection(x_train, x_test, columnnames, model, output_dir, numfeat):
     df.to_csv(output_dir + 'feature_importances.csv')
     indices = list(df.sort_values(by=['feature_importances'], ascending=False).index[0:numfeat])
     return x_train[:, indices], x_test[:, indices]
-
-
-def get_models():
-    models = dict()
-    # lr
-    rfe = RFE(estimator=LogisticRegression(), n_features_to_select=5)
-    model = DecisionTreeClassifier()
-    models['lr'] = Pipeline(steps=[('s', rfe), ('m', model)])
-    # perceptron
-    rfe = RFE(estimator=Perceptron(), n_features_to_select=5)
-    model = DecisionTreeClassifier()
-    models['per'] = Pipeline(steps=[('s', rfe), ('m', model)])
-    # cart
-    rfe = RFE(estimator=DecisionTreeClassifier(), n_features_to_select=5)
-    model = DecisionTreeClassifier()
-    models['cart'] = Pipeline(steps=[('s', rfe), ('m', model)])
-    # rf
-    rfe = RFE(estimator=RandomForestClassifier(), n_features_to_select=5)
-    model = DecisionTreeClassifier()
-    models['rf'] = Pipeline(steps=[('s', rfe), ('m', model)])
-    # gbm
-    rfe = RFE(estimator=GradientBoostingClassifier(), n_features_to_select=5)
-    model = DecisionTreeClassifier()
-    models['gbm'] = Pipeline(steps=[('s', rfe), ('m', model)])
-    return models
-
-
-def evaluate_model(model, X, y):
-    cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=3, random_state=1)
-    scores = cross_val_score(model, X, y, scoring='recall_macro', cv=cv, n_jobs=-1)
-    return scores
-
-
-def recursive_features_modeltest(x_train, y_train):
-    # Build a classification task using 3 informative features
-    le = LabelEncoder()
-    le.fit(y_train)
-    y = le.transform(y_train)
-    # get the models to evaluate
-    models = get_models()
-    # evaluate the models and store results
-    results, names = list(), list()
-    for name, model in models.items():
-        scores = evaluate_model(model, x_train, y)
-        results.append(scores)
-        names.append(name)
-        print('>%s %.3f (%.3f)' % (name, np.mean(scores), np.std(scores)))
-        # plot model performance for comparison
-        pyplot.boxplot(results, labels=names, showmeans=True)
-        pyplot.show()
 
 
 def recursive_features(X, y, columnnames, output_dir):
@@ -183,6 +90,8 @@ def main(ml_method):
     features_path = '/home/jelle/Repositories/animalsounds/data/features/features_v7/features_sanctsynth/*'
     output_dir = '/home/jelle/Repositories/animalsounds/data/svm_results/training_alldata/'
     feat = 'all'
+
+
     if feat == 'general':
         dim = [5, 101]
     elif feat == 'mfcc':
@@ -207,27 +116,16 @@ def main(ml_method):
 
     x_train, x_test = normalize(x_train.to_numpy(), x_test.to_numpy())
     y_file.to_csv(output_dir + 'test_files.csv')
-    # recursive_features(x_train, y_train, temp_x_test.columns, output_dir)
+
 
     model = feature_importance(x_train, y_train)
     x_train, x_test = feature_selection(x_train, x_test, temp_x_test.columns, model, output_dir, numfeat=50)
     if ml_method == 'svm':
         run_svm(x_train, y_train, x_test, y_test, output_dir)
-    elif ml_method == 'nn':
-        # define transforms
-        le = LabelEncoder()
-        le.fit(y_train)
-        train_data = customDataset(x_train, le.transform(y_train))
-        test_data = customDataset(x_test, le.transform(y_test))
-
-        pl.seed_everything(42)
-        mlp = MLP()
-        trainer = pl.Trainer(auto_scale_batch_size='power', gpus=1, deterministic=True, max_epochs=5)
-        trainer.fit(mlp, DataLoader(train_data))
-        result = trainer.test(test_dataloaders=DataLoader(test_data))
-        print(result)
+    elif ml_method == 'rec_feat':
+        recursive_features(x_train, y_train, temp_x_test.columns, output_dir)
 
 
 if __name__ == "__main__":
-    ml_method = 'svm'  # 'nn' or 'svm'
-    main(ml_method)
+    method = 'svm'  # 'rec_feat' or 'svm'
+    main(method)

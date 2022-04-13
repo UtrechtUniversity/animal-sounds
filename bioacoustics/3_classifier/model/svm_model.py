@@ -1,4 +1,4 @@
-from model.acoustic_model import Acoustic_model
+from model.acoustic_model import AcousticModel
 from sklearn.feature_selection import SelectFromModel
 from sklearn.preprocessing import MinMaxScaler
 
@@ -12,7 +12,7 @@ from sklearn.svm import SVC
 import pickle
 
 
-class SVM_model(Acoustic_model):
+class SVM_model(AcousticModel):
 
     def __init__(self, X_train, y_train, X_test, y_test):
         super(SVM_model, self).__init__(X_train, y_train, X_test, y_test)
