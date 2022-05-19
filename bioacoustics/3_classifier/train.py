@@ -1,7 +1,8 @@
 """Script to apply a model on a set of features_old and make a prediction"""
 
-from data_prepration import prepare_data
-#from model.svm_model import SVM_model
+from data_prepration_dl import prepare_data_dl
+from data_prepration_svm import prepare_data_svm
+from model.svm_model import SVM_model
 from model.cnn_model import CNN_model
 from model.cnn10_model import CNN10_model
 from model.cnn6_model import CNN6_model
@@ -92,15 +93,21 @@ def parse_arguments():
 
 
 def main():
+    #cv_results = False
     parser = parse_arguments()
     args = parser.parse_args()
 
     if not os.path.exists(os.path.dirname(args.output_dir)):
         os.makedirs(os.path.dirname(args.output_dir))
 
-    X_train, y_train, X_test, y_test = prepare_data(args.feature_dir, num_channels=args.num_channels,
+    if args.model == 'svm':
+        s = SVM_model()
+        X_train, y_train, X_test, y_test = prepare_data_svm(args.feature_dir,
+                                                            num_channels=args.output_dir,
+                                                           normval_dir=args.normVal_dir)
+    else:
+        X_train, y_train, X_test, y_test = prepare_data_dl(args.feature_dir, num_channels=args.num_channels,
                                                     normval_dir=args.normVal_dir)
-
 
 
     if args.model == 'resnet':
@@ -117,8 +124,10 @@ def main():
     elif args.model == 'cnn6':
         s = CNN6_model(args.nrow_input, args.ncol_input, args.num_channels, args.epochs, args.batch_size, args.channel_first)
 
-    # if args.model=='svm':
-    #     s = SVM_model(X_train, y_train, X_test, y_test)
+    elif args.model=='svm':
+        s = SVM_model()
+        #cv_results = True
+
 
     print(" X_train.shpe", X_train.shape)
     print(" y_train.shpe", y_train.shape)
@@ -126,7 +135,7 @@ def main():
     print(" y_test.shpe", y_test.shape)
 
     s.apply_model(X_train, y_train, X_test, y_test, args.output_dir)
-    s.save_results(y_test, args.output_dir)
+    s.save_results(y_test, args.output_dir)#, cv_results)
 
 # execute main function
 if __name__ == "__main__":

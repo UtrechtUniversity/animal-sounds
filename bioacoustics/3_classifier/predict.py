@@ -1,12 +1,12 @@
 """Script to apply a model on a set of features_old and make a prediction"""
 
-from data_prepration import prepare_data
-#from model.svm_model import SVM_model
+from data_prepration_dl import prepare_data
+from model.svm_model import SVM_model
 from model.cnn_model import CNN_model
 from model.cnn10_model import CNN10_model
 from model.cnn6_model import CNN6_model
 from model.resnet_model import RESNET_model
-import statistics
+#import statistics
 import os
 import argparse
 # import pandas as pd
@@ -69,6 +69,7 @@ def parse_arguments():
 
 
 def main():
+    dl_model = True
     parser = parse_arguments()
     args = parser.parse_args()
 
@@ -89,11 +90,12 @@ def main():
     elif args.model == 'cnn6':
         s = CNN6_model()
 
-    # if args.model=='svm':
-    #     s = SVM_model(None,None, X_test, None)
+    if args.model=='svm':
+        s = SVM_model()
+        dl_model = False
 
-    s.evaluate_model( X_test, y_test, args.trained_model_path)
-    s.predict_model(X_test, args.trained_model_path)
+    #s.evaluate_model( X_test, y_test, args.trained_model_path)
+    s.predict_model(X_test, args.trained_model_path, dl_model)
 
     if args.without_label: # apply model on un-labeled dataset
         s.save_results(y_test, args.output_dir, predicts_only=True)

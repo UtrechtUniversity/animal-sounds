@@ -1,18 +1,30 @@
 import os
-from abc import ABC, abstractmethod
+from abc import ABC
 from tensorflow.keras.models import load_model
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import pickle
 
 
 class AcousticModel(ABC):
+    """Train a model and make a prediction on test dataset
+            Parameters
+            ----------
+            file_name: str
+                file path to save the trained model
+            X_train: bool
+                Indicates if output should be saved
 
+            Returns
+            -------
+            np.ndarrary:
+                Padded audio file.
+    """
     def __init__(self):
         self.acoustic_model = None
-        self.evaluate_result = None
 
-    def _train(self, X_train,y_train,X_test,y_test, file_name):
+    def _train(self, X_train,y_train,X_test=None,y_test=None, file_name=None):
         pass
 
     def _predict(self, X_test):
@@ -20,50 +32,49 @@ class AcousticModel(ABC):
         self.predicts = self.acoustic_model.predict(X_test)
         print('prediction is done!')
 
-    def _load_model(self, file_path):
+    def _load_model(self, file_path, dl_model):
         """Load the model from the given file path
-            Parameters
-            ----------
-            file_path: str
-                    file path of the trained model
+        Parameters
+        ----------
+        file_path: str
+                file path of the trained model
         """
-        self.acoustic_model = load_model(file_path)
+        if dl_model:
+            self.acoustic_model = load_model(file_path)
+        else:
+            self.acoustic_model = pickle.load(open(file_path, 'rb'))
 
     def apply_model(self, X_train,y_train,X_test,y_test, file_name):
         """Train a model and make a prediction on test dataset
-            Parameters
-            ----------
-            file_name: str
-                    file path to save the trained model
+        Parameters
+        ----------
+        file_name: str
+            file path to save the trained model
+        X_train: pandas dataframe
+            Indicates if output should be saved
+
+        Returns
+        -------
+        np.ndarrary:
+            Padded audio file.
         """
 
         self._train(X_train,y_train,X_test,y_test,file_name)
-        self.evaluate_result = self.acoustic_model.evaluate(X_test, y_test, batch_size=32)
-        print(self.evaluate_result)
+        # self.evaluate_result = self.acoustic_model.evaluate(X_test, y_test, batch_size=32)
+        # print(self.evaluate_result)
         self._predict(X_test)
 
-    def predict_model(self, X_test, file_path):
+    def predict_model(self, X_test, file_path, dl_model):
         """Load a trained model and make a prediction
             Parameters
             ----------
             file_path: str
                 file path of the trained model
         """
-        self._load_model(file_path)
+        self._load_model(file_path,dl_model)
         self._predict(X_test)
 
-    def evaluate_model(self, X_test, y_test, file_path):
-        """Load a trained model and make an evaluation on test dataset
-            Parameters
-            ----------
-            file_path: str
-                file path of the trained model
-        """
-        self._load_model(file_path)
-        self.evaluate_result = self.acoustic_model.evaluate(X_test, y_test, batch_size=32)
-        print("test loss, test acc:", self.evaluate_result)
-
-    def save_results(self, y_test, file_path, predicts_only=False):
+    def save_results(self, y_test, file_path, predicts_only=False):#, cv_results= False):
         """Save predictions on test dataset
                 Parameters
                 ----------
@@ -81,20 +92,13 @@ class AcousticModel(ABC):
             return
 
         # # save hyper-parameters / cross_validation results
-        # pd.DataFrame(self.acoustic_model.cv_results_).to_csv(file_name+'_gridSearch_results.csv')
+        # if cv_results:
+        #     pd.DataFrame(self.acoustic_model.cv_results_).to_csv(file_path+'_gridSearch_results.csv')
 
         # save y_test
         pd.DataFrame(y_test).to_csv(file_path+'_y_test.csv', index=False)
 
-#   check if it is used
-#     def _save_model(self, file_path):
-#         """Save the trained model in the given file path
-#             Parameters
-#             ----------
-#             file_path: str
-#                     file path to save the trained model
-#         """
-#         self.acoustic_model.save(file_path)
+
     def plot_measures(self, history, file_path, title=''):
         # summarize history for recall
         plt.plot(history.history['recall'])
