@@ -12,14 +12,15 @@ import sklearn.model_selection as model_selection
 
 def read_features(features_path):
     """Reads all feature files and consolidate them into a dataframe
-        Parameters
-        ----------
-        features_path: str
-            The path of all feature files.
-        Returns
-        -------
-        DataFrame:
-            a dataframe of all features
+    Parameters
+    ----------
+    features_path: str
+        The path of all feature files.
+
+    Returns
+    -------
+    DataFrame:
+        a dataframe of all features
     """
     files = glob.glob(features_path)
     df_result = pd.DataFrame(columns=['file_path','features', 'label_1'])
@@ -86,7 +87,7 @@ def normalize_data(x, x_mean=None, x_std=None, normval_fp='', train_mode=True):
     return x
 
 
-def prepare_data(features_path, without_label=False, trained_model_path='', num_channels=3, normval_dir=''):
+def prepare_data_dl(features_path, without_label=False, trained_model_path='', num_channels=3, normval_dir=''):
     """Prepare train and test dataset
 
                Parameters
