@@ -1,9 +1,6 @@
 import pandas as pd
 import numpy as np
 import glob
-#from torch import FloatTensor
-#from torch import tensor
-#from torch import int64
 from sklearn.preprocessing import Normalizer
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import LabelEncoder
@@ -11,9 +8,10 @@ from sklearn.svm import SVC
 from sklearn.model_selection import StratifiedKFold
 from sklearn.feature_selection import RFECV
 from model.svm_model import SVM_model
-#from model.elm_model import MLP
+
 import sklearn.model_selection as model_selection
 from sklearn.ensemble import ExtraTreesClassifier
+from pickle import dump
 from sklearn.datasets import make_classification
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import RepeatedStratifiedKFold
@@ -25,47 +23,22 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.pipeline import Pipeline
 from matplotlib import pyplot
-#from torch.utils.data import Dataset
-#from torch.utils.data import DataLoader
-#from torchvision import transforms
-#import pytorch_lightning as pl
 
-
-# custom dataset
-# class customDataset(Dataset):
-#     def __init__(self, features, labels=None, transforms=None):
-#         self.X = features
-#         self.y = labels
-#         self.transforms = transforms
-#
-#     def __len__(self):
-#         return (len(self.X))
-#
-#     def __getitem__(self, i):
-#         data = self.X[i, :]
-#         # data = data.astype(np.uint8)
-#
-#         if self.transforms:
-#             data = self.transforms(data)
-#         else:
-#             data = FloatTensor(data)
-#
-#         if self.y is not None:
-#             return (data, tensor(self.y[i], dtype=int64))
-#         else:
-#             return data
-#
 
 def read_features(features_path, index):
-    files = glob.glob(features_path)
+    files = glob.glob(features_path + '**/*.csv', recursive=True)
     return pd.read_csv(files[index])
 
 
-def normalize(x_train, x_test):
+def normalize(x_train, output_dir, x_test=None):
     scaler = StandardScaler()
     x_train_scaled = scaler.fit_transform(x_train)
-    x_test_scaled = scaler.transform(x_test)
-    return x_train_scaled, x_test_scaled
+    if x_test is not None:
+        dump(scaler, open(output_dir + 'scaler/scaler.pkl', 'wb'))
+        x_test_scaled = scaler.transform(x_test)
+        return x_train_scaled, x_test_scaled
+    else:
+        return x_train_scaled
 
 
 def feature_importance(x_train, y_train):
@@ -155,7 +128,6 @@ def recursive_features(X, y, columnnames, output_dir):
     df.to_csv(output_dir + 'feature_rankings.csv')
     print(rfecv.ranking_)
 
-
 # def run_svm(x_train, y_train, x_test, y_test, output_dir):
 #     s = SVM_model(x_train, y_train, x_test, y_test)
 #     s.run_model()
@@ -180,8 +152,9 @@ def split_test(features_path, index, dim, test_size=0.2):
 
 
 def prepare_data_svm(features_path, output_dir):
-    # features_path = '/home/jelle/Repositories/animalsounds/data/features/features_v7/features_sanctsynth/*'
-    # output_dir = '/home/jelle/Repositories/animalsounds/data/svm_results/training_alldata/'
+    print(features_path + '**/*.csv')
+    print(glob.glob(features_path + '**/*.csv', recursive=True))
+
     feat = 'all'
     if feat == 'general':
         dim = [5, 101]
@@ -192,7 +165,7 @@ def prepare_data_svm(features_path, output_dir):
     else:
         dim = [5, -1]
 
-    for i in range(len(glob.glob(features_path))):
+    for i in range(len(glob.glob(features_path + '**/*.csv', recursive=True))):
         print(i)
         if i == 0:
             x_train, x_test, y_train, y_test, y_file = split_test(features_path, i, dim)
@@ -204,34 +177,18 @@ def prepare_data_svm(features_path, output_dir):
             y_test = pd.concat([y_test, temp_y_test], sort=False)
             y_file = pd.concat([y_file, temp_y_file], sort=False)
 
-
-    x_train, x_test = normalize(x_train.to_numpy(), x_test.to_numpy())
     y_file.to_csv(output_dir + 'test_files.csv')
     # recursive_features(x_train, y_train, temp_x_test.columns, output_dir)
 
-    model = feature_importance(x_train, y_train)
-    x_train, x_test = feature_selection(x_train, x_test, temp_x_test.columns, model, output_dir, numfeat=50)
+    # normalize first time for feature selection purposes
+    x_train_tmp = normalize(x_train.to_numpy(), output_dir)
+    model = feature_importance(x_train_tmp, y_train)
+    x_train, x_test = feature_selection(x_train.to_numpy(), x_test.to_numpy(), temp_x_test.columns, model, output_dir, numfeat=50)
+
+    # normalize the 50 features of interest of x_train and x_test
+    x_train, x_test = normalize(x_train, output_dir, x_test)
     return x_train, y_train, x_test, y_test
-#     if ml_method == 'svm':
-#         run_svm(x_train, y_train, x_test, y_test, output_dir)
-#     elif ml_method == 'nn':
-#         # define transforms
-#         le = LabelEncoder()
-#         le.fit(y_train)
-#         train_data = customDataset(x_train, le.transform(y_train))
-#         test_data = customDataset(x_test, le.transform(y_test))
-#
-#         pl.seed_everything(42)
-#         mlp = MLP()
-#         trainer = pl.Trainer(auto_scale_batch_size='power', gpus=1, deterministic=True, max_epochs=5)
-#         trainer.fit(mlp, DataLoader(train_data))
-#         result = trainer.test(test_dataloaders=DataLoader(test_data))
-#         print(result)
-#
-#
-# if __name__ == "__main__":
-#     ml_method = 'svm'  # 'nn' or 'svm'
-#     main(ml_method)
+
 
 ###############
 # def read_file(file, dim):

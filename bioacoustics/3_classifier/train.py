@@ -10,10 +10,12 @@ from model.resnet_model import RESNET_model
 import os
 import argparse
 import pandas as pd
+
+
 # from tensorflow.keras.applications import ResNet50
 # from tensorflow.keras.applications.resnet50 import preprocess_input
-#import sys
-#from data_prepration_large_data import prepare_large_data
+# import sys
+# from data_prepration_large_data import prepare_large_data
 def parse_arguments():
     # parse arguments if available
     parser = argparse.ArgumentParser(
@@ -44,6 +46,13 @@ def parse_arguments():
         type=str,
         default=None,
         help='output dir'
+    )
+
+    parser.add_argument(
+        '--output_filename',
+        type=str,
+        default=None,
+        help='output file'
     )
 
     ##### params for hyperparameter optimization
@@ -93,7 +102,7 @@ def parse_arguments():
 
 
 def main():
-    #cv_results = False
+    # cv_results = False
     parser = parse_arguments()
     args = parser.parse_args()
 
@@ -101,43 +110,43 @@ def main():
         os.makedirs(os.path.dirname(args.output_dir))
 
     if args.model == 'svm':
-        s = SVM_model()
         X_train, y_train, X_test, y_test = prepare_data_svm(args.feature_dir,
-                                                            num_channels=args.output_dir,
-                                                           normval_dir=args.normVal_dir)
+                                                            args.output_dir)
+
     else:
         X_train, y_train, X_test, y_test = prepare_data_dl(args.feature_dir, num_channels=args.num_channels,
-                                                    normval_dir=args.normVal_dir)
-
+                                                           normval_dir=args.normVal_dir)
 
     if args.model == 'resnet':
-        #X_train, y_train, X_test, y_test = prepare_large_data(args.feature_dir, args.output_dir)
+        # X_train, y_train, X_test, y_test = prepare_large_data(args.feature_dir, args.output_dir)
         # X_train = preprocess_input(X_train)
         # X_test = preprocess_input(X_test)
         s = RESNET_model(args.epochs, args.batch_size)
     elif args.model == 'cnn':
-        s = CNN_model(args.nrow_input, args.ncol_input, args.num_channels, args.epochs, args.batch_size, args.channel_first)
+        s = CNN_model(args.nrow_input, args.ncol_input, args.num_channels, args.epochs, args.batch_size,
+                      args.channel_first)
 
     elif args.model == 'cnn10':
-        s = CNN10_model(args.nrow_input, args.ncol_input, args.num_channels, args.epochs, args.batch_size, args.channel_first)
+        s = CNN10_model(args.nrow_input, args.ncol_input, args.num_channels, args.epochs, args.batch_size,
+                        args.channel_first)
 
     elif args.model == 'cnn6':
-        s = CNN6_model(args.nrow_input, args.ncol_input, args.num_channels, args.epochs, args.batch_size, args.channel_first)
+        s = CNN6_model(args.nrow_input, args.ncol_input, args.num_channels, args.epochs, args.batch_size,
+                       args.channel_first)
 
-    elif args.model=='svm':
+    elif args.model == 'svm':
         s = SVM_model()
-        #cv_results = True
-
+        # cv_results = True
 
     print(" X_train.shpe", X_train.shape)
     print(" y_train.shpe", y_train.shape)
     print(" X_test.shpe", X_test.shape)
     print(" y_test.shpe", y_test.shape)
 
-    s.apply_model(X_train, y_train, X_test, y_test, args.output_dir)
-    s.save_results(y_test, args.output_dir)#, cv_results)
+    s.apply_model(X_train, y_train, X_test, y_test, args.output_dir, args.output_filename)
+    s.save_results(y_test, args.output_dir)  # , cv_results)
+
 
 # execute main function
 if __name__ == "__main__":
     main()
-

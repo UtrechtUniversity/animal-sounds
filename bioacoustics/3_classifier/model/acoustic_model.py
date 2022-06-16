@@ -44,7 +44,7 @@ class AcousticModel(ABC):
         else:
             self.acoustic_model = pickle.load(open(file_path, 'rb'))
 
-    def apply_model(self, X_train,y_train,X_test,y_test, file_name):
+    def apply_model(self, X_train, y_train, X_test, y_test, output_dir, file_name):
         """Train a model and make a prediction on test dataset
         Parameters
         ----------
@@ -59,7 +59,7 @@ class AcousticModel(ABC):
             Padded audio file.
         """
 
-        self._train(X_train,y_train,X_test,y_test,file_name)
+        self._train(X_train, y_train, X_test, y_test, output_dir, file_name)
         # self.evaluate_result = self.acoustic_model.evaluate(X_test, y_test, batch_size=32)
         # print(self.evaluate_result)
         self._predict(X_test)
