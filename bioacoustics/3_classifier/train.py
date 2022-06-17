@@ -48,13 +48,6 @@ def parse_arguments():
         help='output dir'
     )
 
-    parser.add_argument(
-        '--output_filename',
-        type=str,
-        default=None,
-        help='output file'
-    )
-
     ##### params for hyperparameter optimization
     parser.add_argument(
         '-T',
@@ -143,7 +136,7 @@ def main():
     print(" X_test.shpe", X_test.shape)
     print(" y_test.shpe", y_test.shape)
 
-    s.apply_model(X_train, y_train, X_test, y_test, args.output_dir, args.output_filename)
+    s.apply_model(X_train, y_train, X_test, y_test, args.output_dir)
     s.save_results(y_test, args.output_dir)  # , cv_results)
 
 

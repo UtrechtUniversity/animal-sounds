@@ -18,7 +18,7 @@ class SVM_model(AcousticModel):
         super(SVM_model, self).__init__()
         self.predicts = None
 
-    def _train(self, X_train, y_train, X_test, y_test, output_dir, file_name):
+    def _train(self, X_train, y_train, X_test, y_test, file_path):
         parameters = [{'kernel': ['rbf'], 'gamma': [1e-3, 1e-4],
                        'C': [1, 10, 100, 1000]},
                       {'kernel': ['linear'], 'C': [1, 10, 100, 1000]}]
@@ -28,8 +28,8 @@ class SVM_model(AcousticModel):
 
         print("Best parameter (UAR=%0.3f):" % self.acoustic_model.best_score_)
         print(self.acoustic_model.best_params_)
-        self._save_model(output_dir, file_name)
+        self._save_model(file_path)
 
-    def _save_model(self, output_dir, file_name):
-        filename = output_dir + file_name + '_svm_model.sav'
+    def _save_model(self, file_path):
+        filename = file_path + 'svm_model.sav'
         pickle.dump(self.acoustic_model, open(filename, 'wb'))
