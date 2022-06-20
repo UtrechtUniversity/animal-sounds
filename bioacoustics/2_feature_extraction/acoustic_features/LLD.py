@@ -3,15 +3,16 @@ import asyncio
 import librosa
 import numpy as np
 import pandas as pd
-import svm_features.speech_features as sf
 
 from pathlib import Path
 from scipy.signal import butter, lfilter
 from sklearn import preprocessing
 
-from svm_features.tools import butter_bandpass_filter, extract_features
-from svm_features.config import Config
-from svm_features.features import FeatureVector
+from . import speech_features as sf
+
+from .tools import butter_bandpass_filter, extract_features
+from .config import Config
+from .features import FeatureVector
 
 # Low Level Descriptors
 class LLD:

@@ -40,7 +40,7 @@ import json
 import numpy as np
 from sympy.ntheory import factorint
 from scipy.signal import butter, lfilter, filtfilt
-from svm_features.featuresFunctions import energy, energy_u
+from .featuresFunctions import energy, energy_u
 from math import sqrt
 
 

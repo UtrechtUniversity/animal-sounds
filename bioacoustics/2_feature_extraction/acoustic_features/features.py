@@ -37,8 +37,8 @@
 # knowledge of the CeCILL
 
 from os.path import isfile
-from svm_features.featuresFunctions import *
-from svm_features.tools import bestFFTlength
+from .featuresFunctions import *
+from .tools import bestFFTlength
 import json
 
 class FeatureVector:

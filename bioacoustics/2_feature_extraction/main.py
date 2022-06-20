@@ -11,11 +11,11 @@ from sklearn import preprocessing
 from pathlib import Path
 from itertools import product
 
-from svm_features.config import Config
-from svm_features.features import FeatureVector
-from svm_features.tools import extract_features
-from svm_features.featuresFunctions import *
-from svm_features.LLD import LLD
+from acoustic_features.config import Config
+from acoustic_features.features import FeatureVector
+from acoustic_features.tools import extract_features
+from acoustic_features.featuresFunctions import *
+from acoustic_features.LLD import LLD
 
 
 def parse_arguments():
