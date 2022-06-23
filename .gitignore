@@ -129,3 +129,6 @@ dmypy.json
 .pyre/
 
 data/
+output/features/
+output/models/
+output/results/
