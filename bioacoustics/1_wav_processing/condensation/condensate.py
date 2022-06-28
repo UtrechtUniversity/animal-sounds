@@ -104,8 +104,8 @@ if __name__ == '__main__':
             # create extractor object for current wav file
             extr = Extractor(filepath)
 
-            # detect potential vocalisations
-            pois = extr.detect_vocalisations(
+            # detect potential vocalizations
+            pois = extr.detect_vocalizations(
                 freqs=freqs, 
                 min_threshold_db=min_vol, 
                 max_threshold_db=max_vol,
