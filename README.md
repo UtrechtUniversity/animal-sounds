@@ -3,38 +3,46 @@
 <!-- Include Github badges here (optional) -->
 <!-- e.g. Github Actions workflow status -->
 
-Description of this (technical) project and of the project itself.
+The aim of this software is to classify Chimpanze vocalizations in audio recordings from the tropical rainforests of Africa. The software can be used for processing raw audio data, extracting features, and apply and compare Support Vector Machines and Deep learning methods for classification. The pipeline is reusable for other settings and species or vocalization types as long as a certain amount of labeled data has been collected. The best performing models will be available here for general usage.
 
 <!-- TABLE OF CONTENTS -->
 ## Table of Contents
 
-- [Project Title](#project-title)
+- [Animal Sounds](#animal-sounds)
   - [Table of Contents](#table-of-contents)
   - [About the Project](#about-the-project)
+    - [Dataset description](#dataset-description)
+    - [Processing](#processing)
+    - [Feature extraction](#feature-extraction)
+    - [Classification](#classification)
     - [Built with](#built-with)
     - [License](#license)
-    - [Attribution and academic use](#attribution-and-academic-use)
+    - [Relevant Publications](#relevant-publications)
   - [Getting Started](#getting-started)
-    - [Prerequisites](#prerequisites)
-    - [Installation](#installation)
-  - [Usage](#usage)
-    - [Subsection](#subsection)
-  - [Links](#links)
+    - [Project structure](#project-structure)
   - [Contributing](#contributing)
-  - [Notes](#notes)
   - [Contact](#contact)
 
 <!-- ABOUT THE PROJECT -->
 ## About the Project
 
+### Dataset description
+
+### Processing
+
+### Feature extraction
+
+### Classification
+
+
 **Date**: October 2021
 
-**Researcher(s)**:
+**Researchers**:
 
-- Joeri Zwerts (researcher.1@uu.nl)
-- Heysem Kaya (researcher.2@uu.nl)
+- Joeri Zwerts (j.a.zwerts@uu.nl)
+- Heysem Kaya (h.kaya@uu.nl)
 
-**Research Software Engineer(s)**:
+**Research Software Engineers**:
 
 - Parisa Zahedi (p.zahedi@uu.nl)
 - Casper Kaandorp (c.s.kaandorp@uu.nl)
@@ -45,15 +53,14 @@ Description of this (technical) project and of the project itself.
 - [Python 3.8](https://www.python.org/)
 - [librosa](https://librosa.org/)
 - [scikit-learn](https://scikit-learn.org/stable/index.html)
+- [tensorflow](https://www.tensorflow.org/)
 
 <!-- Do not forget to also include the license in a separate file(LICENSE[.txt/.md]) and link it properly. -->
 ### License
 
 The code in this project is released under [Apache 2.0](LICENSE.md).
 
-### Attribution and academic use
-
-Relevant publications:
+### Relevant publications
 
 - Introducing a central african primate vocalisation dataset for automated species classification.\ 
 Zwerts, J. A., Treep, J., Kaandorp, C. S., Meewis, F., Koot, A. C., & Kaya, H. (2021).\ 
@@ -65,57 +72,39 @@ Schuller, B. W., Batliner, A., Bergler, C., Mascolo, C., Han, J., Lefter, I., ..
 
 <!-- GETTING STARTED -->
 ## Getting Started
+There are two situations in which you directly apply the scripts here:
+1. You have audio data and a set of manual annotations (in e.g. txt or csv format) and want to use the whole pipeline (processing, augmentation, feature extraction and machine learning). 
+2. You have a highly similar dataset and want to use one of our models to help find Chimpanze vocalizations.
+
+If 1 applies to you, take a look at the project structure below and find getting started instructions for each step in the respective folders: [1_wav_processing](./bioacoustics/1_wav_processing), [2_feature_extraction](./bioacoustics/2_feature_extraction) and [3_classifier](./bioacoustics/3_classifier).
+
+If 2 applies to you, go to step [3_classifier](./bioacoustics/3_classifier/README.md) and read the specific instructions for applying our models on your data.
 
 
+### Project structure
 
-### Prerequisites
-
-To install and run this project you need to have the following prerequisites installed.
-
-- Python
-
-### Installation
-
-To run the project, ensure to install the project's dependencies.
-
-```sh
-pip install -r requirements.txt
 ```
+.
+├── .gitignore
+├── CITATION.md
+├── LICENSE.md
+├── README.md
+├── requirements.txt
+├── bioacoustics              <- main folder for all source code
+│   ├── 1_wav_processing 
+│   ├── 2_feature_extraction
+│   └── 3_classifier        
+├── data               <- All project data, ignored by git
+│   ├── original_wav_files
+│   ├── processed_wav_files            
+│   └── txt_annotations           
+└── output
+    ├── features        <- Figures for the manuscript or reports, ignored by git
+    ├── models          <- Models and relevant training outputs
+    ├── notebooks       <- Notebooks for analysing results
+    └── results         <- Graphs and tables
 
-<!-- USAGE -->
-## Usage
-7 steps are used to come from raw data to classification results:
-### 0. Manual annotation on raw audio data
-Generate a representative set of annotations of the species of interest to tune parameters for extracting sections of interest from the larger body of audio files. [Raven](https://ravensoundsoftware.com/) is used in this project for manual annotations. Generate a background dataset as well by manually annotation (or randomly sample sections in between species annotations).
-
-### 1. Extraction of audio sections of interest
-Sections of interest are identified based on increased energy in certain frequencies. This results in a removal of ~85% of irrelevant sections of plain jungle background (and lowers the annotation effort). <1% of annotations of step 1 are lost in this step.
-[Instructions](src/1_condensation/README.md)
-
-### 1b. Manual annotation on processed audiodata
-Continue manual annotations on the 'condensed' WAV files until a substantial set of annotations is reached (e.g 500 vocalizations) for machine learning.
-
-### 2. Processing of raw data to annotations
-Create WAV files of the species and background annotations only. [Instructions](src/2_wav_processing/README.md)
-
-### 3. Data augmentation
-Generate synthetic data by adding background signal to annotations in varying proportions. [Instructions](src/3_synthetic_data/README.md)
-
-### 4. Feature extraction
-Extract features (e.g. MFCC, RASTA-PLPC) from annotations and store in .csv format.
-[Further details and instructions](src/4_feature_extraction/README.md)
-
-### 5. Modelling
-Separate train, validation and test sets and optimize performance of CNN and SVM models. The SVM model uses a subset of the most important features from step 4 for training and testing. CNN is trained on audio data from step 3 and uses CNN features.
-[Further details and instructions](src/5_classifier/README.md)
-
-### 6. Prediction
-[Instructions](src/6_prediction/README.md)
-
-
-<!-- LINKS -->
-## Links
-
+```
 
 <!-- CONTRIBUTING -->
 ## Contributing
@@ -130,14 +119,12 @@ To contribute:
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-<!-- NOTES -->
-## Notes
-
-Additional notes on the project can be left here.
 
 <!-- CONTACT -->
 ## Contact
 
-Contact Name - [@twitterhandle](https://twitter.com/username) - contact.rse@uu.nl
+[Joeri Zwerts](https://www.uu.nl/medewerkers/JAZwerts) - j.a.zwerts@uu.nl
+
+[Research Engineering team](https://utrechtuniversity.github.io/research-engineering/) - research.engineering@uu.nl
 
 Project Link: [https://github.com/UtrechtUniversity/animal-sounds](https://github.com/UtrechtUniversity/animal-sounds)
