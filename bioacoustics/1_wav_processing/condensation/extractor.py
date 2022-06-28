@@ -262,9 +262,3 @@ class Extractor:
         wv.write(path, self.sr, self.signal)
 
 
-# f = Extractor('/Users/casperkaandorp/Downloads/mandrills/20191216_135958.WAV')
-# vocals = f.detect_vocalisations(freqs=[(10, 400)], threshold_db=23, threshold_pattern=0.1, ignore_voc=0.09)
-# print(len(vocals), vocals)
-# tmp = f.extract_intervals(vocals)
-# tmp.to_wav('zfuck.wav')
-
