@@ -26,15 +26,6 @@ The aim of this software is to classify Chimpanze vocalizations in audio recordi
 <!-- ABOUT THE PROJECT -->
 ## About the Project
 
-### Dataset description
-
-### Processing
-
-### Feature extraction
-
-### Classification
-
-
 **Date**: October 2021
 
 **Researchers**:
@@ -47,6 +38,14 @@ The aim of this software is to classify Chimpanze vocalizations in audio recordi
 - Parisa Zahedi (p.zahedi@uu.nl)
 - Casper Kaandorp (c.s.kaandorp@uu.nl)
 - Jelle Treep (h.j.treep@uu.nl)
+
+### Dataset description
+
+### Processing
+
+### Feature extraction
+
+### Classification
 
 ### Built with
 
