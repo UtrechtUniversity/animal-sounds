@@ -5,7 +5,7 @@ To speed up the annotation process of the large amount of recordings we have cre
 ## Table of Contents
 
 - [How does it work](#how-does-it-work)
-- [Software dependencies](#software-requirements)
+- [Software requirements](#software-requirements)
 - [Usage](#usage)
     - [Using the Extractor class](#using-the-extractor-class)
     - [Using the extractor script](#using-the-extractor-script)
@@ -17,7 +17,7 @@ To speed up the annotation process of the large amount of recordings we have cre
 The detection of deviating audio patterns comprises a Short-time Fourier transform to produce a power distribution in the time-frequency domain. Depending on the properties of the expected primate vocalizations we discard redundant frequency bands. From the remaining bands we collect small time-intervals in which the registered signal loudness exceeds a species specific threshold, or in which the local cumulative power distribution deviates from a global counterpart.
 This collection represents a set of timestamps where we expect to hear disruptions in the ambient noise. The time-intervals are used to extract the corresponding signal fragments from our raw data. These fragments are bundled into a new audio file which a resulting high density of vocalizations that can be annotated more efficiently.
 
-## Software dependencies
+## Software requirements
 
 - Python 3
 - [Librosa ~0.9.1](https://librosa.org/doc/latest/index.html)
@@ -89,4 +89,4 @@ $ ./extract_chimps.sh
 
 ## Remarks
 
-Reducing the annotation time with the Extractor class requires some manual labor! Some experimentation was needed to find the correct frequency band in which the majority of Chimpanzee vocalizations could be found. We also had to deal with differences in background noise per recording batch, which forced us to use different volume thresholds in some cases. Note that this is _not_ a smart detection algorithm. It is not designed to detect vocalizations produced by animals. The sound of an airplane flying by, and the 'bang' of a closing door will be selected as well for annotation. Despite the disability to filter out only animal vocalizations we could remove a significant, uneventful portion from our entire dataset.
+Reducing the annotation time with the Extractor class requires some manual labor! Some experimentation was needed to find the correct frequency band in which the majority of Chimpanzee vocalizations could be found. We also had to deal with differences in background noise per recording batch, which forced us to use different volume thresholds in some cases. Note that this is _not_ a smart detection algorithm. It is not designed to detect vocalizations produced by animals only. The sound of an airplane flying by, and the 'bang' of a closing door will be marked as a deviation from the background noise and thus selected for annotation. Despite this disability we were able to remove a significant, uneventful portion from our entire dataset.
