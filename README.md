@@ -52,11 +52,15 @@ The datasets are labeled into 2 classes (Chimpanze & background) using [Raven Pr
 To speed up the labeling process we developed an energy-change based algorithm to filter out irrelevant parts of the recordings, see [Condensation](./bioacoustics/1_wav_processing/condensation).
 
 To increase and diversify our training set we have created synthetic samples by embedding the sanctuary vocalizations into the recorded background noise of the jungle, see [Synthetic data](./bioacoustics/1_wav_processing/syntetic_data).
-Synthetic data
 
 ### Feature extraction
+Before calculating features we apply a Butterworth bandpass filter with low cutoff at 100 Hz and a high cutoff at 200 Hz.
+For classification using SVM we extract statistical features from different representations of the audio signal.
+For classification using Deep learning we use a mel spectrogram representation as input. 
 
 ### Classification
+
+
 
 ### Built with
 
