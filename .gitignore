@@ -132,3 +132,5 @@ data/
 output/features/
 output/models/
 output/results/
+
+.DS_Store
