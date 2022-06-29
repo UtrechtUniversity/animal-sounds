@@ -26,7 +26,7 @@ The aim of this software is to classify Chimpanze vocalizations in audio recordi
 <!-- ABOUT THE PROJECT -->
 ## About the Project
 
-**Date**: October 2021
+**Date**: June 2022
 
 **Researchers**:
 
@@ -40,8 +40,19 @@ The aim of this software is to classify Chimpanze vocalizations in audio recordi
 - Jelle Treep (h.j.treep@uu.nl)
 
 ### Dataset description
+The dataset for this project contains recordings in `.wav` format at 1 minute length and at a sample rate of 48000 samples/second. The recordings are taken at three locations:
+- Chimpanze sanctuary
+- Natural forest
+- Semi-natural Chimanze enclosures  
+The Chimpanze sanctuary and Natural forest are used for training and optimizing the classifiers. The Semi-natural Chimpanze recordings are used as an independent evaulation of the classifiers.
 
-### Processing
+### Preprocessing 
+The datasets are labeled into 2 classes (Chimpanze & background) using [Raven Pro](https://ravensoundsoftware.com/software/) annotation software, and extracted from the original recordings. Find scripts [here](./bioacoustics/1_wav_processing/raven_to_wav).
+
+To speed up the labeling process we developed an energy-change based algorithm to filter out irrelevant parts of the recordings, see [Condensation](./bioacoustics/1_wav_processing/condensation).
+
+To increase and diversify our training set we have created synthetic samples by embedding the sanctuary vocalizations into the recorded background noise of the jungle, see [Synthetic data](./bioacoustics/1_wav_processing/syntetic_data).
+Synthetic data
 
 ### Feature extraction
 
@@ -71,7 +82,7 @@ Schuller, B. W., Batliner, A., Bergler, C., Mascolo, C., Han, J., Lefter, I., ..
 
 <!-- GETTING STARTED -->
 ## Getting Started
-There are two situations in which you directly apply the scripts here:
+There are two situations in which you can directly apply the scripts in this repository and we tailored the documentation towards these situations:
 1. You have audio data and a set of manual annotations (in e.g. txt or csv format) and want to use the whole pipeline (processing, augmentation, feature extraction and machine learning). 
 2. You have a highly similar dataset and want to use one of our models to help find Chimpanze vocalizations.
 
