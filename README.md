@@ -59,7 +59,9 @@ Before calculating features we apply a Butterworth bandpass filter with low cuto
 For classification using SVM we extract statistical features from different representations of the audio signal.  
 For classification using Deep learning we use a mel spectrogram representation as input. 
 
-<img src="/img/melspectrogram.png" width="400" />
+| <img src="/img/melspectrogram.png" width="400" /> | 
+|:--:| 
+| *Chimpanze vocalization in mel spectrogram representation* |
 
 ### Classification
 **SVM**  
