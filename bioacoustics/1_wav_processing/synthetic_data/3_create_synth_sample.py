@@ -138,9 +138,9 @@ if __name__ == '__main__':
         bg_norm = effects.normalize(match['voc'])
 
         # superposition
-        for amp in [0, 3.3, 6.6, 13]:
+        for amp in [0, 3.3, 6.6, 10]:
 
-            softer = primate_norm.apply_gain(1 * amp)
+            softer = primate_norm.apply_gain(-1 * amp)
 
             superpos = softer.overlay(bg_norm)
             filename = Path(args['output_folder']) / (Path(p['path']).stem + p['postfix'] + f'_{ amp * 10 }' + '.wav')
