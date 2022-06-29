@@ -66,7 +66,7 @@ For classification using Deep learning we use a mel spectrogram representation a
 ### Classification
 **SVM**  
 From the 1140 statistical features from the previous step we select a normalized feature set of 50 features. The selection is based on feature importances computed with an Extra Trees Classifier. We train and optimize the SVM model on those 50 features using 'macro average recall' as evaluation criterion.
-On the independent test set the SVM model establishes a 'macro average recall' of **0.87**.
+On the independent test set the SVM model establishes a 'macro average recall' of **0.84**.
 
 **Deep learning**  
 We trained several architectures of Convolutional Neural Networks (CNN) and a Residual network model (Resnet).
