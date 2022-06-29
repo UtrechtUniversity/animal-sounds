@@ -51,16 +51,23 @@ The datasets are labeled into 2 classes (Chimpanze & background) using [Raven Pr
 
 To speed up the labeling process we developed an energy-change based algorithm to filter out irrelevant parts of the recordings, see [Condensation](./bioacoustics/1_wav_processing/condensation).
 
-To increase and diversify our training set we have created synthetic samples by embedding the sanctuary vocalizations into the recorded background noise of the jungle, see [Synthetic data](./bioacoustics/1_wav_processing/syntetic_data).
+To increase and diversify our training set we have created synthetic samples by embedding the sanctuary vocalizations into the recorded jungle audio that is labeled as 'background', see [Synthetic data](./bioacoustics/1_wav_processing/syntetic_data).
 
 ### Feature extraction
-Before calculating features we apply a Butterworth bandpass filter with low cutoff at 100 Hz and a high cutoff at 200 Hz.
-For classification using SVM we extract statistical features from different representations of the audio signal.
+We trained the models on frames of 0.5 seconds.  
+Before calculating features we apply a Butterworth bandpass filter with low cutoff at 100 Hz and a high cutoff at 2000 Hz.  
+For classification using SVM we extract statistical features from different representations of the audio signal.  
 For classification using Deep learning we use a mel spectrogram representation as input. 
 
+![Mel spectrogram representation](/img/melspectrogram.png)
+
 ### Classification
+**SVM**  
+From the 1140 statistical features from the previous step we select a normalized feature set of 50 features. The selection is based on feature importances computed with an Extra Trees Classifier. We train and optimize the SVM model on those 50 features using 'macro average recall' as evaluation criterion.
+On the independent test set the SVM model establishes a 'macro average recall' of **0.87**.
 
-
+**Deep learning**  
+We trained several architectures of Convolutional Neural Networks (CNN) and a Residual network model (Resnet).
 
 ### Built with
 
