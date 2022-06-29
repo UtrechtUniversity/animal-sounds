@@ -20,7 +20,7 @@ from extractor import Extractor
 def parse_arguments():
     # parse arguments if available
     parser = argparse.ArgumentParser(
-        description="Bioacoustics Synth Dataset step 1"
+        description="Bioacoustics Synth Dataset, step 1: fragment collection"
     )
 
     # File path to the data.
@@ -94,7 +94,6 @@ if __name__ == '__main__':
                 collect_filename_from_raven_path(x)
             )
         )
-        print(bg)
  
         bg = bg[bg['Class']=='Background']
 
