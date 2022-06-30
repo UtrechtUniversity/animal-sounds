@@ -16,7 +16,7 @@
 
 ### Feature selection (SVM)
 With the total of 1140 acoustic features from the training samples as input, we used a Recursive Feature Elimination (RFE) technique to determine an optimal number of features. This technique yielded a broad optimum with centered a round a rough estimate of 50 features.
-| <img src="/output/results/RFE.png" width="400" /> | 
+| <img src="../../output/results/RFE.png" width="400" /> | 
 |:--:| 
 | *Recursive Feature Elimination on training dataset* |
 
