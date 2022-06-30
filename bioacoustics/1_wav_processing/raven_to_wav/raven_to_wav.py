@@ -12,7 +12,7 @@ def parse_arguments():
     )
     # File path to the data.
     parser.add_argument(
-        "raven_file",
+        "annotations_file",
         type=str,
         help="File path to the annotation dataset"
     )
@@ -398,7 +398,7 @@ def main():
     parser = parse_arguments()
     args = parser.parse_args()
 
-    p1 = ProcessRaven(args.raven_file, args.wavpath)
+    p1 = ProcessRaven(args.annotations_file, args.wavpath)
     p1.read_raven()
     p1.compute_file_lengths(args.wavpath)
     p1.process_raven(args.species, args.min_sig_len)

@@ -7,7 +7,6 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.svm import SVC
 from sklearn.model_selection import StratifiedKFold
 from sklearn.feature_selection import RFECV
-from model.svm_model import SVM_model
 
 import sklearn.model_selection as model_selection
 from sklearn.ensemble import ExtraTreesClassifier
