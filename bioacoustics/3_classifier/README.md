@@ -12,10 +12,22 @@
 
 ## How does it work
 
-Preprocessing and feature selection
-Add train
-Add predict
-Add models
+### Preprocessing
+
+### Feature selection (SVM)
+With the total of 1140 acoustic features from the training samples as input, we used a Recursive Feature Elimination (RFE) technique to determine an optimal number of features. This technique yielded a broad optimum with centered a round a rough estimate of 50 features.
+| <img src="/results/RFE.png" width="400" /> | 
+|:--:| 
+| *Recursive Feature Elimination on training dataset* |
+
+In the preprocessing steps of the SVM model, we perform feature selection using [Extra Trees Classifier](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.ExtraTreesClassifier.html) to rank the features and select the 50 most important features.
+
+
+### Training
+
+
+### Predicting
+
 
 
 ## Software requirements
