@@ -46,6 +46,11 @@ The dataset for this project contains recordings in `.wav` format at 1 minute le
 - Semi-natural Chimanze enclosures  
 The Chimpanze sanctuary and Natural forest are used for training and optimizing the classifiers. The Semi-natural Chimpanze recordings are used as an independent evaulation of the classifiers.
 
+|Dataset| # Chimpanze samples | # Background samples |
+| --- | --- | --- |
+| Sanctuary | 17.921 | 74.163 | 
+| Synthetic | 68.757 | 97.149 | 
+
 ### Preprocessing 
 The datasets are labeled into 2 classes (Chimpanze & background) using [Raven Pro](https://ravensoundsoftware.com/software/) annotation software, and extracted from the original recordings. Find scripts [here](./bioacoustics/1_wav_processing/raven_to_wav).
 
