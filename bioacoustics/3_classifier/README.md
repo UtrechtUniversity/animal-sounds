@@ -12,6 +12,7 @@
 
 ## How does it work
 
+Preprocessing and feature selection
 Add train
 Add predict
 Add models
