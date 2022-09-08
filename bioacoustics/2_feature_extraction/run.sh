@@ -1,5 +1,5 @@
-input_dir="/wav_path/"
-output_dir="/feature_files/"
+input_dir="../../data/processed_wav_files/"
+output_dir="../../output/features/"
 
 echo "Processing $input_dir"
 
