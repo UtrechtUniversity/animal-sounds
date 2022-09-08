@@ -46,6 +46,11 @@ The dataset for this project contains recordings in `.wav` format at 1 minute le
 - Semi-natural Chimanze enclosures  
 The Chimpanze sanctuary and Natural forest are used for training and optimizing the classifiers. The Semi-natural Chimpanze recordings are used as an independent evaulation of the classifiers.
 
+|Dataset| # Chimpanze samples | # Background samples |
+| --- | --- | --- |
+| Sanctuary | 17.921 | 74.163 | 
+| Synthetic | 68.757 | 97.149 | 
+
 ### Preprocessing 
 The datasets are labeled into 2 classes (Chimpanze & background) using [Raven Pro](https://ravensoundsoftware.com/software/) annotation software, and extracted from the original recordings. Find scripts [here](./bioacoustics/1_wav_processing/raven_to_wav).
 
@@ -66,13 +71,19 @@ For classification using Deep learning we use a mel spectrogram representation a
 ### Classification
 **SVM**  
 From the 1140 statistical features from the previous step we select a normalized feature set of 50 features. The selection is based on feature importances computed with an Extra Trees Classifier. We train and optimize the SVM model on those 50 features using 'macro average recall' as evaluation criterion.
-On the independent test set the SVM model establishes a 'macro average recall' of **0.84**.
+On the independent test set the SVM model establishes a 'macro average recall' of **0.87**.
 | <img src="/img/A6_matrix.png" width="400" /> | 
 |:--:| 
 | *SVM prediction results for A6 recorder* |
 
 **Deep learning**  
-We trained several architectures of Convolutional Neural Networks (CNN) and a Residual network model (Resnet).
+We trained several architectures of Convolutional Neural Networks (CNN) and a Residual network model (Resnet). CNN10 is the best performing model.
+
+| Trained on| SVM | CNN | CNN10 | 
+| --- | --- | --- | --- |
+| Sanctuary | 0.86 | 0.81 | 0.83 |
+| Synthetic | 0.65 | 0.82 | 0.85 |
+| Sanctuary + Synthetic | 0.87 | 0.83 | 0.87 | 
 
 ### Built with
 
@@ -84,7 +95,7 @@ We trained several architectures of Convolutional Neural Networks (CNN) and a Re
 <!-- Do not forget to also include the license in a separate file(LICENSE[.txt/.md]) and link it properly. -->
 ### License
 
-The code in this project is released under [Apache 2.0](LICENSE.md).
+The code that is developed in this project is released under [Apache 2.0](LICENSE.md). Some of the scripts for [feature extraction](/bioacoustics/2_feature_extraction) that we use in this project are available under [CeCILL 1.1](https://github.com/malfante/AAA/blob/master/LICENSE_EN.txt) license. The scripts where this is the case contain license information at the header lines of the scripst. The original versions of these scripts are created by Marielle Malfante and are available via [GitHub](https://github.com/malfante/AAA).
 
 ### Relevant publications
 
@@ -94,6 +105,8 @@ Zwerts, J. A., Treep, J., Kaandorp, C. S., Meewis, F., Koot, A. C., & Kaya, H. (
 - The INTERSPEECH 2021 Computational Paralinguistics Challenge: COVID-19 cough, COVID-19 speech, escalation & primates.\
 Schuller, B. W., Batliner, A., Bergler, C., Mascolo, C., Han, J., Lefter, I., ... & Kaandorp, C. (2021).\
 [arXiv preprint](https://arxiv.org/pdf/2102.13468.pdf)
+- Automatic Analysis Architecture, M. MALFANTE, J. MARS, M. DALLA MURA 
+DOI: [10.5281/zenodo.126028](https://doi.org/10.5281/zenodo.1216028)
 
 
 <!-- GETTING STARTED -->
