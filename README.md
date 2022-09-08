@@ -122,6 +122,7 @@ There are two situations in which you can directly apply the scripts in this rep
 2. [You have a highly similar dataset and want to use one of our models to help find Chimpanze vocalizations.](docs/tutorial.md)
 
 ### Project structure
+This project uses the following directory structure. After cloning the repository on your local PC, organize your data in the repository using the structure below to make sure the scripts 'know' where the data is located. 
 
 ```
 .
