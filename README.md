@@ -111,14 +111,15 @@ DOI: [10.5281/zenodo.126028](https://doi.org/10.5281/zenodo.1216028)
 
 <!-- GETTING STARTED -->
 ## Getting Started
+
+To obtain all methods in this repository:
+```
+git clone https://github.com/UtrechtUniversity/animal-sounds.git
+```
+
 There are two situations in which you can directly apply the scripts in this repository and we tailored the documentation towards these situations:
-1. You have audio data and a set of manual annotations (in e.g. txt or csv format) and want to use the whole pipeline (processing, augmentation, feature extraction and machine learning). 
-2. You have a highly similar dataset and want to use one of our models to help find Chimpanze vocalizations.
-
-If 1 applies to you, take a look at the project structure below and find getting started instructions for each step in the respective folders: [1_wav_processing](./bioacoustics/1_wav_processing), [2_feature_extraction](./bioacoustics/2_feature_extraction) and [3_classifier](./bioacoustics/3_classifier).
-
-If 2 applies to you, go to step [3_classifier](./bioacoustics/3_classifier/README.md) and read the specific instructions for applying our models on your data.
-
+1. You have audio data and a set of manual annotations (in e.g. txt or csv format) and want to use the whole pipeline including training your own model. Find getting started instructions for each step in the respective folders: [1_wav_processing](./bioacoustics/1_wav_processing), [2_feature_extraction](./bioacoustics/2_feature_extraction) and [3_classifier](./bioacoustics/3_classifier) 
+2. [You have a highly similar dataset and want to use one of our models to help find Chimpanze vocalizations.](docs/tutorial.md)
 
 ### Project structure
 
