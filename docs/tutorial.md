@@ -82,5 +82,12 @@ sudo apt-get install libsndfile-dev
 In the previous step, `.wav` files are chunked into 0.5 second chunks. These chunks are then translated into features describing the chunk.
 In this step we classify each chunk into classes `chimpanze` or `background`. 
 
+- Go to the directory `3_classifier`
+`cd ../3_classifier`
+
+- Use this command to run the predict script (but customize the options to choose the model you wish to use):
+```
+python3.8 predict.py --model=svm --feature_dir=../../output/features/ --trained_model_path=../../output/models/svm/all/svm_model.sav --output_dir=../../output/models/svm/all/predictions/
+```
 
 
