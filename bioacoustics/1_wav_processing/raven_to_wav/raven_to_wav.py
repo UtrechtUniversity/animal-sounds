@@ -121,7 +121,7 @@ class ProcessRaven:
     def split_multifile_annotations(df, filelist, wav_path):
         """Split annotations that are composed of multiple .wav files.
 
-        Annotations that are composed on multiple .wav files are split into
+        Annotations that are composed of multiple .wav files are split into
         multiple annotations that will replace the original annotation in
         the returned datafrome. The original rows are dropped and new rows
         appended at the end of the dataframe in the following order:
@@ -192,6 +192,24 @@ class ProcessRaven:
 
     @staticmethod
     def select_columns_rows(df, species, min_sig_len):
+        """Select rows of interest.
+
+        This function selects rows from the input DataFrame
+        that contain annotations from the species of interest
+        and are longer than the defined minimum signal length (s).
+
+        Parameters
+        ----------
+        df : DataFrame
+            dataframe containing annotated segments
+
+        species : str
+            Species (or class) of interest
+
+        min_sig_len : float
+            Minimal threshold signal length. Annotations shorter than
+            this threshold will be excluded.
+        """
         return df.loc[(df['species'] == species)
                       & ((df['end time (s)']
                           - df['begin time (s)'])
@@ -219,11 +237,6 @@ class ProcessRaven:
         min_sig_len : float
             Minimal threshold signal length. Annotations shorter than
             this threshold will be excluded.
-
-        Returns
-        -------
-        bool
-            True if successful, False otherwise.
         """
         df = self.df.rename(columns={'begin path': 'file',
                                      'end path': 'end_file'})
@@ -255,29 +268,32 @@ class ProcessRaven:
 
 
     def padding(self, df, wav_path, min_bg_padding, min_length):
-        """Short description.
+        """Background padding.
 
-        Extended description of the function, providing a more extensive
-        description than a single-line summary.
+        Pads vocalizations on two sides with unannotated segments of
+        specified length. When this is not entirely possible because the audio
+        file starts or ends within this unannotated segment, the segment
+        on the other end will be extended with the remaining padding length.
 
         Parameters
         ----------
-        param1 : int
-            description
+        df : DataFrame
+            dataframe containing annotated segments
 
-            This description can span multiple lines and/or paragraphs as
-            well.
-        param2 : str, optional
-            another description
-        *args
-            Variable length argument list.
-        **kwargs
-            Arbitrary keyword arguments.
+        wav_path : str
+            location of the .wav files
 
-        Returns
-        -------
-        bool
-            True if successful, False otherwise.
+        min_bg_padding : float
+            background padding length in seconds.
+            This length will be added in front as well as
+            behind the annotated segment
+
+        min_length : float
+            annotation will be extended with background padding
+            to a minimum specified by this length. If the
+            annotated vocalization combined with min_bg_padding
+            will not reach this minimum length the background segments
+            will be extended to reach this minimum
         """
         self.df_pad = pd.DataFrame({'file': [], 'start': [], 'duration': []})
         for index, row in df.iterrows():
@@ -310,15 +326,18 @@ def write_files(df, output_path,
                 k_start,
                 frame_len,
                 jump_len):
-    """Short description.
+    """ Write annotations to new .wav files
 
-    Extended description of the function, providing a more extensive
-    description than a single-line summary.
+    Read annotated audio signal from the original .wav files and write
+    .wav files containing annotated signal only.
 
     Parameters
     ----------
-    param1 : int
-        description
+    df : DataFrame
+        dataframe containing annotated segments
+
+    output_path : str
+        location where to store the .wav files
 
         This description can span multiple lines and/or paragraphs as
         well.
