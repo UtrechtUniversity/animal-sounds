@@ -87,7 +87,7 @@ We trained several architectures of Convolutional Neural Networks (CNN) and a Re
 
 ### Built with
 
-- [Python 3.8](https://www.python.org/)
+- [Python >=3.8](https://www.python.org/)
 - [librosa](https://librosa.org/)
 - [scikit-learn](https://scikit-learn.org/stable/index.html)
 - [tensorflow](https://www.tensorflow.org/)
@@ -120,7 +120,7 @@ git clone https://github.com/UtrechtUniversity/animal-sounds.git
 Install all required python libraries:
 ```
 cd animal-sounds
-python3.8 -m pip install -r requirements.txt
+python -m pip install -r requirements.txt
 ```
 
 
