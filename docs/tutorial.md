@@ -17,7 +17,7 @@ git clone https://github.com/UtrechtUniversity/animal-sounds.git
 Install all required python libraries:
 ```
 cd animal-sounds
-python3.8 -m pip install -r requirements.txt
+python -m pip install -r requirements.txt
 ```
 ## Organize data folder
 - Create a data folder and subfolders to store your data following the project structure below.
@@ -54,7 +54,7 @@ cd bioacoustics/2_feature_extraction
 ```
 - Run `main.py` from the command line as follows, but change the options `--input_dir`, `--output_dir` and `--cores` (number of CPU cores to run the task on) when applicable:
 ```
-python3.8 main.py --input_dir "../../data/processed_wav_files/" --output_dir "../../output/features/features.csv" --frame_length 24000 --hop_length 12000 --cores 2 --filter 100 2000 5 --label1 unknown --label2 unknown
+python main.py --input_dir "../../data/processed_wav_files/" --output_dir "../../output/features/features.csv" --frame_length 24000 --hop_length 12000 --cores 2 --filter 100 2000 5 --label1 unknown --label2 unknown
 ```
 
 - Alternatively, use the text file `run.sh` to customize your runs of `main.py`.  the variable `input_dir=<location of your files>` so it will point to the location of your files and (if necessary) `output_dir=<location of your files>` so it will point to the location where you want your feature files to be stored. Change the variable `--cores <number of available CPU cores>` to the number of available CPU cores on your machine. Potentially you will have to 
@@ -87,7 +87,7 @@ In this step we classify each chunk into classes `chimpanze` or `background`.
 
 - Use this command to run the predict script (but customize the options to choose the model you wish to use):
 ```
-python3.8 predict.py --model=svm --feature_dir=../../output/features/ --trained_model_path=../../output/models/svm/all/svm_model.sav --output_dir=../../output/models/svm/all/predictions/
+python predict.py --model=svm --feature_dir=../../output/features/ --trained_model_path=../../output/models/svm/all/svm_model.sav --output_dir=../../output/models/svm/all/predictions/
 ```
 
 
