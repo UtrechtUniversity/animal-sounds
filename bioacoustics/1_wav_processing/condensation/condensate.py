@@ -1,9 +1,9 @@
 import argparse
-import numpy as np
 import pandas as pd
 
 from pathlib import Path
 from extractor import Extractor
+
 
 def parse_arguments():
     """Parses command line parameters"""
@@ -37,7 +37,7 @@ def parse_arguments():
             'String containing a list of tuples containing frequency bands '
             'of interest. Default is [(200, 5000)] denoting a single band between '
             '200Hz en 5000Hz.'
-        )) 
+        ))
     )
     # Sound volume of interest
     parser.add_argument(
@@ -62,11 +62,11 @@ if __name__ == '__main__':
 
     # collect input from CLI
     if ',' in args['input']:
-        input = [Path(f.strip()) for f in args['input'].split(',')]
+        parsed_input = [Path(f.strip()) for f in args['input'].split(',')]
     elif Path(args['input']).is_file():
-        input = [Path(args['input'])]
+        parsed_input = [Path(args['input'])]
     elif Path(args['input']).is_dir():
-        input = Path(args['input']).glob('*.WAV')
+        parsed_input = Path(args['input']).glob('*.WAV')
     else:
         raise RuntimeError(f'input is not a file or folder')
 
@@ -95,7 +95,7 @@ if __name__ == '__main__':
     result_counter = 1
     csv_stopwatch = 0.0
 
-    for filepath in sorted(input):
+    for filepath in sorted(parsed_input):
 
         try:
 
@@ -119,7 +119,7 @@ if __name__ == '__main__':
             extracted = extr.extract_intervals(pois, padding=padding)
 
             # add extracted signal to signal_out
-            signal_out = extracted if signal_out == None else signal_out + extracted
+            signal_out = extracted if signal_out is None else signal_out + extracted
 
             # process peaks (potential vocalisations) and add to csv
             rows = []
@@ -159,19 +159,3 @@ if __name__ == '__main__':
             'result_file', 'res_start', 'res_end']
     )
     df.to_csv(Path(args['output_csv']), index=False)
-
-
-
-
-
-
-
-
-
-
-                
-
-
-
-
-

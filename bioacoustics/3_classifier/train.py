@@ -1,7 +1,7 @@
 """Script to apply a model on a set of features_old and make a prediction"""
 
-from data_prepration_dl import prepare_data_dl
-from data_prepration_svm import prepare_data_svm
+from data_preparation_dl import prepare_data_dl
+from data_preparation_svm import prepare_data_svm
 from model.svm_model import SVM_model
 from model.cnn_model import CNN_model
 from model.cnn10_model import CNN10_model
