@@ -1,5 +1,5 @@
 import pandas as pd
-from .rasta import *
+from . import rasta
 import numpy as np
 
 def extract_speech_features(signal, sr=48000):
