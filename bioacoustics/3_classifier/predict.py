@@ -1,19 +1,21 @@
 """Script to apply a model on a set of features_old and make a prediction"""
 
-from data_prepration_dl import prepare_data_dl
-from data_prepration_svm import prepare_data_svm
+from data_preparation_dl import prepare_data_dl
+from data_preparation_svm import prepare_data_svm
 from model.svm_model import SVM_model
 from model.cnn_model import CNN_model
 from model.cnn10_model import CNN10_model
 from model.cnn6_model import CNN6_model
 from model.resnet_model import RESNET_model
-#import statistics
+# import statistics
 import os
 import argparse
+
+
 # import pandas as pd
 # from tensorflow.keras.applications import ResNet50
 # from tensorflow.keras.applications.resnet50 import preprocess_input
-#import sys
+# import sys
 
 def parse_arguments():
     # parse arguments if available
@@ -84,32 +86,32 @@ def main():
 
     else:
         X_train, y_train, X_test, y_test = prepare_data_dl(args.feature_dir, without_label=args.without_label,
-                                                        trained_model_path=args.trained_model_path,
-                                                        num_channels=args.num_channels,
-                                                        normval_dir=args.normVal_dir)
+                                                           trained_model_path=args.trained_model_path,
+                                                           num_channels=args.num_channels,
+                                                           normval_dir=args.normVal_dir)
 
-    if args.model =='resnet':
+    if args.model == 'resnet':
         s = RESNET_model()
-    elif args.model =='cnn':
+    elif args.model == 'cnn':
         s = CNN_model()
     elif args.model == 'cnn10':
         s = CNN10_model()
     elif args.model == 'cnn6':
         s = CNN6_model()
 
-    if args.model=='svm':
+    if args.model == 'svm':
         s = SVM_model()
         dl_model = False
 
-    #s.evaluate_model( X_test, y_test, args.trained_model_path)
+    # s.evaluate_model( X_test, y_test, args.trained_model_path)
     s.predict_model(X_test, args.trained_model_path, dl_model)
 
-    if args.without_label: # apply model on un-labeled dataset
+    if args.without_label:  # apply model on un-labeled dataset
         s.save_results(y_test, args.output_dir, predicts_only=True)
     else:
         s.save_results(y_test, args.output_dir)
 
+
 # execute main function
 if __name__ == "__main__":
     main()
-
