@@ -1,19 +1,15 @@
 import argparse
 import asyncio
-import librosa
 import multiprocessing as mp
-import numpy as np
 import pandas as pd
 import random
 import time
 
-from sklearn import preprocessing
 from pathlib import Path
 from itertools import product
 
 from acoustic_features.config import Config
 from acoustic_features.features import FeatureVector
-from acoustic_features.tools import extract_features
 from acoustic_features.featuresFunctions import *
 from acoustic_features.LLD import LLD
 
@@ -94,14 +90,10 @@ def parse_arguments():
         help='first label'
     )
 
-
-
-
     return parser
 
 
 def main(workload):
-
     path = 'config/features/features_01.json'
     config = Config(path)
     config.read()
@@ -110,13 +102,13 @@ def main(workload):
     workload, args = workload
     cores = args['cores']
     # chop up the workload into chunks
-    max_open = int(200/cores)
+    max_open = int(200 / cores)
     workload = [
-        workload[x:x+max_open] 
+        workload[x:x + max_open]
         for x in range(0, len(workload), max_open)
     ]
     lld = LLD(
-        workload, 
+        workload,
         frame_length=args['frame_length'],
         hop_length=args['hop_length'],
         sr=args['sample_rate'],
@@ -127,6 +119,7 @@ def main(workload):
     res = asyncio.run(lld.extract())
     return res
 
+
 # make sure every core gets roughly the same amount of Megabytes to handle
 def balance_workload(all_files, cores):
     # order reversed based on file_size
@@ -134,14 +127,14 @@ def balance_workload(all_files, cores):
     # make sure we have anough items to form a matrix
     all_files = np.array(all_files + ([None] * (cores - (len(all_files) % cores))))
     # split into a matrix
-    workload = all_files.reshape(len(all_files)//cores, cores)
+    workload = all_files.reshape(len(all_files) // cores, cores)
     return workload.T
 
 
 if __name__ == '__main__':
     cores = mp.cpu_count()
     print("Number of processors on your machine: ", cores)
-    
+
     # get arguments
     parser = parse_arguments()
     args = vars(parser.parse_args())
