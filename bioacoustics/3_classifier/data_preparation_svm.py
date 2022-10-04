@@ -156,7 +156,7 @@ def filter_features(data, file, numfeat=50):
     return data[:, indices]
 
 
-def read_files(file_path, dim, svm_dir):
+def read_files(file_path, dim, svm_dir, predict=False, hoplength=0.25, output_dir=''):
     """Read and filter feature data.
 
     This function reads features and labels from all relevant files
@@ -174,6 +174,16 @@ def read_files(file_path, dim, svm_dir):
     svm_dir: str
         Directory path of the feature importances file
 
+    predict: bool, default False
+        True when calling the function from predict.py
+
+    hoplength: float
+        Used when calling the function from predict.py
+        to determine the offset of each frame
+    output_dir: str, optional
+        Used when calling the function from predict.py
+        to specify the location of the output file
+
     Returns
     -------
     DataFrames:
@@ -181,6 +191,8 @@ def read_files(file_path, dim, svm_dir):
     """
     feature_file = svm_dir + 'feature_importances.csv'
     files = glob.glob(file_path + '**/*.csv', recursive=True)
+    if predict is True:
+        dim = [0, -1]
     for i in range(len(files)):
         if i == 0:
             x, y = read_file(files[i], dim)
@@ -189,7 +201,18 @@ def read_files(file_path, dim, svm_dir):
             x = pd.concat([x, temp_x], sort=False)
             y = pd.concat([y, temp_y], sort=False)
 
+    if predict is True:
+        # create info file to match predictions with actual audio
+        frame_info = x.iloc[:, 0:5]
+        frame_info['offset[s]'] = frame_info['frameId'] * hoplength
+        print(list(frame_info.columns))
+        frame_info.drop(columns=['label_1', 'label_2', 'frameId', 'length[s]'], inplace=True)
+        print(frame_info)
+        frame_info.to_csv(output_dir + 'frame-info.csv')
+        x = x.iloc[:, 5:-1]
+
     x = filter_features(x.to_numpy(), feature_file)
+
     return x, y
 
 
@@ -384,6 +407,7 @@ def prepare_data_svm(features_path, output_dir, trained_model_path=''):
     else:
         dim = [5, -1]
     if trained_model_path == '':
+        # create training and test sets
         for i in range(len(glob.glob(features_path + '**/*.csv', recursive=True))):
             print(i)
             if i == 0:
@@ -408,9 +432,11 @@ def prepare_data_svm(features_path, output_dir, trained_model_path=''):
         # normalize the 50 features of interest of x_train and x_test
         x_train, x_test = normalize_fit(x_train, output_dir, x_test)
     else:
+        # create only test set
         trained_model_dir = os.path.split(trained_model_path)[0]+'/'
-        x_test, y_test = read_files(features_path, [5, -1], trained_model_dir)
+        x_test, y_test = read_files(features_path, [0, -1], trained_model_dir, predict=True, output_dir=output_dir)
         x_test = normalize(x_test, trained_model_dir)
         x_train = None
         y_train = None
+
     return x_train, y_train, x_test, y_test
