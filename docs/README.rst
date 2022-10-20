@@ -1,4 +1,5 @@
 Chimp Detector
 =======================================
 
-Init
+Welcome to this documentation page
+
