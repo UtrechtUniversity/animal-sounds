@@ -5,7 +5,9 @@ from data_prepration_svm import prepare_data_svm
 from model.svm_model import SVM_model
 from model.cnn_model import CNN_model
 from model.cnn10_model import CNN10_model
+from model.cnn8_model import CNN8_model
 from model.cnn6_model import CNN6_model
+from model.cnn2_model import CNN2_model
 from model.resnet_model import RESNET_model
 import os
 import argparse
@@ -116,16 +118,22 @@ def main():
         # X_test = preprocess_input(X_test)
         s = RESNET_model(args.epochs, args.batch_size)
     elif args.model == 'cnn':
-        s = CNN_model(args.nrow_input, args.ncol_input, args.num_channels, args.epochs, args.batch_size,
+        s = CNN_model(args.nrow_input, args.ncol_input, args.num_channels,
                       args.channel_first)
 
-    elif args.model == 'cnn10':
-        s = CNN10_model(args.nrow_input, args.ncol_input, args.num_channels, args.epochs, args.batch_size,
-                        args.channel_first)
-
     elif args.model == 'cnn6':
-        s = CNN6_model(args.nrow_input, args.ncol_input, args.num_channels, args.epochs, args.batch_size,
+        s = CNN6_model(args.nrow_input, args.ncol_input, args.num_channels,
                        args.channel_first)
+    elif args.model == 'cnn8':
+        s = CNN8_model(args.nrow_input, args.ncol_input, args.num_channels,
+                        args.channel_first)
+    elif args.model == 'cnn10':
+        s = CNN10_model(args.nrow_input, args.ncol_input, args.num_channels,
+                        args.channel_first)
+        s.make_model()
+    elif args.model == 'cnn2':
+        s = CNN2_model(args.nrow_input, args.ncol_input, args.num_channels,
+                        args.channel_first)
 
     elif args.model == 'svm':
         s = SVM_model()
@@ -136,7 +144,7 @@ def main():
     print(" X_test.shpe", X_test.shape)
     print(" y_test.shpe", y_test.shape)
 
-    s.apply_model(X_train, y_train, X_test, y_test, args.output_dir)
+    s.apply_model(X_train, y_train, X_test, y_test, args.output_dir, args.epochs, args.batch_size)
     s.save_results(y_test, args.output_dir)  # , cv_results)
 
 

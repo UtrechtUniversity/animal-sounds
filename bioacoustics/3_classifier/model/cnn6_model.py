@@ -11,6 +11,9 @@ from datetime import datetime
 
 from tensorflow.keras.metrics import Recall
 from tensorflow.keras.models import load_model
+from tensorflow.keras.constraints import MaxNorm
+from tensorflow.keras import regularizers
+
 
 class CNN6_model(AcousticModel):
 
@@ -43,13 +46,13 @@ class CNN6_model(AcousticModel):
             self.num_rows = args[0]
             self.num_columns = args[1]
             self.num_channels = args[2]
-            self.num_epochs = args[3]
-            self.batch_size = args[4]
-            self.channel_first = args[5]
-            self._make_cnn_model()
-            self._compile()
+            # self.num_epochs = args[3]
+            # self.batch_size = args[4]
+            self.channel_first = args[3]
+            # self._make_cnn_model()
+            # self._compile()
 
-    def _make_cnn_model(self):
+    def _make_cnn_model(self, init_mode, dropout_rate, weight_constraint):
         """Make a CNN model"""
         if self.channel_first:
             keras.backend.set_image_data_format('channels_first')
@@ -61,25 +64,29 @@ class CNN6_model(AcousticModel):
 
         self.acoustic_model = Sequential()
         self.acoustic_model.add(
-            Conv2D(filters=64, kernel_size=3, input_shape=input_shape, data_format=data_format))
+            Conv2D(filters=64, kernel_size=3, input_shape=input_shape, data_format=data_format, padding='same',
+                   kernel_regularizer=regularizers.l2(l=0.01), kernel_initializer=init_mode,
+                   kernel_constraint=MaxNorm(weight_constraint)))
         self.acoustic_model.add(BatchNormalization())
         self.acoustic_model.add(Activation('relu'))
         self.acoustic_model.add(AveragePooling2D(pool_size=2))
-        self.acoustic_model.add(Dropout(0.2))
-        self._cnnBlock(128, data_format)
+        self.acoustic_model.add(Dropout(dropout_rate))
+        self._cnnBlock(128, data_format, init_mode, weight_constraint)
         self.acoustic_model.add(AveragePooling2D(pool_size=2))
-        self.acoustic_model.add(Dropout(0.2))
-        self._cnnBlock(256, data_format)
+        self.acoustic_model.add(Dropout(dropout_rate))
+        self._cnnBlock(256, data_format, init_mode, weight_constraint)
         self.acoustic_model.add(AveragePooling2D(pool_size=2))
-        self.acoustic_model.add(Dropout(0.2))
+        self.acoustic_model.add(Dropout(dropout_rate))
         # self._cnnBlock(512, data_format)
         # self._cnnBlock(512, data_format)
         # self.acoustic_model.add(AveragePooling2D(pool_size=2))
         self.acoustic_model.add(GlobalAveragePooling2D())
-        self.acoustic_model.add(Dropout(0.5))
+        self.acoustic_model.add(Dropout(dropout_rate))
         #self.acoustic_model.add(Dense(512, activation='relu'))
-        self.acoustic_model.add(Dense(256, activation='relu'))
-        self.acoustic_model.add(Dense(self.num_labels, activation='softmax'))
+        self.acoustic_model.add(Dense(256, activation='relu', kernel_initializer=init_mode,
+                                      kernel_constraint=MaxNorm(weight_constraint)))
+        self.acoustic_model.add(Dropout(dropout_rate))  # new added
+        self.acoustic_model.add(Dense(self.num_labels, activation='softmax', kernel_initializer=init_mode))
 
 
 
@@ -90,7 +97,7 @@ class CNN6_model(AcousticModel):
         # Display model architecture summary
         self.acoustic_model.summary()
 
-    def _train(self, X_train,y_train,X_test,y_test, file_path):
+    def _train(self, X_train,y_train,X_test,y_test, file_path, epochs, batch_size):
         """Train a CNN model
             Parameters
             ----------
@@ -111,8 +118,8 @@ class CNN6_model(AcousticModel):
         weights = {0: 1 / y_train[:, 0].mean(), 1: 1 / y_train[:, 1].mean()}
         history = self.acoustic_model.fit(X_train,
                                 y_train,
-                                batch_size=self.batch_size,
-                                epochs=self.num_epochs,
+                                batch_size=batch_size,
+                                epochs=epochs,
                                 validation_data=(X_test, y_test),
                                 shuffle=True,
                                 class_weight=weights,
@@ -122,10 +129,12 @@ class CNN6_model(AcousticModel):
         duration = datetime.now() - start
         print("Training completed in time: ", duration)
 
-    def _cnnBlock(self, in_channels, data_format):
+    def _cnnBlock(self, in_channels, data_format, init_mode, weight_constraint):
         self.acoustic_model.add(ZeroPadding2D(padding=(2, 2)))
         self.acoustic_model.add(
-            Conv2D(filters=in_channels, kernel_size=5, data_format=data_format))
+            Conv2D(filters=in_channels, kernel_size=5, data_format=data_format, padding='same',
+                   kernel_regularizer=regularizers.l2(l=0.01), kernel_initializer=init_mode,
+                   kernel_constraint=MaxNorm(weight_constraint)))
         self.acoustic_model.add(BatchNormalization())
         self.acoustic_model.add(Activation('relu'))
 

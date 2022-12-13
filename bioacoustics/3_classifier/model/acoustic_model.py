@@ -24,7 +24,12 @@ class AcousticModel(ABC):
     def __init__(self):
         self.acoustic_model = None
 
-    def _train(self, X_train,y_train,X_test=None,y_test=None, file_name=None):
+    def _make_cnn_model(self):
+        pass
+    def _compile(self):
+        pass
+
+    def _train(self, X_train,y_train,X_test=None,y_test=None, file_name=None, epochs=5, batch_size=32):
         pass
 
     def _predict(self, X_test):
@@ -44,7 +49,13 @@ class AcousticModel(ABC):
         else:
             self.acoustic_model = pickle.load(open(file_path, 'rb'))
 
-    def apply_model(self, X_train, y_train, X_test, y_test, file_path):
+    def make_model(self, init_mode="glorot_uniform", dropout_rate=0.2, weight_constraint=3, compile_model=True): #learning_rate=0.001
+        self._make_cnn_model(init_mode, dropout_rate,weight_constraint)
+        if compile_model:
+            self._compile()
+        return self.acoustic_model
+
+    def apply_model(self, X_train, y_train, X_test, y_test, file_path, epochs, batch_size):
         """Train a model and make a prediction on test dataset
         Parameters
         ----------
@@ -59,7 +70,7 @@ class AcousticModel(ABC):
             Padded audio file.
         """
 
-        self._train(X_train, y_train, X_test, y_test, file_path)
+        self._train(X_train, y_train, X_test, y_test, file_path, epochs, batch_size)
         # self.evaluate_result = self.acoustic_model.evaluate(X_test, y_test, batch_size=32)
         # print(self.evaluate_result)
         self._predict(X_test)
