@@ -6,7 +6,7 @@ from model.cnn_model import CNN_model
 from model.cnn10_model import CNN10_model
 from model.cnn8_model import CNN8_model
 from model.cnn6_model import CNN6_model
-from model.resnet_model import RESNET_model
+
 #import statistics
 import os
 import argparse
@@ -82,9 +82,7 @@ def main():
                                                     num_channels=args.num_channels,
                                                     normval_dir= args.normVal_dir)
 
-    if args.model =='resnet':
-        s = RESNET_model()
-    elif args.model =='cnn':
+    if args.model == 'cnn':
         s = CNN_model()
     elif args.model == 'cnn10':
         s = CNN10_model()
