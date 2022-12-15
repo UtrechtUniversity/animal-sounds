@@ -1,6 +1,8 @@
 import os
 from abc import ABC
 from tensorflow.keras.models import load_model
+from tensorflow import keras
+from tensorflow.keras.metrics import Recall
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -26,8 +28,17 @@ class AcousticModel(ABC):
 
     def _make_cnn_model(self):
         pass
-    def _compile(self):
-        pass
+    # def _compile(self):
+    #     pass
+
+    def _compile(self, learning_rate):
+        optimizer = keras.optimizers.Adam(lr=learning_rate) #0.0001
+
+        # Compile the model
+        self.acoustic_model.compile(loss='categorical_crossentropy', metrics=[Recall()], optimizer=optimizer)# optimizer='adam')  # 'accuracy'
+
+        # Display model architecture summary
+        self.acoustic_model.summary()
 
     def _train(self, X_train,y_train,X_test=None,y_test=None, file_name=None, epochs=5, batch_size=32):
         pass
@@ -49,10 +60,10 @@ class AcousticModel(ABC):
         else:
             self.acoustic_model = pickle.load(open(file_path, 'rb'))
 
-    def make_model(self, init_mode="glorot_uniform", dropout_rate=0.2, weight_constraint=3, compile_model=True): #learning_rate=0.001
+    def make_model(self, init_mode="glorot_uniform", dropout_rate=0.2, weight_constraint=3, learning_rate =0.001, compile_model=True): #learning_rate=0.001
         self._make_cnn_model(init_mode, dropout_rate,weight_constraint)
         if compile_model:
-            self._compile()
+            self._compile(learning_rate)
         return self.acoustic_model
 
     def apply_model(self, X_train, y_train, X_test, y_test, file_path, epochs, batch_size):

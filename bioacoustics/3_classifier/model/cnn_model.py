@@ -29,16 +29,9 @@ class CNN_model(AcousticModel):
             args[1]: int
                 Number of columns
             args[2]: int
-                Number of epochs
-            args[3]: int
-                Number of filters in the first Conv layer
-            args[4]: int
-                Number of filters in the second Conv layer
-            args[5]: int
-                Dropout percentage
-            args[6]: int
-                Number of hidden units
-
+                Number of channels
+            args[3]: bool
+                Indicates if the number-of-channels is the first input or not
         """
         super(CNN_model, self).__init__()
 
@@ -47,11 +40,7 @@ class CNN_model(AcousticModel):
             self.num_rows = args[0]
             self.num_columns = args[1]
             self.num_channels = args[2]
-            # self.num_epochs = args[3]
-            # self.batch_size = args[4]
             self.channel_first = args[3]
-            # self._make_cnn_model()
-            # self._compile()
 
     def _make_cnn_model(self, init_mode, dropout_rate, weight_constraint):
         """Make a CNN model"""
@@ -82,12 +71,12 @@ class CNN_model(AcousticModel):
         self.acoustic_model.add(Dropout(dropout_rate))
         self.acoustic_model.add(Dense(self.num_labels, activation='softmax',kernel_initializer=init_mode))
 
-    def _compile(self):
-        # Compile the model
-        self.acoustic_model.compile(loss='categorical_crossentropy', metrics=[Recall()], optimizer='adam')  # 'accuracy'
-
-        # Display model architecture summary
-        self.acoustic_model.summary()
+    # def _compile(self):
+    #     # Compile the model
+    #     self.acoustic_model.compile(loss='categorical_crossentropy', metrics=[Recall()], optimizer='adam')  # 'accuracy'
+    #
+    #     # Display model architecture summary
+    #     self.acoustic_model.summary()
 
     def _train(self, X_train,y_train,X_test,y_test, file_path, epochs, batch_size):
         """Train a CNN model

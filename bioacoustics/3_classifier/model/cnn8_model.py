@@ -30,16 +30,9 @@ class CNN8_model(AcousticModel):
             args[1]: int
                 Number of columns
             args[2]: int
-                Number of epochs
-            args[3]: int
-                Number of filters in the first Conv layer
-            args[4]: int
-                Number of filters in the second Conv layer
-            args[5]: int
-                Dropout percentage
-            args[6]: int
-                Number of hidden units
-
+                Number of channels
+            args[3]: bool
+                Indicates if the number-of-channels is the first input or not
         """
         super(CNN8_model, self).__init__()
 
@@ -48,11 +41,7 @@ class CNN8_model(AcousticModel):
             self.num_rows = args[0]
             self.num_columns = args[1]
             self.num_channels = args[2]
-            # self.num_epochs = args[3]
-            # self.batch_size = args[4]
             self.channel_first = args[3]
-            # self._make_cnn_model()
-            # self._compile()
 
     def _make_cnn_model(self, init_mode, dropout_rate, weight_constraint):
         """Make a CNN model"""
@@ -67,45 +56,47 @@ class CNN8_model(AcousticModel):
         self.acoustic_model = Sequential()
         self.acoustic_model.add(
             Conv2D(filters=64, kernel_size=3, input_shape=input_shape, data_format=data_format, padding='same',
-                   kernel_regularizer=regularizers.l2(l=0.01), kernel_initializer='he_normal'))
+                   kernel_regularizer=regularizers.l2(l=0.01), kernel_initializer=init_mode,
+                   kernel_constraint=MaxNorm(weight_constraint)))
         self.acoustic_model.add(BatchNormalization())
         self.acoustic_model.add(Activation('relu'))
-        self._cnnBlock(64, data_format)
+        self._cnnBlock(64, data_format, init_mode, weight_constraint)
         self.acoustic_model.add(AveragePooling2D(pool_size=2))
-        self.acoustic_model.add(Dropout(0.2))
-        self._cnnBlock(128, data_format)
-        self._cnnBlock(128, data_format)
+        self.acoustic_model.add(Dropout(dropout_rate)) #0.2
+        self._cnnBlock(128, data_format, init_mode, weight_constraint)
+        self._cnnBlock(128, data_format, init_mode, weight_constraint)
         self.acoustic_model.add(AveragePooling2D(pool_size=2))
-        self.acoustic_model.add(Dropout(0.2))
-        self._cnnBlock(256, data_format)
-        self._cnnBlock(256, data_format)
+        self.acoustic_model.add(Dropout(dropout_rate)) #0.2
+        self._cnnBlock(256, data_format, init_mode, weight_constraint)
+        self._cnnBlock(256, data_format, init_mode, weight_constraint)
         self.acoustic_model.add(AveragePooling2D(pool_size=2))
-        self.acoustic_model.add(Dropout(0.2))
+        self.acoustic_model.add(Dropout(dropout_rate)) #0.2
 
         # self._cnnBlock(512, data_format)
         # self._cnnBlock(512, data_format)
         # self.acoustic_model.add(AveragePooling2D(pool_size=2))
 
         self.acoustic_model.add(GlobalAveragePooling2D())
-        self.acoustic_model.add(Dropout(0.5))
+        self.acoustic_model.add(Dropout(dropout_rate)) #0.5
 
         #self.acoustic_model.add(Dense(512, activation='relu'))
 
-        self.acoustic_model.add(Dense(256, activation='relu'))
-        self.acoustic_model.add(Dense(self.num_labels, activation='softmax'))
+        self.acoustic_model.add(Dense(256, activation='relu', kernel_initializer=init_mode,
+                                      kernel_constraint=MaxNorm(weight_constraint)))
+        self.acoustic_model.add(Dense(self.num_labels, activation='softmax', kernel_initializer=init_mode))
 
 
 
-    def _compile(self):
-        optimizer = keras.optimizers.Adam(lr=0.001)
+    # def _compile(self):
+    #     optimizer = keras.optimizers.Adam(lr=0.001)
+    #
+    #     # Compile the model
+    #     self.acoustic_model.compile(loss='categorical_crossentropy', metrics=[Recall()], optimizer=optimizer)# optimizer='adam')  # 'accuracy'
+    #
+    #     # Display model architecture summary
+    #     self.acoustic_model.summary()
 
-        # Compile the model
-        self.acoustic_model.compile(loss='categorical_crossentropy', metrics=[Recall()], optimizer=optimizer)# optimizer='adam')  # 'accuracy'
-
-        # Display model architecture summary
-        self.acoustic_model.summary()
-
-    def _train(self, X_train,y_train,X_test,y_test, file_path):
+    def _train(self, X_train,y_train,X_test,y_test, file_path, epochs, batch_size):
         """Train a CNN model
             Parameters
             ----------
@@ -126,8 +117,8 @@ class CNN8_model(AcousticModel):
         weights = {0: 1 / y_train[:, 0].mean(), 1: 1 / y_train[:, 1].mean()}
         history = self.acoustic_model.fit(X_train,
                                 y_train,
-                                batch_size=self.batch_size,
-                                epochs=self.num_epochs,
+                                batch_size=batch_size,
+                                epochs=epochs,
                                 validation_data=(X_test, y_test),
                                 shuffle=True,
                                 class_weight=weights,
@@ -138,10 +129,11 @@ class CNN8_model(AcousticModel):
         duration = datetime.now() - start
         print("Training completed in time: ", duration)
 
-    def _cnnBlock(self, in_channels, data_format):
+    def _cnnBlock(self, in_channels, data_format, init_mode, weight_constraint):
         self.acoustic_model.add(
             Conv2D(filters=in_channels, kernel_size=3, data_format=data_format, padding='same',
-                   kernel_regularizer=regularizers.l2(l=0.01)))
+                   kernel_regularizer=regularizers.l2(l=0.01), kernel_initializer=init_mode,
+                   kernel_constraint=MaxNorm(weight_constraint)))
         self.acoustic_model.add(BatchNormalization())
         self.acoustic_model.add(Activation('relu'))
 
