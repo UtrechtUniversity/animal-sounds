@@ -44,6 +44,19 @@ def parse_arguments():
         help='output dir'
     )
 
+    parser.add_argument(
+        '--epochs',
+        type=int,
+        default=5,
+        help='number of epochs'
+    )
+
+    parser.add_argument(
+        '--batch_size',
+        type=int,
+        default=8,
+        help='batch size'
+    )
     return parser
 
 # Function to create model, required for KerasClassifier
@@ -55,7 +68,7 @@ def create_model(init_mode='uniform', dropout_rate=0.2, weight_constraint=1):
     s = CNN10_model(64, 64, 1, True)
 
     model = s.make_model(init_mode=init_mode, dropout_rate=dropout_rate, weight_constraint=weight_constraint,
-                         compile_model=True)
+                         compile_model=False)
 
     return model
 
@@ -74,12 +87,13 @@ X_train, y_train, X_test, y_test = prepare_data_dl(args.feature_dir, num_channel
 
 # create model
 callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=3)
-model = KerasClassifier(model=create_model, callbacks=[callback], verbose=1)
+
+model = KerasClassifier(model=create_model, loss="categorical_crossentropy", optimizer="adam", callbacks=[callback],
+                        epochs=args.epoch, batch_size=args.batch_size, verbose=1)
 
 # define the grid search parameters
-batch_size = [8,32,64]
-epochs = [5, 10, 50]
-param_grid = dict(batch_size=batch_size, epochs=epochs)
+learn_rate = [0.001, 0.01, 0.1]
+param_grid = dict(optimizer__learning_rate=learn_rate)
 grid = GridSearchCV(estimator=model, param_grid=param_grid, n_jobs=1, cv=3)
 grid_result = grid.fit(X_train, y_train)
 

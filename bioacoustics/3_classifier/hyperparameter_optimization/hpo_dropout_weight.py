@@ -44,23 +44,47 @@ def parse_arguments():
         help='output dir'
     )
 
+    parser.add_argument(
+        '--epochs',
+        type=int,
+        default=5,
+        help='number of epochs'
+    )
+
+    parser.add_argument(
+        '--batch_size',
+        type=int,
+        default=8,
+        help='batch size'
+    )
+    return parser
+
+    parser.add_argument(
+            '--learning_rate',
+            type=int,
+            default=0.001,
+            help='learning rate'
+        )
     return parser
 
 # Function to create model, required for KerasClassifier
 
+parser = parse_arguments()
+args = parser.parse_args()
 
 def create_model(init_mode='uniform', dropout_rate=0.2, weight_constraint=1):
     # """Make a CNN model"""
 
     s = CNN10_model(64, 64, 1, True)
+    print('inside create_model init_mode', init_mode)
+    print('inside create_model dropout_rate', dropout_rate)
+    print('inside create_model weight_constraint', weight_constraint)
 
     model = s.make_model(init_mode=init_mode, dropout_rate=dropout_rate, weight_constraint=weight_constraint,
-                         compile_model=True)
+                         learning_rate=args.learning_rate, compile_model=True)
 
     return model
 
-parser = parse_arguments()
-args = parser.parse_args()
 
 if not os.path.exists(os.path.dirname(args.output_dir)):
     os.makedirs(os.path.dirname(args.output_dir))
@@ -74,12 +98,16 @@ X_train, y_train, X_test, y_test = prepare_data_dl(args.feature_dir, num_channel
 
 # create model
 callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=3)
-model = KerasClassifier(model=create_model, callbacks=[callback], verbose=1)
+
+model = KerasClassifier(model=create_model, loss="categorical_crossentropy", optimizer="adam", callbacks=[callback],
+                        epochs=args.epoch, batch_size=args.batch_size, verbose=1)
 
 # define the grid search parameters
-batch_size = [8,32,64]
-epochs = [5, 10, 50]
-param_grid = dict(batch_size=batch_size, epochs=epochs)
+init_mode = ['uniform', 'glorot_uniform', 'he_normal'] #
+weight_constraint = [1.0, 3.0,  5.0]
+dropout_rate = [0.2, 0.5]
+param_grid = dict(model__init_mode=init_mode, model__dropout_rate=dropout_rate, model__weight_constraint=weight_constraint)
+
 grid = GridSearchCV(estimator=model, param_grid=param_grid, n_jobs=1, cv=3)
 grid_result = grid.fit(X_train, y_train)
 
