@@ -1,0 +1,12 @@
+pandas
+numpy
+sklearn
+tensorflow
+librosa
+scipy
+matplotlib
+spectrum
+aiofiles
+sympy
+soundfile
+pydub
