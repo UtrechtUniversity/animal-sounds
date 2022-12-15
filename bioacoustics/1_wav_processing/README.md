@@ -1,12 +1,12 @@
-# Condensation
+# 1_wav_processing
 
-Extracting anomalous fragments from a WAV file.
+## [raven_to_wav](./raven_to_wav)
+Raven to wav is used to filter annotated parts from the original `.wav` files based on annotations in table format (e.g. `.txt` or `.csv`).
 
-## Description
+## [Condensation](./condensation)
+In condensation we use an energy change based method to filter out low energy parts from the original dataset to make manual annotation/labeling more efficient.
 
-This folder 
+## [Synthetic data](./synthetic_data)
+In Synthetic data we embed Chimpanze vocalizations in jungle sounds that are labeled as background to create more and more diverse data.
 
-In order to speed up annotation of raw audio data we 
-
-To speed up the annotation of the sanctuary data we ‘condensate’ the data with an energy/change based automatic vocalization detection. The detection comprises a Short-time Fourier transform to produce a power distribution in the time-frequency domain. Depending on the properties of the expected primate vocalizations we discard redundant frequency bands. From the remaining bands we collect small time-intervals in which the registered signal loudness exceeds a species specific threshold, or in which the local cumulative power distribution deviates from a global counterpart. This collection represents a set of timestamps where we expect to hear disruptions in the ambient noise. The time-intervals are used to extract the corresponding signal fragments from our raw data. These fragments are bundled into a new audio file which a resulting high density of vocalizations that can be annotated more efficiently.
-
+Find usage steps in the respective folders.
