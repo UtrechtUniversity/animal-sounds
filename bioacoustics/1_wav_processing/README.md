@@ -9,4 +9,7 @@ In condensation we use an energy change based method to filter out low energy pa
 ## [Synthetic data](./synthetic_data)
 In Synthetic data we embed Chimpanze vocalizations in jungle sounds that are labeled as background to create more and more diverse data.
 
+## [Chunk wav](./chunk_wav)
+Chunk_wav component splits wav files into smaller chunks, as part of the preparation process for deep learning models. 
+
 Find usage steps in the respective folders.
