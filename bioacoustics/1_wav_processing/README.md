@@ -10,6 +10,8 @@ In condensation we use an energy change based method to filter out low energy pa
 In Synthetic data we embed Chimpanze vocalizations in jungle sounds that are labeled as background to create more and more diverse data.
 
 ## [Chunk wav](./chunk_wav)
-Chunk_wav component splits wav files into smaller chunks, as part of the preparation process for deep learning models. 
+Chunk_wav component splits `.wav` files into smaller chunks. This is a step in the preparation process for deep 
+learning models. By default, desired length of wav files is 0.5 seconds. There is an overlap of 0.25 seconds between each of two 
+following chunks.
 
 Find usage steps in the respective folders.
