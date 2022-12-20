@@ -25,7 +25,7 @@ jobs:
       - name: Check Poetry lock file consistency
         run: poetry lock --check
 
-tox:
+  tox:
     runs-on: ubuntu-latest
     strategy:
       matrix:
