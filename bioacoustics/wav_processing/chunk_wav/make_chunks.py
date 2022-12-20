@@ -9,32 +9,22 @@ from scipy.io.wavfile import write
 
 def parse_arguments():
     """Parse arguments if available."""
-    parser = argparse.ArgumentParser(
-        description="Bioacoustics"
-    )
-    parser.add_argument(
-        "--input_dir",
-        type=str,
-        help="Directory of wav files"
-    )
+    parser = argparse.ArgumentParser(description="Bioacoustics")
+    parser.add_argument("--input_dir", type=str, help="Directory of wav files")
     parser.add_argument(
         "--chunk_length",
         type=float,
         default=0.5,
-        help="Desired length of wav files in seconds "
+        help="Desired length of wav files in seconds ",
     )
 
     parser.add_argument(
-        '--overlap',
+        "--overlap",
         type=float,
-        default= 0.25,
-        help='overlap of two following chunks in seconds'
+        default=0.25,
+        help="overlap of two following chunks in seconds",
     )
-    parser.add_argument(
-        "--output_dir",
-        type=str,
-        help="Directory of output wav files"
-    )
+    parser.add_argument("--output_dir", type=str, help="Directory of output wav files")
     return parser
 
 
@@ -56,13 +46,15 @@ def make_audio_chunks(audio, sample_rate, chunk_length, overlap):
     -------
         a list of chunked signals
     """
-    slices = np.arange(0, len(audio) / sample_rate, chunk_length - overlap)  # , dtype=np.int64
+    slices = np.arange(
+        0, len(audio) / sample_rate, chunk_length - overlap
+    )  # , dtype=np.int64
     audio_slice = []
     for start, end in zip(slices[:-1], slices[1:]):
         start_audio = start * sample_rate
         end_audio = (end + overlap) * sample_rate
         # print(start_audio, end_audio)
-        audio_slice.append(audio[int(start_audio): int(end_audio)])
+        audio_slice.append(audio[int(start_audio) : int(end_audio)])
 
     return audio_slice
 
@@ -92,7 +84,7 @@ def pad_audio(audio, sample_rate, target_length, output_fp, save_output=True):
     n_tar = int(sample_rate * target_length)
     # Create the target shape
     n_pad = n_tar - len(audio)
-    padded = np.hstack((np.zeros(n_pad, dtype=np.int8),audio))
+    padded = np.hstack((np.zeros(n_pad, dtype=np.int8), audio))
 
     if save_output:
         new_file_name = output_fp + "_1.wav"
@@ -116,14 +108,18 @@ def split_audio(audio, sample_rate, chunk_length, overlap, output_fp):
     output_fp: str
         file path of output wav file
     """
-    chunks = make_audio_chunks(audio, sample_rate, chunk_length, overlap) #Make chunks with size of chunk_length
-    if len(chunks[-1])/sample_rate < chunk_length:
-        chunks[-1] = pad_audio(chunks[-1], sample_rate, chunk_length, output_fp, save_output=False)
+    chunks = make_audio_chunks(
+        audio, sample_rate, chunk_length, overlap
+    )  # Make chunks with size of chunk_length
+    if len(chunks[-1]) / sample_rate < chunk_length:
+        chunks[-1] = pad_audio(
+            chunks[-1], sample_rate, chunk_length, output_fp, save_output=False
+        )
 
-    #Export all of the individual chunks as wav files
+    # Export all of the individual chunks as wav files
     for i, chunk in enumerate(chunks):
-        chunk_name = output_fp+"_chunk{0}.wav".format(i)
-        print ("exporting", chunk_name)
+        chunk_name = output_fp + "_chunk{0}.wav".format(i)
+        print("exporting", chunk_name)
         write(chunk_name, sample_rate, chunk)
 
 
@@ -136,12 +132,12 @@ def main():
     overlap = args.overlap
     fps = glob.glob(args.input_dir)
 
-    print('number of selected files', len(fps))
+    print("number of selected files", len(fps))
     file_no = 0
     for fp in fps:
-        file_no +=1
+        file_no += 1
         print(fp)
-        print (file_no)
+        print(file_no)
 
         # read audio file
         sample_rate, audio = wavfile.read(fp)
@@ -149,12 +145,13 @@ def main():
         # get file name
         base = os.path.basename(fp)
         file_name = os.path.splitext(base)[0]
-        out_file_path = args.output_dir+'/'+ file_name
+        out_file_path = args.output_dir + "/" + file_name
 
-        if len(audio)/sample_rate < chunk_length :
+        if len(audio) / sample_rate < chunk_length:
             pad_audio(audio, sample_rate, chunk_length, out_file_path, save_output=True)
         else:
             split_audio(audio, sample_rate, chunk_length, overlap, out_file_path)
+
 
 if __name__ == "__main__":
     main()

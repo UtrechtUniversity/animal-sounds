@@ -41,6 +41,7 @@ from .featuresFunctions import *
 from .tools import bestFFTlength
 import json
 
+
 class FeatureVector:
     """
     Feature vector object to compute and store features values for a given signal
@@ -63,14 +64,16 @@ class FeatureVector:
     - _readFeaturesFunctions: reads the feature vector "pattern" from config files, loads all the function, etc (proper init of the object needed before calling compute)
     """
 
-    def __init__(self,config,verbatim=0):
+    def __init__(self, config, verbatim=0):
         """
         Initialization method
         """
-        self.configFeatures = config.features #config.general['project_root'] + config.features['path_to_config']
-        self.domains = config.domain.split(' ')
+        self.configFeatures = (
+            config.features
+        )  # config.general['project_root'] + config.features['path_to_config']
+        self.domains = config.domain.split(" ")
         self.n_domains = len(self.domains)
-        self.n_features = None # /!\ In ONE domain
+        self.n_features = None  # /!\ In ONE domain
         self.featuresFunctions = None
         self.intermValues = None
         self.featuresValues = None
@@ -78,33 +81,35 @@ class FeatureVector:
         self.featuresOptArguments = None
         self.featuresComputationDomains = None
 
-
-
         # Read features functions
         self._readFeaturesFunctions()
 
-    def compute(self,signal,fs):
+    def compute(self, signal, fs):
         """
         Compute features from signal, according to configuration information given at __init__
         /!\ signal is already in the proper bandwidth
         """
 
         # Get signals for all domains
-        signals = np.zeros((self.n_domains,),dtype=object)
-        for i,domain in enumerate(self.domains):
-            if domain == 'time':
+        signals = np.zeros((self.n_domains,), dtype=object)
+        for i, domain in enumerate(self.domains):
+            if domain == "time":
                 signals[i] = signal
-            elif domain == 'spectral':
+            elif domain == "spectral":
                 signals[i] = np.absolute(np.fft.fft(signal, bestFFTlength(len(signal))))
-            elif domain == 'cepstral':
-                signals[i] = np.absolute(np.fft.fft(np.absolute(np.fft.fft(signal, bestFFTlength(len(signal))))))
+            elif domain == "cepstral":
+                signals[i] = np.absolute(
+                    np.fft.fft(
+                        np.absolute(np.fft.fft(signal, bestFFTlength(len(signal))))
+                    )
+                )
             else:
-                print('computation domain should be time, spectral or cepstral')
+                print("computation domain should be time, spectral or cepstral")
                 return
         # Define variables: featuresValues
-        self.featuresValues = np.zeros((self.n_features*self.n_domains,),dtype=float)
+        self.featuresValues = np.zeros((self.n_features * self.n_domains,), dtype=float)
         # Proceed to actual computation
-        self._computation(signals,fs)
+        self._computation(signals, fs)
 
     def _readFeaturesFunctions(self):
         """
@@ -116,30 +121,48 @@ class FeatureVector:
 
         # Set right dimensions depending on number of features and number of domains
         self.n_features = len(self.configFeatures.keys())
-        self.featuresRef = np.zeros((self.n_domains*self.n_features,),dtype=object)
-        #self.Values will be defined later, during computation
-        self.featuresFunctions = np.zeros((self.n_domains*self.n_features,),dtype=object)
-        self.featuresOptArguments = np.zeros((self.n_domains*self.n_features,),dtype=object)
-        self.featuresComputationDomains = np.zeros((self.n_domains*self.n_features,),dtype=object)
+        self.featuresRef = np.zeros((self.n_domains * self.n_features,), dtype=object)
+        # self.Values will be defined later, during computation
+        self.featuresFunctions = np.zeros(
+            (self.n_domains * self.n_features,), dtype=object
+        )
+        self.featuresOptArguments = np.zeros(
+            (self.n_domains * self.n_features,), dtype=object
+        )
+        self.featuresComputationDomains = np.zeros(
+            (self.n_domains * self.n_features,), dtype=object
+        )
 
         # Get all featuresFunctions, featuresRef, featuresOptArguments from configFeatures
         # Also set featuresComputationDomains
         # -----> First find them for no specific domain (-> Unique)
-        featuresFunctionsUnique = np.zeros((self.n_features,),dtype=object)
-        featuresOptArgumentsUnique = np.zeros((self.n_features,),dtype=object)
-        featuresRefUnique = np.zeros((self.n_features,),dtype=object)
-        for i,i_feature in enumerate(sorted(list(self.configFeatures.keys()))):
-            featuresFunctionsUnique[i] = eval(self.configFeatures[i_feature]["function"])
-            featuresOptArgumentsUnique[i] = eval(self.configFeatures[i_feature]["function_opt_arg"])
+        featuresFunctionsUnique = np.zeros((self.n_features,), dtype=object)
+        featuresOptArgumentsUnique = np.zeros((self.n_features,), dtype=object)
+        featuresRefUnique = np.zeros((self.n_features,), dtype=object)
+        for i, i_feature in enumerate(sorted(list(self.configFeatures.keys()))):
+            featuresFunctionsUnique[i] = eval(
+                self.configFeatures[i_feature]["function"]
+            )
+            featuresOptArgumentsUnique[i] = eval(
+                self.configFeatures[i_feature]["function_opt_arg"]
+            )
             featuresRefUnique[i] = str(i_feature)
         # -----> Then extend to all domains
-        for i,domain in enumerate(self.domains):
-            self.featuresFunctions[i*self.n_features:(i+1)*self.n_features] = featuresFunctionsUnique
-            self.featuresOptArguments[i*self.n_features:(i+1)*self.n_features] = featuresOptArgumentsUnique
-            self.featuresRef[i*self.n_features:(i+1)*self.n_features] = [domain[0]+f for f in featuresRefUnique]
-            self.featuresComputationDomains[i*self.n_features:(i+1)*self.n_features] = [domain[0].upper()]*self.n_features
+        for i, domain in enumerate(self.domains):
+            self.featuresFunctions[
+                i * self.n_features : (i + 1) * self.n_features
+            ] = featuresFunctionsUnique
+            self.featuresOptArguments[
+                i * self.n_features : (i + 1) * self.n_features
+            ] = featuresOptArgumentsUnique
+            self.featuresRef[i * self.n_features : (i + 1) * self.n_features] = [
+                domain[0] + f for f in featuresRefUnique
+            ]
+            self.featuresComputationDomains[
+                i * self.n_features : (i + 1) * self.n_features
+            ] = [domain[0].upper()] * self.n_features
 
-    def _intermComputation(self,signal_in_domain,fs):
+    def _intermComputation(self, signal_in_domain, fs):
         """
         Proceed to interm computation in one domain. Interm values are needed
         before computation (computation factorization)
@@ -150,30 +173,42 @@ class FeatureVector:
         self.intermValues = dict()
 
         # Interm values computation.
-        self.intermValues['fs'] = fs
-        self.intermValues['u'] = np.linspace(0, (len(signal_in_domain) - 1)*(1/fs), len(signal_in_domain))
-        self.intermValues['E_u'] = energy_u(signal_in_domain, self.intermValues)
-        self.intermValues['E'] = energy(signal_in_domain, self.intermValues)
-        self.intermValues['u_bar'] = u_mean(signal_in_domain, self.intermValues)
-        self.intermValues['RMS_u'] = RMS_u(signal_in_domain, self.intermValues)
+        self.intermValues["fs"] = fs
+        self.intermValues["u"] = np.linspace(
+            0, (len(signal_in_domain) - 1) * (1 / fs), len(signal_in_domain)
+        )
+        self.intermValues["E_u"] = energy_u(signal_in_domain, self.intermValues)
+        self.intermValues["E"] = energy(signal_in_domain, self.intermValues)
+        self.intermValues["u_bar"] = u_mean(signal_in_domain, self.intermValues)
+        self.intermValues["RMS_u"] = RMS_u(signal_in_domain, self.intermValues)
 
-    def _computation(self,signals,fs):
+    def _computation(self, signals, fs):
         """
         Compute featuresValues associated to self FeatureVector pattern
         - signals : shape (n_domains,) contains signals in all the domains
         - self.featuresValues is defined and set in this function
         """
-        for i,domain in enumerate(self.domains):
+        for i, domain in enumerate(self.domains):
             # Compute needed interm values (needed for computation)
-            self._intermComputation(signals[i],fs)
+            self._intermComputation(signals[i], fs)
             # Compute each feature value
-            for j in range(self.n_features): #i*n_features + j -est features.py
+            for j in range(self.n_features):  # i*n_features + j -est features.py
                 # If there already is a dictionnary of optional arguments, copy
                 # and update it with interm values. Then compute feature.
-                if self.featuresOptArguments[i*self.n_features + j]:
+                if self.featuresOptArguments[i * self.n_features + j]:
                     new_dictionary = self.intermValues.copy()
-                    new_dictionary.update(self.featuresOptArguments[i*self.n_features + j])
-                    self.featuresValues[i*self.n_features + j] = self.featuresFunctions[i*self.n_features + j](signals[i],new_dictionary)
+                    new_dictionary.update(
+                        self.featuresOptArguments[i * self.n_features + j]
+                    )
+                    self.featuresValues[
+                        i * self.n_features + j
+                    ] = self.featuresFunctions[i * self.n_features + j](
+                        signals[i], new_dictionary
+                    )
                 # Otherwise directly compute feature value.
                 else:
-                    self.featuresValues[i*self.n_features + j] = self.featuresFunctions[i*self.n_features + j](signals[i],self.intermValues)
+                    self.featuresValues[
+                        i * self.n_features + j
+                    ] = self.featuresFunctions[i * self.n_features + j](
+                        signals[i], self.intermValues
+                    )

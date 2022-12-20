@@ -20,11 +20,9 @@ class Extractor:
         else:
             self.signal, self.sr = np.array([]), None
 
-
     # set signal manually
     def set_signal(self, signal, sr):
         self.signal, self.sr = signal, sr
-
 
     # + operator add signals if sr is identical
     def __add__(self, other):
@@ -34,10 +32,7 @@ class Extractor:
             new_filter.set_signal(new_signal, self.sr)
             return new_filter
         else:
-            raise Exception(
-                'You tried to add two signals with different sample rates.'
-            )
-
+            raise Exception("You tried to add two signals with different sample rates.")
 
     # length of signal
     def __len__(self):
@@ -46,18 +41,30 @@ class Extractor:
     # minimal vocalization duration in seconds
     # padding in seconds (before and after vocalization)
     # min/max_threshold_db: loudness of vocalizations I am looking for, above ref db's
-    def detect_vocalizations(self, freqs=None, n_fft=2048, win_length=2048, 
-        hop_length=512, min_threshold_db=30, max_threshold_db=None, threshold_pattern=0.1, 
-        ref=np.median, min_voc_duration=0.5, padding=0.3, ignore_voc=0.0, use_cached_stft=True):
+    def detect_vocalizations(
+        self,
+        freqs=None,
+        n_fft=2048,
+        win_length=2048,
+        hop_length=512,
+        min_threshold_db=30,
+        max_threshold_db=None,
+        threshold_pattern=0.1,
+        ref=np.median,
+        min_voc_duration=0.5,
+        padding=0.3,
+        ignore_voc=0.0,
+        use_cached_stft=True,
+    ):
 
         if use_cached_stft == False or (use_cached_stft == True and self.stft == None):
             # perform stft
             self.stft = stft(
                 self.signal,
                 fs=self.sr,
-                nfft=n_fft, # nfft: powers of 2
-                nperseg=win_length, 
-                noverlap=(win_length - hop_length)
+                nfft=n_fft,  # nfft: powers of 2
+                nperseg=win_length,
+                noverlap=(win_length - hop_length),
             )
 
         # get stft output
@@ -76,7 +83,7 @@ class Extractor:
         # collect all time indexes in which something happens
         time_indexes = set([])
 
-        # get all indexes of dbs rows of every band that we're 
+        # get all indexes of dbs rows of every band that we're
         # interested in
         for (low, high) in freqs:
             idx_low = (np.abs(f - low)).argmin() - 1
@@ -89,7 +96,7 @@ class Extractor:
 
             # apply frequency indexes to dbs
             dbs_filtered = dbs[band, :]
-        
+
             # STEP 1: collect loud noises
             # find time indexes where we can find a noise above
             # <threhold_db> on top of median IN the relevant frequency bands
@@ -106,7 +113,6 @@ class Extractor:
             time_indexes_dbs = set(np.nonzero(max_dbs)[0])
             # add to our indexes
             time_indexes = time_indexes.union(time_indexes_dbs)
-
 
             # STEP 2: collect noises that stand out
             # based on cumulative freq distributions
@@ -125,15 +131,13 @@ class Extractor:
             # add to our indexes
             time_indexes = time_indexes.union(time_indexes_patterns)
 
-
-
         # these are the time indexes of interest collected from analyzing
         # the individual frequency bands
         time_indexes = sorted(list(time_indexes))
 
         # I need sensible clusters for the found time indexes:
         # divide total time in bins and create histograms of time indexes.
-        # merge adjacent bins when they contain more than 1 value. Bins with 
+        # merge adjacent bins when they contain more than 1 value. Bins with
         # 0 indexes mark the end of a cluster
         # divide the duration of the wav file in bins of size
         # <min_voc_duration> to cluster the time-indexes
@@ -162,7 +166,7 @@ class Extractor:
         # to have start and end times of these clusters
         clusters = []
         for c in clustered_indexes:
-            start  = T[c[0]]
+            start = T[c[0]]
             end = T[c[-1]]
             if (end - start) > ignore_voc:
                 start = max(start - padding, 0)
@@ -171,44 +175,50 @@ class Extractor:
 
         return clusters
 
-
     # padding in seconds
     def extract_intervals(self, timestamps=[], padding=0, dtype=np.int16):
         cut_signal = np.array([])
         padding_zeros = np.zeros(int(padding * self.sr))
 
         for start, end in timestamps:
-            start_signal_index = self._time_2_sample_unit(start, 'start')
-            end_signal_index = self._time_2_sample_unit(end, 'end')
-            cut_signal = np.concatenate((cut_signal, self.signal[start_signal_index:end_signal_index], padding_zeros))
+            start_signal_index = self._time_2_sample_unit(start, "start")
+            end_signal_index = self._time_2_sample_unit(end, "end")
+            cut_signal = np.concatenate(
+                (
+                    cut_signal,
+                    self.signal[start_signal_index:end_signal_index],
+                    padding_zeros,
+                )
+            )
 
         cut_signal = np.asarray(cut_signal, dtype=dtype)
         tmp = Extractor()
         tmp.set_signal(cut_signal, sr=self.sr)
         return tmp
 
-
     def _time_2_sample_unit(self, t, time_type):
-        return int(np.floor(t * self.sr)) if time_type == 'start' else int(np.ceil(t * self.sr))
-
-
+        return (
+            int(np.floor(t * self.sr))
+            if time_type == "start"
+            else int(np.ceil(t * self.sr))
+        )
 
     def _create_freq_distribs(self, dbs, window_y=4):
         all_distribs = {}
 
-        for i in range(dbs.shape[0]-window_y):
+        for i in range(dbs.shape[0] - window_y):
             # take a small frequency band over time (all columns)
             # and sort all db values found in this band
             # reshape to a single array
-            values = np.sort(dbs[i:i+window_y, :].reshape(-1))
+            values = np.sort(dbs[i : i + window_y, :].reshape(-1))
             # # set all negative values to 0 (power lower than median)
             # values[values < 0] = 0
             # create bins for these sorted values
-            bins = np.linspace(np.min(values)-20, np.max(values)+20, num=600)
+            bins = np.linspace(np.min(values) - 20, np.max(values) + 20, num=600)
             # create a histogram from bins and values
             hist, _ = np.histogram(values, bins=bins)
             # create a normalized cum distribution out of this
-            cum_dist = np.cumsum(hist)/np.cumsum(hist)[-1]
+            cum_dist = np.cumsum(hist) / np.cumsum(hist)[-1]
             # and get the bin in which we find the highest frequency
             highest_bin = np.where(cum_dist == 1)[0][0]
             # for every frequency band, store the cumulative power distribution
@@ -217,25 +227,24 @@ class Extractor:
 
         return all_distribs
 
-
-    def _compute_window(self, dbs, x_start, y_start, distribs, alpha=3, window_x=4,
-                    window_y=4):
-        # collect all db values 
+    def _compute_window(
+        self, dbs, x_start, y_start, distribs, alpha=3, window_x=4, window_y=4
+    ):
+        # collect all db values
         x_sample = np.sort(
-            dbs[y_start:y_start+window_y, x_start:x_start+window_x].reshape(-1)
+            dbs[y_start : y_start + window_y, x_start : x_start + window_x].reshape(-1)
         )
-        sample_cum = (1+np.arange(len(x_sample)))/len(x_sample)
+        sample_cum = (1 + np.arange(len(x_sample))) / len(x_sample)
         # and arrange a similar cumulative power/db distribution
         # as we have created for the frequency band of y_start in
         # _create_freq_distribs. The latter is taken over the
         # entire time interval. The one we are creating right now is taken
         # over a short amount of time (window_y and window_x)
         cum_dist, bins = distribs[y_start]
-        # 
+        #
         inter_sample = np.interp(bins, x_sample, sample_cum, left=0, right=1)
         # return the sum of all difference between both cum. distributions
-        return np.sum((cum_dist-inter_sample)**alpha)
-
+        return np.sum((cum_dist - inter_sample) ** alpha)
 
     def _suppress_noise_patterns(self, dbs, window=4):
         all_distrib = self._create_freq_distribs(dbs, window_y=window)
@@ -252,14 +261,10 @@ class Extractor:
                 signal[i_y, i_x] = max(new_signal, 0)
         return signal
 
-
     # load wav file
     def load_wav_file(self, path: str):
         return wv.read(path)
 
-
     # write wav file
     def to_wav(self, path):
         wv.write(path, self.sr, self.signal)
-
-

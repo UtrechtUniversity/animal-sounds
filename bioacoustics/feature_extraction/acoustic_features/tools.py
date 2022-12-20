@@ -44,7 +44,6 @@ from .featuresFunctions import energy, energy_u
 from math import sqrt
 
 
-
 # def display_cat(cat):
 #     """
 #     Display information about data contained in catalogue
@@ -57,6 +56,7 @@ from math import sqrt
 #         '\t', np.round(cat[cat['class']==class_name]['length'].skew(),decimals=4))
 #     return None
 
+
 def bestFFTlength(n):
     """
     Computation can be super long for signal of length with a bad factorint.
@@ -66,6 +66,7 @@ def bestFFTlength(n):
         n -= 1
     return n
 
+
 def butter_bandpass(lowcut, highcut, fs, order=5):
     """
     Butter bandpass filter design
@@ -73,8 +74,9 @@ def butter_bandpass(lowcut, highcut, fs, order=5):
     nyq = 0.5 * fs
     low = lowcut / nyq
     high = highcut / nyq
-    b, a = butter(order, [low, high], btype='band')
+    b, a = butter(order, [low, high], btype="band")
     return b, a
+
 
 def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
     """
@@ -85,6 +87,8 @@ def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
     b, a = butter_bandpass(lowcut, highcut, fs, order=order)
     y = filtfilt(b, a, data)
     return y
+
+
 #
 # def filter_data(data, fs, lowcut):
 #     data_filtered = []
@@ -223,19 +227,20 @@ def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
 #     else:
 #         return potentialClasses, maxes
 
-def extract_features(config, signals, features, fs,meta_data):
+
+def extract_features(config, signals, features, fs, meta_data):
     """
     Function used to extract features outside of a recording environment
     """
     # (nData,_) = np.shape(signals)
     nData = np.shape(signals)[0]
-    allFeatures = np.zeros((nData,),dtype=object)
+    allFeatures = np.zeros((nData,), dtype=object)
     for i in range(np.shape(signals)[0]):
         signature = signals[i]
         # ... preprocessing
 
         # if config.preprocessing['energy_norm']:
-        E = energy(signature, arg_dict={'E_u':energy_u(signature)})
+        E = energy(signature, arg_dict={"E_u": energy_u(signature)})
 
         # print(meta_data[i])
         # print('E',E)
@@ -245,15 +250,14 @@ def extract_features(config, signals, features, fs,meta_data):
         # print('signature',signature)
         #
         # print('type signature',type(signature))
-        if (E == 0):
+        if E == 0:
             signature = np.zeros(len(signature))
         else:
             signature = np.array(signature) / sqrt(E)
 
         # ... features extraction
-        features.compute(signature,fs)
+        features.compute(signature, fs)
         allFeatures[i] = features.featuresValues
     # Get proper shape (nData,nFeatures) instead of (nData,)
     allFeatures = np.vstack(allFeatures)
     return allFeatures
-

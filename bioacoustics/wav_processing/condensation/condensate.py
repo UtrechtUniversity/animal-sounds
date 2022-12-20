@@ -14,67 +14,71 @@ def parse_arguments():
     parser.add_argument(
         "--input",
         type=str,
-        help="Input path <str>, directory, file or, if comma separated, multiple files"
+        help="Input path <str>, directory, file or, if comma separated, multiple files",
     )
     # Path to output csv file
     parser.add_argument(
-        '--output-csv',
+        "--output-csv",
         type=str,
-        help='Path of csv file that contains extraction data (timestamps)'
+        help="Path of csv file that contains extraction data (timestamps)",
     )
     # Path to output signal file
     parser.add_argument(
-        '--output-signal',
+        "--output-signal",
         type=str,
-        help='Path of wav file that contains all extracted fragments'
+        help="Path of wav file that contains all extracted fragments",
     )
     # Frequencies of interest
     parser.add_argument(
-        '--frequencies',
+        "--frequencies",
         type=str,
-        default='[(200, 5000)]',
-        help=((
-            'String containing a list of tuples containing frequency bands '
-            'of interest. Default is [(200, 5000)] denoting a single band between '
-            '200Hz en 5000Hz.'
-        ))
+        default="[(200, 5000)]",
+        help=(
+            (
+                "String containing a list of tuples containing frequency bands "
+                "of interest. Default is [(200, 5000)] denoting a single band between "
+                "200Hz en 5000Hz."
+            )
+        ),
     )
     # Sound volume of interest
     parser.add_argument(
-        '--volume',
+        "--volume",
         type=str,
-        default='(0,40)',
-        help=((
-            'String to specify a volume band with respect to a base value, '
-            'which is typically the median volume, in which vocalizations of '
-            'interest are expected. A tuple (x,y) denotes a volume range '
-            'between xdB and ydB with respect to the base volume. If a single '
-            'value N is given, a range between 0dB and NdB will be assumed.'
-        )) 
+        default="(0,40)",
+        help=(
+            (
+                "String to specify a volume band with respect to a base value, "
+                "which is typically the median volume, in which vocalizations of "
+                "interest are expected. A tuple (x,y) denotes a volume range "
+                "between xdB and ydB with respect to the base volume. If a single "
+                "value N is given, a range between 0dB and NdB will be assumed."
+            )
+        ),
     )
     return parser
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     parser = parse_arguments()
     args = vars(parser.parse_args())
 
     # collect input from CLI
-    if ',' in args['input']:
-        parsed_input = [Path(f.strip()) for f in args['input'].split(',')]
-    elif Path(args['input']).is_file():
-        parsed_input = [Path(args['input'])]
-    elif Path(args['input']).is_dir():
-        parsed_input = Path(args['input']).glob('*.WAV')
+    if "," in args["input"]:
+        parsed_input = [Path(f.strip()) for f in args["input"].split(",")]
+    elif Path(args["input"]).is_file():
+        parsed_input = [Path(args["input"])]
+    elif Path(args["input"]).is_dir():
+        parsed_input = Path(args["input"]).glob("*.WAV")
     else:
-        raise RuntimeError(f'input is not a file or folder')
+        raise RuntimeError(f"input is not a file or folder")
 
     # collect frequencies of interest from CLI
-    freqs = eval(args['frequencies'])
+    freqs = eval(args["frequencies"])
 
     # collect relative volumes of interest from CLI
-    volume = eval(args['volume'])
+    volume = eval(args["volume"])
     if type(volume) in [int, float]:
         min_vol = 0
         max_vol = volume
@@ -83,7 +87,7 @@ if __name__ == '__main__':
         max_vol = volume[1]
     else:
         raise RuntimeError(
-            f'volume must be a single value of tuple containing 2 values'
+            f"volume must be a single value of tuple containing 2 values"
         )
 
     # list used to collect the csv data
@@ -99,21 +103,21 @@ if __name__ == '__main__':
 
         try:
 
-            print(f'{counter} - {filepath.name}')
-            
+            print(f"{counter} - {filepath.name}")
+
             # create extractor object for current wav file
             extr = Extractor(filepath)
 
             # detect potential vocalizations
             pois = extr.detect_vocalizations(
-                freqs=freqs, 
-                min_threshold_db=min_vol, 
+                freqs=freqs,
+                min_threshold_db=min_vol,
                 max_threshold_db=max_vol,
-                threshold_pattern=0.1, 
+                threshold_pattern=0.1,
                 ignore_voc=0.09,
-                padding=0.35
+                padding=0.35,
             )
-            
+
             # extract th potential vocalisations from the wav file
             padding = 0.1
             extracted = extr.extract_intervals(pois, padding=padding)
@@ -125,23 +129,25 @@ if __name__ == '__main__':
             rows = []
             for p in pois:
                 # duration of vocalisation
-                voc_duration = (p[1] - p[0])
-                # start 
+                voc_duration = p[1] - p[0]
+                # start
                 res_start = round(csv_stopwatch, 3)
                 res_end = round(csv_stopwatch + voc_duration, 3)
 
                 csv_stopwatch = csv_stopwatch + voc_duration + padding
 
                 # this is for the csv file
-                rows.append((
-                    str(filepath),
-                    filepath.name,
-                    p[0], 
-                    p[1], 
-                    f'{args["output_csv"]}',
-                    res_start,
-                    res_end
-                ))
+                rows.append(
+                    (
+                        str(filepath),
+                        filepath.name,
+                        p[0],
+                        p[1],
+                        f'{args["output_csv"]}',
+                        res_start,
+                        res_end,
+                    )
+                )
 
             csv_data += rows
 
@@ -149,13 +155,20 @@ if __name__ == '__main__':
             counter += 1
 
         except Exception:
-            print(f'bad file: {filepath}')
-                
+            print(f"bad file: {filepath}")
+
     # write data and signal_out to files
-    signal_out.to_wav(Path(args['output_signal']))
+    signal_out.to_wav(Path(args["output_signal"]))
     df = pd.DataFrame(
-        csv_data, 
-        columns=['path', 'filename', 't_start', 't_end', 
-            'result_file', 'res_start', 'res_end']
+        csv_data,
+        columns=[
+            "path",
+            "filename",
+            "t_start",
+            "t_end",
+            "result_file",
+            "res_start",
+            "res_end",
+        ],
     )
-    df.to_csv(Path(args['output_csv']), index=False)
+    df.to_csv(Path(args["output_csv"]), index=False)

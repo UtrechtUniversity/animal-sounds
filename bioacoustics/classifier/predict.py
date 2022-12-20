@@ -8,6 +8,7 @@ from model.cnn10_model import CNN10_model
 from model.cnn8_model import CNN8_model
 from model.cnn6_model import CNN6_model
 from model.resnet_model import RESNET_model
+
 # import statistics
 import os
 import argparse
@@ -18,55 +19,41 @@ import argparse
 # from tensorflow.keras.applications.resnet50 import preprocess_input
 # import sys
 
+
 def parse_arguments():
     # parse arguments if available
-    parser = argparse.ArgumentParser(
-        description="Bioacoustics"
-    )
+    parser = argparse.ArgumentParser(description="Bioacoustics")
 
     # File path to the data.
     parser.add_argument(
-        "--feature_dir",
-        type=str,
-        help="File path to the dataset of features"
+        "--feature_dir", type=str, help="File path to the dataset of features"
     )
 
     parser.add_argument(
         "--normVal_dir",
         type=str,
-        help="File path to the mean and std values of trained data to normalize test dataset"
+        help="File path to the mean and std values of trained data to normalize test dataset",
     )
     parser.add_argument(
-        "--model",
-        type=str,
-        default='cnn',
-        help="machine learning model "
+        "--model", type=str, default="cnn", help="machine learning model "
     )
 
     parser.add_argument(
         "--trained_model_path",
         type=str,
-        default='',
-        help="file path of a pre-trained model to apply on a given dataset"
+        default="",
+        help="file path of a pre-trained model to apply on a given dataset",
     )
 
     parser.add_argument(
-        '--without_label',
+        "--without_label",
         type=bool,
         default=False,
-        help='indicate if dataset is labeled'
+        help="indicate if dataset is labeled",
     )
+    parser.add_argument("--output_dir", type=str, default=None, help="output dir")
     parser.add_argument(
-        '--output_dir',
-        type=str,
-        default=None,
-        help='output dir'
-    )
-    parser.add_argument(
-        '--num_channels',
-        type=int,
-        default=3,
-        help='number of channels'
+        "--num_channels", type=int, default=3, help="number of channels"
     )
 
     return parser
@@ -80,30 +67,32 @@ def main():
     if not os.path.exists(os.path.dirname(args.output_dir)):
         os.makedirs(os.path.dirname(args.output_dir))
 
-
-    if args.model == 'svm':
-        X_train, y_train, X_test, y_test = prepare_data_svm(args.feature_dir,
-                                                            args.output_dir,
-                                                            args.trained_model_path)
+    if args.model == "svm":
+        X_train, y_train, X_test, y_test = prepare_data_svm(
+            args.feature_dir, args.output_dir, args.trained_model_path
+        )
 
     else:
-        X_train, y_train, X_test, y_test = prepare_data_dl(args.feature_dir, without_label=args.without_label,
-                                                           trained_model_path=args.trained_model_path,
-                                                           num_channels=args.num_channels,
-                                                           normval_dir=args.normVal_dir)
+        X_train, y_train, X_test, y_test = prepare_data_dl(
+            args.feature_dir,
+            without_label=args.without_label,
+            trained_model_path=args.trained_model_path,
+            num_channels=args.num_channels,
+            normval_dir=args.normVal_dir,
+        )
 
-    if args.model == 'resnet':
+    if args.model == "resnet":
         s = RESNET_model()
-    elif args.model == 'cnn':
+    elif args.model == "cnn":
         s = CNN_model()
-    elif args.model == 'cnn10':
+    elif args.model == "cnn10":
         s = CNN10_model()
-    elif args.model == 'cnn8':
+    elif args.model == "cnn8":
         s = CNN8_model()
-    elif args.model == 'cnn6':
+    elif args.model == "cnn6":
         s = CNN6_model()
 
-    if args.model == 'svm':
+    if args.model == "svm":
         s = SVM_model()
         dl_model = False
 

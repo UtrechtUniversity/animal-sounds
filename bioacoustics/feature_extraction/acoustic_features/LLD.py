@@ -16,9 +16,16 @@ from .features import FeatureVector
 
 # Low Level Descriptors
 class LLD:
-
-
-    def __init__(self, file_set, frame_length, hop_length, sr, bandpass_filter=False, config=False, features=[]):
+    def __init__(
+        self,
+        file_set,
+        frame_length,
+        hop_length,
+        sr,
+        bandpass_filter=False,
+        config=False,
+        features=[],
+    ):
         self.file_set = file_set
         self.frame_length = frame_length
         self.hop_length = hop_length
@@ -39,11 +46,10 @@ class LLD:
         elif (isinstance(bandpass_filter, tuple)) and len(bandpass_filter) == 0:
             self.bandpass_filter = False
         else:
-            raise RuntimeError('bandpass_filter is either False or tuple')
+            raise RuntimeError("bandpass_filter is either False or tuple")
 
         self.config = config
         self.features = features
-
 
     async def extract(self):
         result = []
@@ -57,9 +63,8 @@ class LLD:
         result = [r for r in result if r is not False]
         return pd.concat(result)
 
-
     async def __open_wav_file(self, path):
-        async with aiofiles.open(path, mode='br') as f:
+        async with aiofiles.open(path, mode="br") as f:
             contents = await f.read()
             f.close()
             # first 22 bytes are not relevant
@@ -68,7 +73,6 @@ class LLD:
             signal = signal / self.norm_factor
             return signal
 
-    
     # extract speech features
     def extract_speech_features(self, frames):
         return np.apply_along_axis(sf.extract_speech_features, 1, frames)
@@ -84,11 +88,11 @@ class LLD:
         if self.bandpass_filter:
             org_dtype = signal.dtype
             signal = butter_bandpass_filter(
-                signal, 
+                signal,
                 self.bandpass_filter[0],
                 self.bandpass_filter[1],
                 self.sr,
-                self.bandpass_filter[2]
+                self.bandpass_filter[2],
             )
             # make sure we are still dealing with float32 values
             signal = signal.astype(org_dtype)
@@ -96,9 +100,11 @@ class LLD:
         # padding of signal with 0's if it is too short
         if len(signal) < self.frame_length:
             return False
-        
+
         # create frames
-        f = librosa.util.frame(signal, frame_length=self.frame_length, hop_length=self.hop_length)
+        f = librosa.util.frame(
+            signal, frame_length=self.frame_length, hop_length=self.hop_length
+        )
 
         frames_no = np.shape(f)[1]
         # create meta data
@@ -108,8 +114,9 @@ class LLD:
         learningData = f.T
 
         # extract the features
-        learningFeatures = extract_features(self.config, learningData, self.features, self.sr, meta_data)
-        
+        learningFeatures = extract_features(
+            self.config, learningData, self.features, self.sr, meta_data
+        )
 
         # # Scale features and store scaler
         # scaler = preprocessing.StandardScaler().fit(learningFeatures)
@@ -117,18 +124,11 @@ class LLD:
 
         # part II, speech features
         speech_features = pd.DataFrame(list(self.extract_speech_features(learningData)))
-        
+
         # put into DataFrame
         df_features = pd.DataFrame(learningFeatures, columns=self.features.featuresRef)
-        df_meta_data = pd.DataFrame(meta_data, columns=['file_path', 'frameId'])
-        df_meta_data['length[s]'] = learningData.shape[1] / self.sr
+        df_meta_data = pd.DataFrame(meta_data, columns=["file_path", "frameId"])
+        df_meta_data["length[s]"] = learningData.shape[1] / self.sr
         df_res = pd.concat([df_meta_data, df_features, speech_features], axis=1)
 
         return df_res
-
-        
-
-
-        
-
-

@@ -20,6 +20,6 @@ class Config:
         Read configuration file stored in self.path.
         """
         # Read
-        conf = json.load(open(self.path, 'rb'))
-        self.domain = conf['computation_domains']
-        self.features = conf['features']
+        conf = json.load(open(self.path, "rb"))
+        self.domain = conf["computation_domains"]
+        self.features = conf["features"]

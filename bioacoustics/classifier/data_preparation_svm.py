@@ -41,7 +41,7 @@ def read_features(features_path, index):
     DataFrame:
         a dataframe of all features
     """
-    files = glob.glob(features_path + '**/*.csv', recursive=True)
+    files = glob.glob(features_path + "**/*.csv", recursive=True)
     return pd.read_csv(files[index])
 
 
@@ -71,7 +71,7 @@ def normalize_fit(x_train, output_dir, x_test=None):
     scaler = StandardScaler()
     x_train_scaled = scaler.fit_transform(x_train)
     if x_test is not None:
-        dump(scaler, open(output_dir + 'scaler/scaler.pkl', 'wb'))
+        dump(scaler, open(output_dir + "scaler/scaler.pkl", "wb"))
         x_test_scaled = scaler.transform(x_test)
         return x_train_scaled, x_test_scaled
     else:
@@ -97,7 +97,7 @@ def normalize(x_test, svm_dir):
     DataFrame:
         a dataframe containing normalized feature values
     """
-    scaler = load(open(svm_dir + 'scaler/scaler.pkl', 'rb'))
+    scaler = load(open(svm_dir + "scaler/scaler.pkl", "rb"))
     x_test_scaled = scaler.transform(x_test)
     return x_test_scaled
 
@@ -121,8 +121,8 @@ def read_file(file, dim):
         DataFrames containing features (x) and labels (y)
     """
     df = pd.read_csv(file)
-    x = df.iloc[:, dim[0]:dim[1]]
-    y = df['label_1']
+    x = df.iloc[:, dim[0] : dim[1]]
+    y = df["label_1"]
     return x, y
 
 
@@ -152,11 +152,13 @@ def filter_features(data, file, numfeat=50):
     """
 
     df = pd.read_csv(file)
-    indices = list(df.sort_values(by=['feature_importances'], ascending=False).index[0:numfeat])
+    indices = list(
+        df.sort_values(by=["feature_importances"], ascending=False).index[0:numfeat]
+    )
     return data[:, indices]
 
 
-def read_files(file_path, dim, svm_dir, predict=False, hoplength=0.25, output_dir=''):
+def read_files(file_path, dim, svm_dir, predict=False, hoplength=0.25, output_dir=""):
     """Read and filter feature data.
 
     This function reads features and labels from all relevant files
@@ -189,8 +191,8 @@ def read_files(file_path, dim, svm_dir, predict=False, hoplength=0.25, output_di
     DataFrames:
         DataFrames containing features (x) and labels (y)
     """
-    feature_file = svm_dir + 'feature_importances.csv'
-    files = glob.glob(file_path + '**/*.csv', recursive=True)
+    feature_file = svm_dir + "feature_importances.csv"
+    files = glob.glob(file_path + "**/*.csv", recursive=True)
     if predict is True:
         dim = [0, -1]
     for i in range(len(files)):
@@ -204,11 +206,13 @@ def read_files(file_path, dim, svm_dir, predict=False, hoplength=0.25, output_di
     if predict is True:
         # create info file to match predictions with actual audio
         frame_info = x.iloc[:, 0:5]
-        frame_info['offset[s]'] = frame_info['frameId'] * hoplength
+        frame_info["offset[s]"] = frame_info["frameId"] * hoplength
         print(list(frame_info.columns))
-        frame_info.drop(columns=['label_1', 'label_2', 'frameId', 'length[s]'], inplace=True)
+        frame_info.drop(
+            columns=["label_1", "label_2", "frameId", "length[s]"], inplace=True
+        )
         print(frame_info)
-        frame_info.to_csv(output_dir + 'frame-info.csv')
+        frame_info.to_csv(output_dir + "frame-info.csv")
         x = x.iloc[:, 5:-1]
 
     x = filter_features(x.to_numpy(), feature_file)
@@ -271,9 +275,13 @@ def feature_selection(x_train, x_test, columnnames, model, output_dir, numfeat):
     DataFrames:
         DataFrames containing filtered features of training set (x_train) and test set (x_test)
     """
-    df = pd.DataFrame({'featname': columnnames, 'feature_importances': model.feature_importances_})
-    df.to_csv(output_dir + 'feature_importances.csv')
-    indices = list(df.sort_values(by=['feature_importances'], ascending=False).index[0:numfeat])
+    df = pd.DataFrame(
+        {"featname": columnnames, "feature_importances": model.feature_importances_}
+    )
+    df.to_csv(output_dir + "feature_importances.csv")
+    indices = list(
+        df.sort_values(by=["feature_importances"], ascending=False).index[0:numfeat]
+    )
     return x_train[:, indices], x_test[:, indices]
 
 
@@ -307,8 +315,9 @@ def recursive_features(X, y, columnnames, output_dir):
     svc = SVC(kernel="linear")
     # The "accuracy" scoring is proportional to the number of correct
     # classifications
-    rfecv = RFECV(estimator=svc, step=1, cv=StratifiedKFold(2),
-                  scoring='recall_macro', n_jobs=-1)
+    rfecv = RFECV(
+        estimator=svc, step=1, cv=StratifiedKFold(2), scoring="recall_macro", n_jobs=-1
+    )
     rfecv.fit(X, y)
 
     print("Optimal number of features : %d" % rfecv.n_features_)
@@ -320,8 +329,8 @@ def recursive_features(X, y, columnnames, output_dir):
     pyplot.plot(range(1, len(rfecv.grid_scores_) + 1), rfecv.grid_scores_)
     pyplot.show()
 
-    df = pd.DataFrame({'featname': columnnames, 'feature_ranking': rfecv.ranking_})
-    df.to_csv(output_dir + 'feature_rankings.csv')
+    df = pd.DataFrame({"featname": columnnames, "feature_ranking": rfecv.ranking_})
+    df.to_csv(output_dir + "feature_rankings.csv")
     print(rfecv.ranking_)
 
 
@@ -356,11 +365,11 @@ def split_test(features_path, index, dim, test_size=0.2):
     """
     subset = 1
     df = read_features(features_path, index)
-    x_train = df.iloc[0:int(round((1 - test_size) * len(df))), dim[0]:dim[1]]
-    y_train = df['label_1'][0:int(round((1 - test_size) * len(df)))]
-    x_test = df.iloc[int(round((1 - test_size) * len(df))):-1, dim[0]:dim[1]]
-    y_test = df['label_1'][int(round((1 - test_size) * len(df))):-1]
-    y_file = df['file_path'][int(round((1 - test_size) * len(df))):-1]
+    x_train = df.iloc[0 : int(round((1 - test_size) * len(df))), dim[0] : dim[1]]
+    y_train = df["label_1"][0 : int(round((1 - test_size) * len(df)))]
+    x_test = df.iloc[int(round((1 - test_size) * len(df))) : -1, dim[0] : dim[1]]
+    y_test = df["label_1"][int(round((1 - test_size) * len(df))) : -1]
+    y_file = df["file_path"][int(round((1 - test_size) * len(df))) : -1]
 
     if subset and x_train.shape[0] > 10000:
         sample_idx = np.random.choice(x_train.shape[0], replace=False, size=10000)
@@ -370,7 +379,7 @@ def split_test(features_path, index, dim, test_size=0.2):
     return x_train, x_test, y_train, y_test, y_file
 
 
-def prepare_data_svm(features_path, output_dir, trained_model_path=''):
+def prepare_data_svm(features_path, output_dir, trained_model_path=""):
     """Preprocess data for SVM training and prediction.
 
     This main function prepares training and testing features and class
@@ -394,47 +403,67 @@ def prepare_data_svm(features_path, output_dir, trained_model_path=''):
         sets and class labels (y_train, y_test)
     """
 
-    print(features_path + '**/*.csv')
-    print(glob.glob(features_path + '**/*.csv', recursive=True))
+    print(features_path + "**/*.csv")
+    print(glob.glob(features_path + "**/*.csv", recursive=True))
 
-    feat = 'all'
-    if feat == 'general':
+    feat = "all"
+    if feat == "general":
         dim = [5, 101]
-    elif feat == 'mfcc':
+    elif feat == "mfcc":
         dim = [101, 491]
-    elif feat == 'mfcc+rasta':
+    elif feat == "mfcc+rasta":
         dim = [101, -1]
     else:
         dim = [5, -1]
-    if trained_model_path == '':
+    if trained_model_path == "":
         # create training and test sets
-        for i in range(len(glob.glob(features_path + '**/*.csv', recursive=True))):
+        for i in range(len(glob.glob(features_path + "**/*.csv", recursive=True))):
             print(i)
             if i == 0:
-                x_train, x_test, y_train, y_test, y_file = split_test(features_path, i, dim)
+                x_train, x_test, y_train, y_test, y_file = split_test(
+                    features_path, i, dim
+                )
             else:
-                temp_x_train, temp_x_test, temp_y_train, temp_y_test, temp_y_file = split_test(features_path, i, dim)
+                (
+                    temp_x_train,
+                    temp_x_test,
+                    temp_y_train,
+                    temp_y_test,
+                    temp_y_file,
+                ) = split_test(features_path, i, dim)
                 x_train = pd.concat([x_train, temp_x_train], sort=False)
                 x_test = pd.concat([x_test, temp_x_test], sort=False)
                 y_train = pd.concat([y_train, temp_y_train], sort=False)
                 y_test = pd.concat([y_test, temp_y_test], sort=False)
                 y_file = pd.concat([y_file, temp_y_file], sort=False)
 
-        y_file.to_csv(output_dir + 'test_files.csv')
+        y_file.to_csv(output_dir + "test_files.csv")
         # recursive_features(x_train, y_train, temp_x_test.columns, output_dir)
 
         # normalize first time for feature selection purposes
         x_train_tmp = normalize_fit(x_train.to_numpy(), output_dir, scaler_dir)
         model = feature_importance(x_train_tmp, y_train)
-        x_train, x_test = feature_selection(x_train.to_numpy(), x_test.to_numpy(), temp_x_test.columns, model,
-                                            output_dir, numfeat=50)
+        x_train, x_test = feature_selection(
+            x_train.to_numpy(),
+            x_test.to_numpy(),
+            temp_x_test.columns,
+            model,
+            output_dir,
+            numfeat=50,
+        )
 
         # normalize the 50 features of interest of x_train and x_test
         x_train, x_test = normalize_fit(x_train, output_dir, x_test)
     else:
         # create only test set
-        trained_model_dir = os.path.split(trained_model_path)[0]+'/'
-        x_test, y_test = read_files(features_path, [0, -1], trained_model_dir, predict=True, output_dir=output_dir)
+        trained_model_dir = os.path.split(trained_model_path)[0] + "/"
+        x_test, y_test = read_files(
+            features_path,
+            [0, -1],
+            trained_model_dir,
+            predict=True,
+            output_dir=output_dir,
+        )
         x_test = normalize(x_test, trained_model_dir)
         x_train = None
         y_train = None
