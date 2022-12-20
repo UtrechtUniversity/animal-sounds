@@ -8,9 +8,10 @@ from tensorflow.keras.layers import Dense, Dropout, Flatten
 from tensorflow.keras.layers import Conv2D, MaxPooling2D
 from tensorflow.keras.callbacks import ModelCheckpoint
 from datetime import datetime
-
+from tensorflow.keras import regularizers
 from tensorflow.keras.metrics import Recall
 from tensorflow.keras.models import load_model
+from tensorflow.keras.constraints import MaxNorm
 
 class CNN_model(AcousticModel):
 
@@ -28,16 +29,9 @@ class CNN_model(AcousticModel):
             args[1]: int
                 Number of columns
             args[2]: int
-                Number of epochs
-            args[3]: int
-                Number of filters in the first Conv layer
-            args[4]: int
-                Number of filters in the second Conv layer
-            args[5]: int
-                Dropout percentage
-            args[6]: int
-                Number of hidden units
-
+                Number of channels
+            args[3]: bool
+                Indicates if the number-of-channels is the first input or not
         """
         super(CNN_model, self).__init__()
 
@@ -46,13 +40,9 @@ class CNN_model(AcousticModel):
             self.num_rows = args[0]
             self.num_columns = args[1]
             self.num_channels = args[2]
-            self.num_epochs = args[3]
-            self.batch_size = args[4]
-            self.channel_first = args[5]
-            self._make_cnn_model()
-            self._compile()
+            self.channel_first = args[3]
 
-    def _make_cnn_model(self):
+    def _make_cnn_model(self, init_mode, dropout_rate, weight_constraint):
         """Make a CNN model"""
         if self.channel_first:
             keras.backend.set_image_data_format('channels_first')
@@ -65,22 +55,30 @@ class CNN_model(AcousticModel):
         self.acoustic_model = Sequential()
         self.acoustic_model.add(
             Conv2D(filters=64, kernel_size=3, input_shape=input_shape,
-                   activation='relu', data_format=data_format))
-        self.acoustic_model.add(Conv2D(filters=64, kernel_size=3, activation='relu'))
-        self.acoustic_model.add(Dropout(0.5))
+                   activation='relu', data_format=data_format, padding='same',
+                   kernel_regularizer=regularizers.l2(l=0.01), kernel_initializer=init_mode,
+                   kernel_constraint=MaxNorm(weight_constraint)))
+
+        self.acoustic_model.add(Conv2D(filters=64, kernel_size=3, activation='relu',
+                                       kernel_regularizer=regularizers.l2(l=0.01), kernel_initializer=init_mode,
+                                       kernel_constraint=MaxNorm(weight_constraint)))
+
+        self.acoustic_model.add(Dropout(dropout_rate))
         self.acoustic_model.add(MaxPooling2D(pool_size=2))
         self.acoustic_model.add(Flatten())
-        self.acoustic_model.add(Dense(100, activation='relu'))
-        self.acoustic_model.add(Dense(self.num_labels, activation='softmax'))
+        self.acoustic_model.add(Dense(100, activation='relu', kernel_regularizer=regularizers.l2(l=0.01),
+                                      kernel_initializer=init_mode, kernel_constraint=MaxNorm(weight_constraint)))
+        self.acoustic_model.add(Dropout(dropout_rate))
+        self.acoustic_model.add(Dense(self.num_labels, activation='softmax',kernel_initializer=init_mode))
 
-    def _compile(self):
-        # Compile the model
-        self.acoustic_model.compile(loss='categorical_crossentropy', metrics=[Recall()], optimizer='adam')  # 'accuracy'
+    # def _compile(self):
+    #     # Compile the model
+    #     self.acoustic_model.compile(loss='categorical_crossentropy', metrics=[Recall()], optimizer='adam')  # 'accuracy'
+    #
+    #     # Display model architecture summary
+    #     self.acoustic_model.summary()
 
-        # Display model architecture summary
-        self.acoustic_model.summary()
-
-    def _train(self, X_train,y_train,X_test,y_test, file_path):
+    def _train(self, X_train,y_train,X_test,y_test, file_path, epochs, batch_size):
         """Train a CNN model
             Parameters
             ----------
@@ -96,8 +94,8 @@ class CNN_model(AcousticModel):
         weights = {0: 1 / y_train[:, 0].mean(), 1: 1 / y_train[:, 1].mean()}
         history = self.acoustic_model.fit(X_train,
                                 y_train,
-                                batch_size=self.batch_size,
-                                epochs=self.num_epochs,
+                                batch_size=batch_size,
+                                epochs=epochs,
                                 validation_data=(X_test, y_test),
                                 shuffle=True,
                                 class_weight=weights,
