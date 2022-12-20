@@ -87,7 +87,21 @@ def normalize_data(x, x_mean=None, x_std=None, normval_fp='', train_mode=True):
     return x
 
 
-def prepare_data_dl(features_path, without_label=False, trained_model_path='', num_channels=3, normval_dir=''):
+def get_dataset(features_path,without_label,num_channels,fraction=1):
+    df_features = read_features(features_path)
+    x = df_features[df_features.columns.difference(['file_path', 'label_1'])]
+    y = None if without_label else df_features['label_1']
+    x, y = get_dl_format(x, y, num_channels)
+
+    x_frac = x[0:int(fraction * len(x))]
+    y_frac = y[0:int(fraction * len(y))]
+
+    return x_frac, y_frac
+
+
+
+
+def prepare_data_dl(features_path, without_label=False, trained_model_path='', num_channels=3, normval_dir='', fraction=1):
     """Prepare train and test dataset
 
                Parameters
@@ -107,16 +121,41 @@ def prepare_data_dl(features_path, without_label=False, trained_model_path='', n
                DataFrames:
                     X_train, y_train, X_test, y_test in four different dataframe
     """
-    df_features = read_features(features_path)
-    x = df_features[df_features.columns.difference(['file_path', 'label_1'])]
-    y = None if without_label else df_features['label_1']
-    x, y = get_dl_format(x, y, num_channels)
+    # df_features = read_features(features_path)
+    # x = df_features[df_features.columns.difference(['file_path', 'label_1'])]
+    # y = None if without_label else df_features['label_1']
+    # x, y = get_dl_format(x, y, num_channels)
 
+    x, y = get_dataset(features_path, without_label, num_channels, fraction)
     normval_fp = os.path.join(normval_dir, 'normval.csv')
+
+    # if trained_model_path == '':  # prepare data for train model scenario
+    #     # split dataset to train and test set
+    #     X_train, X_test, y_train, y_test = model_selection.train_test_split(x, y, test_size=0.2, random_state=1)
+    #
+    #     X_train = normalize_data(X_train, normval_fp=normval_fp, train_mode=True)
+    #     normdf = pd.read_csv(normval_fp)
+    #     X_test = normalize_data(X_test,x_mean=normdf.loc[0,'x_mean'], x_std=normdf.loc[0,'x_std'], train_mode=False)
+    # else:  # prepare data to apply an existing model
+    #
+    #     X_test = x.copy()
+    #     normdf = pd.read_csv(normval_fp)
+    #     X_test = normalize_data(X_test, x_mean=normdf.loc[0, 'x_mean'], x_std=normdf.loc[0, 'x_std'], train_mode=False)
+    #
+    #     X_train = None
+    #     y_train = None
+    #
+    #     y_test = None if without_label else y  # apply model on un-labeled dataset
+
+    test_size = 0.2
 
     if trained_model_path == '':  # prepare data for train model scenario
         # split dataset to train and test set
-        X_train, X_test, y_train, y_test = model_selection.train_test_split(x, y, test_size=0.2, random_state=1)
+
+        X_train = x[0:int(round((1 - test_size) * len(x)))]
+        y_train = y[0:int(round((1 - test_size) * len(y)))]
+        X_test = x[int(round((1 - test_size) * len(x))):]
+        y_test = y[int(round((1 - test_size) * len(x))):]
 
         X_train = normalize_data(X_train, normval_fp=normval_fp, train_mode=True)
         normdf = pd.read_csv(normval_fp)

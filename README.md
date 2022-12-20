@@ -1,6 +1,7 @@
 # animal-sounds
 
 <!-- Include Github badges here (optional) -->
+[![DOI](https://zenodo.org/badge/408387579.svg)](https://zenodo.org/badge/latestdoi/408387579)
 <!-- e.g. Github Actions workflow status -->
 
 The aim of this software is to classify Chimpanze vocalizations in audio recordings from the tropical rainforests of Africa. The software can be used for processing raw audio data, extracting features, and apply and compare Support Vector Machines and Deep learning methods for classification. The pipeline is reusable for other settings and species or vocalization types as long as a certain amount of labeled data has been collected. The best performing models will be available here for general usage.

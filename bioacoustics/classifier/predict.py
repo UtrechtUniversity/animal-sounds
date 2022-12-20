@@ -5,6 +5,7 @@ from data_preparation_svm import prepare_data_svm
 from model.svm_model import SVM_model
 from model.cnn_model import CNN_model
 from model.cnn10_model import CNN10_model
+from model.cnn8_model import CNN8_model
 from model.cnn6_model import CNN6_model
 from model.resnet_model import RESNET_model
 # import statistics
@@ -79,6 +80,7 @@ def main():
     if not os.path.exists(os.path.dirname(args.output_dir)):
         os.makedirs(os.path.dirname(args.output_dir))
 
+
     if args.model == 'svm':
         X_train, y_train, X_test, y_test = prepare_data_svm(args.feature_dir,
                                                             args.output_dir,
@@ -96,6 +98,8 @@ def main():
         s = CNN_model()
     elif args.model == 'cnn10':
         s = CNN10_model()
+    elif args.model == 'cnn8':
+        s = CNN8_model()
     elif args.model == 'cnn6':
         s = CNN6_model()
 
