@@ -1,8 +1,8 @@
+from collections import deque
+
 import librosa
 import numpy as np
 import scipy.io.wavfile as wv
-
-from collections import deque
 from scipy.signal import stft
 
 
@@ -14,7 +14,7 @@ class Extractor:
         # for short term fourier transform
         self.stft = None
 
-        # this 
+        # load wav file, or initialize with empty numpy array
         if wav_file_path:
             self.sr, self.signal = self.load_wav_file(self.path)
         else:
@@ -45,8 +45,8 @@ class Extractor:
 
     # minimal vocalization duration in seconds
     # padding in seconds (before and after vocalization)
-    # min/max_threshold_db: loudness of vocalisations I am looking for, above ref db's
-    def detect_vocalisations(self, freqs=None, n_fft=2048, win_length=2048, 
+    # min/max_threshold_db: loudness of vocalizations I am looking for, above ref db's
+    def detect_vocalizations(self, freqs=None, n_fft=2048, win_length=2048, 
         hop_length=512, min_threshold_db=30, max_threshold_db=None, threshold_pattern=0.1, 
         ref=np.median, min_voc_duration=0.5, padding=0.3, ignore_voc=0.0, use_cached_stft=True):
 
@@ -117,7 +117,8 @@ class Extractor:
             deviations = np.sum(dbs_suppressed, axis=0)
             # normalize: biggest value is 1
             deviations = deviations / np.max(deviations)
-            # filter anything below 10% of max signal
+            # filter anything below <threshold_pattern> of max signal
+            # by default 10%
             deviations[deviations < threshold_pattern] = 0
             # and collect all time indices which stick out
             time_indexes_patterns = set(np.nonzero(deviations)[0])
@@ -246,7 +247,7 @@ class Extractor:
                 # new_signal can be negative, take the max of new_signal and 0
                 # leaving us with only positive differences. So if things are louder
                 # in specific time/frequency window in comparison with the cum
-                # power distribution of the entire time interval we get a possitive number
+                # power distribution of the entire time interval we get a positive number
                 # back.
                 signal[i_y, i_x] = max(new_signal, 0)
         return signal
@@ -261,10 +262,4 @@ class Extractor:
     def to_wav(self, path):
         wv.write(path, self.sr, self.signal)
 
-
-# f = Extractor('/Users/casperkaandorp/Downloads/mandrills/20191216_135958.WAV')
-# vocals = f.detect_vocalisations(freqs=[(10, 400)], threshold_db=23, threshold_pattern=0.1, ignore_voc=0.09)
-# print(len(vocals), vocals)
-# tmp = f.extract_intervals(vocals)
-# tmp.to_wav('zfuck.wav')
 

@@ -1,13 +1,5 @@
 from .acoustic_model import AcousticModel
-from sklearn.feature_selection import SelectFromModel
-from sklearn.preprocessing import MinMaxScaler
-
-import numpy as np
-import pandas as pd
-from sklearn.pipeline import Pipeline
-
 from sklearn.model_selection import GridSearchCV
-from sklearn.calibration import CalibratedClassifierCV
 from sklearn.svm import SVC
 import pickle
 
