@@ -16,6 +16,11 @@ jobs:
       - name: Check out
         uses: actions/checkout@v3
 
+      - name: Set up python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 'pypy3.9'
+
       - name: Set up the environment
         uses: ./.github/actions/setup-poetry-env
 
