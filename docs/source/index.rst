@@ -12,7 +12,7 @@ The aim of this software is to classify Chimpanze vocalizations in audio recordi
    :maxdepth: 2
    :caption: Contents:
 
-
+   modules
 
 Indices and tables
 ==================
