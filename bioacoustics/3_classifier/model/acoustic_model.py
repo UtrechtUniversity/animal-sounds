@@ -32,7 +32,7 @@ class AcousticModel(ABC):
     #     pass
 
     def _compile(self, learning_rate):
-        optimizer = keras.optimizers.Adam(lr=learning_rate) #0.0001
+        optimizer = keras.optimizers.Adam(learning_rate=learning_rate) #0.0001
 
         # Compile the model
         self.acoustic_model.compile(loss='categorical_crossentropy', metrics=[Recall()], optimizer=optimizer)# optimizer='adam')  # 'accuracy'
@@ -40,7 +40,7 @@ class AcousticModel(ABC):
         # Display model architecture summary
         self.acoustic_model.summary()
 
-    def _train(self, X_train,y_train,X_test=None,y_test=None, file_name=None, epochs=5, batch_size=32):
+    def _train(self, X_train,y_train,epochs, batch_size,X_test=None,y_test=None, file_name=None):
         pass
 
     def _predict(self, X_test):
@@ -60,7 +60,9 @@ class AcousticModel(ABC):
         else:
             self.acoustic_model = pickle.load(open(file_path, 'rb'))
 
-    def make_model(self, init_mode="glorot_uniform", dropout_rate=0.2, weight_constraint=3, learning_rate =0.001, compile_model=True): #learning_rate=0.001
+    def make_model(self, init_mode="glorot_uniform", dropout_rate=0.2, weight_constraint=3, learning_rate =0.001,
+                   compile_model=True):
+        print('inside make_model')
         self._make_cnn_model(init_mode, dropout_rate,weight_constraint)
         if compile_model:
             self._compile(learning_rate)

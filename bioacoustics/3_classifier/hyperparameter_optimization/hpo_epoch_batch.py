@@ -6,11 +6,21 @@ import pandas as pd
 import sys
 sys.path.append('.')
 
-from model.cnn10_model import CNN10_model
+from model.cnn2_model import CNN2_model
+
 from data_prepration_dl import prepare_data_dl
 
 import os
 import argparse
+
+from tensorflow import keras
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Dropout, Flatten
+from tensorflow.keras.layers import Conv2D, MaxPooling2D
+from tensorflow.keras import regularizers
+from tensorflow.keras.metrics import Recall
+from tensorflow.keras.models import load_model
+from tensorflow.keras.constraints import MaxNorm
 
 def parse_arguments():
     # parse arguments if available
@@ -49,15 +59,53 @@ def parse_arguments():
 # Function to create model, required for KerasClassifier
 
 
-def create_model(init_mode='uniform', dropout_rate=0.2, weight_constraint=1):
+def create_model():
     # """Make a CNN model"""
 
-    s = CNN10_model(64, 64, 1, True)
+    s = CNN2_model(64, 64, 1, True)
 
-    model = s.make_model(init_mode=init_mode, dropout_rate=dropout_rate, weight_constraint=weight_constraint,
-                         compile_model=True)
+    c_model = s.make_model()
 
-    return model
+    print(type(c_model))
+
+    return c_model
+
+    # num_channels=1
+    # num_rows=64
+    # num_columns=64
+    # weight_constraint = 1
+    # dropout_rate =0.2
+    # num_labels=2
+    #
+    # keras.backend.set_image_data_format('channels_first')
+    # input_shape = (num_channels, num_rows, num_columns)
+    # data_format = 'channels_first'
+    #
+    #
+    # acoustic_model = Sequential()
+    # acoustic_model.add(
+    #     Conv2D(filters=64, kernel_size=3, input_shape=input_shape,
+    #            activation='relu', data_format=data_format, padding='same',
+    #            kernel_regularizer=regularizers.l2(l=0.01), kernel_initializer='uniform', #init_mode,
+    #            kernel_constraint=MaxNorm(weight_constraint)))
+    #
+    # acoustic_model.add(Conv2D(filters=64, kernel_size=3, activation='relu',
+    #                                kernel_regularizer=regularizers.l2(l=0.01), kernel_initializer='uniform', #init_mode,
+    #                                kernel_constraint=MaxNorm(weight_constraint)))
+    #
+    # acoustic_model.add(Dropout(dropout_rate))
+    # acoustic_model.add(MaxPooling2D(pool_size=2))
+    # acoustic_model.add(Flatten())
+    # acoustic_model.add(Dense(100, activation='relu', kernel_regularizer=regularizers.l2(l=0.01),
+    #                               kernel_initializer='uniform', #init_mode
+    #                         kernel_constraint=MaxNorm(weight_constraint)))
+    # acoustic_model.add(Dropout(dropout_rate))
+    # acoustic_model.add(Dense(num_labels, activation='softmax', kernel_initializer='uniform')) #init_mode
+    #
+    # # Compile model
+    # acoustic_model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=[Recall()])
+    # print(type(acoustic_model))
+    # return acoustic_model
 
 parser = parse_arguments()
 args = parser.parse_args()
@@ -74,11 +122,11 @@ X_train, y_train, X_test, y_test = prepare_data_dl(args.feature_dir, num_channel
 
 # create model
 callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=3)
-model = KerasClassifier(model=create_model, callbacks=[callback], verbose=1)
+model = KerasClassifier(model=create_model, verbose=1) #callbacks=[callback],
 
 # define the grid search parameters
-batch_size = [8,32,64]
-epochs = [5, 10, 50]
+batch_size = [64] #8,32,
+epochs = [1, 10] #, 50
 param_grid = dict(batch_size=batch_size, epochs=epochs)
 grid = GridSearchCV(estimator=model, param_grid=param_grid, n_jobs=1, cv=3)
 grid_result = grid.fit(X_train, y_train)

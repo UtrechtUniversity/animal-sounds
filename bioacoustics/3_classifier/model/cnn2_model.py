@@ -4,8 +4,8 @@ import tensorflow as tf
 from tensorflow import keras
 
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense,BatchNormalization, Activation, Dropout
-from tensorflow.keras.layers import Conv1D, MaxPooling1D #AveragePooling2D, GlobalAveragePooling2D
+from tensorflow.keras.layers import Dense,BatchNormalization, Activation, Dropout, GlobalAveragePooling2D,MaxPooling2D
+from tensorflow.keras.layers import Conv2D, AveragePooling2D #AveragePooling2D, GlobalAveragePooling2D
 from tensorflow.keras.callbacks import ModelCheckpoint
 from datetime import datetime
 
@@ -55,26 +55,29 @@ class CNN2_model(AcousticModel):
 
         self.acoustic_model = Sequential()
         self.acoustic_model.add(
-            Conv1D(filters=512, kernel_size=10, input_shape=input_shape, data_format=data_format,
-                   padding='same', kernel_regularizer=regularizers.l2(l=0.01),
-                   activation='relu', kernel_initializer=init_mode, kernel_constraint=MaxNorm(weight_constraint)))
-        self.acoustic_model.add(MaxPooling1D(pool_size=4))
+            Conv2D(filters=64, kernel_size=3, input_shape=input_shape,
+                   data_format=data_format, padding='same',
+                   kernel_regularizer=regularizers.l2(l=0.01), kernel_initializer=init_mode,
+                   kernel_constraint=MaxNorm(weight_constraint)))
+        # self.acoustic_model.add(
+        #     Conv2D(filters=64, kernel_size=3, data_format=data_format, padding='same',
+        #            kernel_regularizer=regularizers.l2(l=0.01), kernel_initializer=init_mode,
+        #            kernel_constraint=MaxNorm(weight_constraint)))
+        # self.acoustic_model.add(BatchNormalization())
+        # self.acoustic_model.add(Activation('relu'))
 
+        self.acoustic_model.add(Conv2D(filters=64, kernel_size=3, activation='relu',
+                                       kernel_regularizer=regularizers.l2(l=0.01), kernel_initializer=init_mode,
+                                       kernel_constraint=MaxNorm(weight_constraint)))
+
+        self.acoustic_model.add(GlobalAveragePooling2D())
+        self.acoustic_model.add(Dropout(dropout_rate))  # Dropout(0.2)
         self.acoustic_model.add(
-            Conv1D(filters=512, kernel_size=5, input_shape=input_shape, data_format=data_format,
-                   padding='same', kernel_regularizer=regularizers.l2(l=0.01),
-                   activation='relu', kernel_initializer=init_mode, kernel_constraint=MaxNorm(weight_constraint)))
-        self.acoustic_model.add(MaxPooling1D(pool_size=4))
+            Dense(128, activation='relu', kernel_initializer=init_mode, kernel_constraint=MaxNorm(weight_constraint)))
 
-        self.acoustic_model.add(Dense(256, activation='relu',kernel_regularizer=regularizers.l2(l=0.01),
-                                kernel_initializer=init_mode, kernel_constraint=MaxNorm(weight_constraint)))
-        self.acoustic_model.add(Dropout(dropout_rate))
-
-        self.acoustic_model.add(Dense(128, activation='relu', kernel_regularizer=regularizers.l2(l=0.01),
-                                kernel_initializer=init_mode, kernel_constraint=MaxNorm(weight_constraint)))
-        self.acoustic_model.add(Dropout(dropout_rate))
-
-        self.acoustic_model.add(Dense(self.num_labels, activation='softmax',kernel_initializer=init_mode))
+        self.acoustic_model.add(Dropout(dropout_rate))  # new added
+        # self.acoustic_model.add(Dense(256, activation='relu'))
+        self.acoustic_model.add(Dense(self.num_labels, activation='softmax', kernel_initializer=init_mode))
 
     # def _compile(self):
     #     optimizer = keras.optimizers.Adam(lr=0.0001)

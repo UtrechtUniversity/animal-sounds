@@ -57,7 +57,6 @@ def parse_arguments():
         default=8,
         help='batch size'
     )
-    return parser
 
     parser.add_argument(
             '--learning_rate',
@@ -100,7 +99,7 @@ X_train, y_train, X_test, y_test = prepare_data_dl(args.feature_dir, num_channel
 callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=3)
 
 model = KerasClassifier(model=create_model, loss="categorical_crossentropy", optimizer="adam", callbacks=[callback],
-                        epochs=args.epoch, batch_size=args.batch_size, verbose=1)
+                        epochs=args.epochs, batch_size=args.batch_size, verbose=1)
 
 # define the grid search parameters
 init_mode = ['uniform', 'glorot_uniform', 'he_normal'] #

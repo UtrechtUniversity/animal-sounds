@@ -89,7 +89,7 @@ X_train, y_train, X_test, y_test = prepare_data_dl(args.feature_dir, num_channel
 callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=3)
 
 model = KerasClassifier(model=create_model, loss="categorical_crossentropy", optimizer="adam", callbacks=[callback],
-                        epochs=args.epoch, batch_size=args.batch_size, verbose=1)
+                        epochs=args.epochs, batch_size=args.batch_size, verbose=1)
 
 # define the grid search parameters
 learn_rate = [0.001, 0.01, 0.1]
