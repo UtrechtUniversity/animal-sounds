@@ -30,4 +30,7 @@ jobs:
           python-version: '3.9'
           cache: 'poetry'
       - name: Install dependencies
-        run: poetry install
+        run: poetry install       
+      - name: Check if documentation builds.
+        run: |
+          cd docs; make html SPHINXOPTS="-W --keep-going"
