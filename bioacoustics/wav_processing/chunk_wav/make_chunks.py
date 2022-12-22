@@ -54,7 +54,7 @@ def make_audio_chunks(audio, sample_rate, chunk_length, overlap):
         start_audio = start * sample_rate
         end_audio = (end + overlap) * sample_rate
         # print(start_audio, end_audio)
-        audio_slice.append(audio[int(start_audio) : int(end_audio)])
+        audio_slice.append(audio[int(start_audio): int(end_audio)])
 
     return audio_slice
 
