@@ -21,13 +21,13 @@ jobs:
           src: "./bioacoustics"
   build:
     runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v3
-        - name: Install Poetry
-          uses: snok/install-poetry@v1
-        - uses: actions/setup-python@v3
-          with:
-            python-version: '3.9'
-            cache: 'poetry'
-        - name: Install dependencies
-          run: poetry install
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+      - uses: actions/setup-python@v3
+        with:
+          python-version: '3.9'
+          cache: 'poetry'
+      - name: Install dependencies
+        run: poetry install
