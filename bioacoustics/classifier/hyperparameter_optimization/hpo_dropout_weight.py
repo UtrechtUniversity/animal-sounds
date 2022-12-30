@@ -8,7 +8,7 @@ import sys
 sys.path.append(".")
 
 from model.cnn10_model import CNN10_model
-from data_prepration_dl import prepare_data_dl
+from data_preparation_dl import prepare_data_dl
 
 import os
 import argparse
@@ -20,7 +20,9 @@ def parse_arguments():
 
     # File path to the data.
     parser.add_argument(
-        "--feature_dir", type=str, help="File path to the dataset of features"
+        "--feature_dir",
+        type=str,
+        help="File path to the dataset of features"
     )
 
     parser.add_argument(
@@ -29,18 +31,38 @@ def parse_arguments():
         help="File path to the mean and std values of trained data to normalize test dataset",
     )
     parser.add_argument(
-        "--model", type=str, default="cnn10", help="machine learning model "
+        "--model",
+        type=str,
+        default="cnn10",
+        help="machine learning model "
     )
 
-    parser.add_argument("--output_dir", type=str, default=None, help="output dir")
-
-    parser.add_argument("--epochs", type=int, default=5, help="number of epochs")
-
-    parser.add_argument("--batch_size", type=int, default=8, help="batch size")
-    return parser
+    parser.add_argument(
+        "--output_dir",
+        type=str,
+        default=None,
+        help="output dir"
+    )
 
     parser.add_argument(
-        "--learning_rate", type=int, default=0.001, help="learning rate"
+        "--epochs",
+        type=int,
+        default=5,
+        help="number of epochs"
+    )
+
+    parser.add_argument(
+        "--batch_size",
+        type=int,
+        default=32,
+        help="batch size"
+    )
+
+    parser.add_argument(
+        "--learning_rate",
+        type=int,
+        default=0.001,
+        help="learning rate"
     )
     return parser
 
@@ -51,7 +73,7 @@ parser = parse_arguments()
 args = parser.parse_args()
 
 
-def create_model(init_mode="uniform", dropout_rate=0.2, weight_constraint=1):
+def create_model(init_mode, dropout_rate, weight_constraint):
     # """Make a CNN model"""
 
     s = CNN10_model(64, 64, 1, True)
@@ -78,7 +100,7 @@ seed = 7
 tf.random.set_seed(seed)
 
 X_train, y_train, X_test, y_test = prepare_data_dl(
-    args.feature_dir, num_channels=1, normval_dir=args.normVal_dir, fraction=0.4
+    args.feature_dir, norm_val_dir=args.normVal_dir, fraction=0.6
 )
 
 # create model
@@ -89,15 +111,15 @@ model = KerasClassifier(
     loss="categorical_crossentropy",
     optimizer="adam",
     callbacks=[callback],
-    epochs=args.epoch,
+    epochs=args.epochs,
     batch_size=args.batch_size,
     verbose=1,
 )
 
 # define the grid search parameters
-init_mode = ["uniform", "glorot_uniform", "he_normal"]  #
+init_mode = ["glorot_uniform","uniform","he_normal"]
 weight_constraint = [1.0, 3.0, 5.0]
-dropout_rate = [0.2, 0.5]
+dropout_rate = [0.2,0.5]
 param_grid = dict(
     model__init_mode=init_mode,
     model__dropout_rate=dropout_rate,
