@@ -2,6 +2,7 @@ import argparse
 import asyncio
 import multiprocessing as mp
 import pandas as pd
+import numpy as np
 import random
 import time
 
@@ -10,7 +11,6 @@ from itertools import product
 
 from acoustic_features.config import Config
 from acoustic_features.features import FeatureVector
-from acoustic_features.featuresFunctions import *
 from acoustic_features.LLD import LLD
 
 
@@ -56,7 +56,7 @@ def main(workload):
     cores = args["cores"]
     # chop up the workload into chunks
     max_open = int(200 / cores)
-    workload = [workload[x : x + max_open] for x in range(0, len(workload), max_open)]
+    workload = [workload[x: x + max_open] for x in range(0, len(workload), max_open)]
     lld = LLD(
         workload,
         frame_length=args["frame_length"],
@@ -96,7 +96,7 @@ if __name__ == "__main__":
 
     t1 = time.time()
     # get input path
-    all_files = list(Path(args["input_dir"]).glob("**/*.wav"))
+    all_files = list(Path(args["input_dir"]).glob("**/*.[wW][aA][vV]"))
     all_files = [fp for fp in all_files if not fp.name.startswith(".")]
 
     # sample if necessary
