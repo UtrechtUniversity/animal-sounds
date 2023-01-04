@@ -1,4 +1,4 @@
-"""Script to extract features of .wav files using melspectrogram."""
+"""Extracting features of audio files using melspectrogram."""
 
 import glob
 import librosa
