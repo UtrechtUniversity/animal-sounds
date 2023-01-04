@@ -36,10 +36,9 @@
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL
 
-import json
 import numpy as np
 from sympy.ntheory import factorint
-from scipy.signal import butter, lfilter, filtfilt
+from scipy.signal import butter, filtfilt
 from .featuresFunctions import energy, energy_u
 from math import sqrt
 
