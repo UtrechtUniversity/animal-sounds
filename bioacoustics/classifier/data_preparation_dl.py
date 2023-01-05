@@ -4,10 +4,8 @@ import glob
 import numpy as np
 import os
 
-import statistics
 from sklearn.preprocessing import LabelEncoder
 from tensorflow.keras.utils import to_categorical
-import sklearn.model_selection as model_selection
 
 
 def read_features(features_path):
@@ -34,7 +32,8 @@ def read_features(features_path):
 
 
 def get_dl_format(df_features, labels, num_channels=3):
-    """Convert features and corresponding classification labels into numpy arrays and categorical values
+    """Convert features and corresponding classification labels into
+    numpy arrays and categorical values
 
     Parameters
     ----------
@@ -93,8 +92,8 @@ def get_dataset(features_path, without_label, num_channels, fraction=1):
     y = None if without_label else df_features["label_1"]
     x, y = get_dl_format(x, y, num_channels)
 
-    x_frac = x[0 : int(fraction * len(x))]
-    y_frac = y[0 : int(fraction * len(y))]
+    x_frac = x[0: int(fraction * len(x))]
+    y_frac = y[0: int(fraction * len(y))]
 
     return x_frac, y_frac
 
@@ -126,6 +125,7 @@ def prepare_data_dl(
     DataFrames:
          X_train, y_train, X_test, y_test in four different dataframe
     """
+    # NOTE: REMOVE THIS PART?
     # df_features = read_features(features_path)
     # x = df_features[df_features.columns.difference(['file_path', 'label_1'])]
     # y = None if without_label else df_features['label_1']
@@ -134,18 +134,28 @@ def prepare_data_dl(
     x, y = get_dataset(features_path, without_label, num_channels, fraction)
     normval_fp = os.path.join(normval_dir, "normval.csv")
 
+    # NOTE: REMOVE THIS PART?
     # if trained_model_path == '':  # prepare data for train model scenario
     #     # split dataset to train and test set
-    #     X_train, X_test, y_train, y_test = model_selection.train_test_split(x, y, test_size=0.2, random_state=1)
+    #     X_train, X_test, y_train, y_test = model_selection.train_test_split(x,
+    #                                                                         y,
+    #                                                                         test_size=0.2,
+    #                                                                         random_state=1)
     #
     #     X_train = normalize_data(X_train, normval_fp=normval_fp, train_mode=True)
     #     normdf = pd.read_csv(normval_fp)
-    #     X_test = normalize_data(X_test,x_mean=normdf.loc[0,'x_mean'], x_std=normdf.loc[0,'x_std'], train_mode=False)
+    #     X_test = normalize_data(X_test,
+    #                             x_mean=normdf.loc[0,'x_mean'],
+    #                             x_std=normdf.loc[0,'x_std'],
+    #                             train_mode=False)
     # else:  # prepare data to apply an existing model
     #
     #     X_test = x.copy()
     #     normdf = pd.read_csv(normval_fp)
-    #     X_test = normalize_data(X_test, x_mean=normdf.loc[0, 'x_mean'], x_std=normdf.loc[0, 'x_std'], train_mode=False)
+    #     X_test = normalize_data(X_test,
+    #                             x_mean=normdf.loc[0, 'x_mean'],
+    #                             x_std=normdf.loc[0, 'x_std'],
+    #                             train_mode=False)
     #
     #     X_train = None
     #     y_train = None
@@ -157,10 +167,10 @@ def prepare_data_dl(
     if trained_model_path == "":  # prepare data for train model scenario
         # split dataset to train and test set
 
-        X_train = x[0 : int(round((1 - test_size) * len(x)))]
-        y_train = y[0 : int(round((1 - test_size) * len(y)))]
-        X_test = x[int(round((1 - test_size) * len(x))) :]
-        y_test = y[int(round((1 - test_size) * len(x))) :]
+        X_train = x[0: int(round((1 - test_size) * len(x)))]
+        y_train = y[0: int(round((1 - test_size) * len(y)))]
+        X_test = x[int(round((1 - test_size) * len(x))):]
+        y_test = y[int(round((1 - test_size) * len(x))):]
 
         X_train = normalize_data(X_train, normval_fp=normval_fp, train_mode=True)
         normdf = pd.read_csv(normval_fp)

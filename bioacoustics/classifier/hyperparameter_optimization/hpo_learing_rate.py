@@ -1,17 +1,16 @@
-# Use scikit-learn to grid search the dropout rate
+""" Module that uses scikit-learn for grid search on the dropout rate """
 import tensorflow as tf
 from sklearn.model_selection import GridSearchCV
 from scikeras.wrappers import KerasClassifier
 import pandas as pd
 import sys
+import os
+import argparse
 
 sys.path.append(".")
 
 from model.cnn10_model import CNN10_model
-from data_prepration_dl import prepare_data_dl
-
-import os
-import argparse
+from data_preparation_dl import prepare_data_dl
 
 
 def parse_arguments():

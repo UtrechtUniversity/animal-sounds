@@ -9,15 +9,6 @@ from sklearn.svm import SVC
 from sklearn.model_selection import StratifiedKFold
 from sklearn.feature_selection import RFECV
 from sklearn.ensemble import ExtraTreesClassifier
-from sklearn.model_selection import cross_val_score
-from sklearn.model_selection import RepeatedStratifiedKFold
-from sklearn.feature_selection import RFE
-from sklearn.linear_model import LogisticRegression
-from sklearn.linear_model import Perceptron
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.ensemble import GradientBoostingClassifier
-from sklearn.pipeline import Pipeline
 from matplotlib import pyplot
 from pickle import dump, load
 
@@ -121,7 +112,7 @@ def read_file(file, dim):
         DataFrames containing features (x) and labels (y)
     """
     df = pd.read_csv(file)
-    x = df.iloc[:, dim[0] : dim[1]]
+    x = df.iloc[:, dim[0]: dim[1]]
     y = df["label_1"]
     return x, y
 
@@ -365,11 +356,11 @@ def split_test(features_path, index, dim, test_size=0.2):
     """
     subset = 1
     df = read_features(features_path, index)
-    x_train = df.iloc[0 : int(round((1 - test_size) * len(df))), dim[0] : dim[1]]
-    y_train = df["label_1"][0 : int(round((1 - test_size) * len(df)))]
-    x_test = df.iloc[int(round((1 - test_size) * len(df))) : -1, dim[0] : dim[1]]
-    y_test = df["label_1"][int(round((1 - test_size) * len(df))) : -1]
-    y_file = df["file_path"][int(round((1 - test_size) * len(df))) : -1]
+    x_train = df.iloc[0: int(round((1 - test_size) * len(df))), dim[0]: dim[1]]
+    y_train = df["label_1"][0: int(round((1 - test_size) * len(df)))]
+    x_test = df.iloc[int(round((1 - test_size) * len(df))): -1, dim[0]: dim[1]]
+    y_test = df["label_1"][int(round((1 - test_size) * len(df))): -1]
+    y_file = df["file_path"][int(round((1 - test_size) * len(df))): -1]
 
     if subset and x_train.shape[0] > 10000:
         sample_idx = np.random.choice(x_train.shape[0], replace=False, size=10000)
@@ -441,7 +432,7 @@ def prepare_data_svm(features_path, output_dir, trained_model_path=""):
         # recursive_features(x_train, y_train, temp_x_test.columns, output_dir)
 
         # normalize first time for feature selection purposes
-        x_train_tmp = normalize_fit(x_train.to_numpy(), output_dir, scaler_dir)
+        x_train_tmp = normalize_fit(x_train.to_numpy(), output_dir)
         model = feature_importance(x_train_tmp, y_train)
         x_train, x_test = feature_selection(
             x_train.to_numpy(),

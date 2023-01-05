@@ -1,4 +1,4 @@
-"""Script to apply a model on a set of features_old and make a prediction"""
+"""Script to train and test a model on a set of features"""
 
 from data_preparation_dl import prepare_data_dl
 from data_preparation_svm import prepare_data_svm
@@ -11,7 +11,6 @@ from model.cnn2_model import CNN2_model
 
 import os
 import argparse
-import pandas as pd
 
 
 def parse_arguments():
@@ -34,7 +33,7 @@ def parse_arguments():
 
     parser.add_argument("--output_dir", type=str, default=None, help="output dir")
 
-    ##### params for hyperparameter optimization
+    # params for hyperparameter optimization
     parser.add_argument(
         "--nrow_input", type=int, default=64, help="first dimension of input"
     )
