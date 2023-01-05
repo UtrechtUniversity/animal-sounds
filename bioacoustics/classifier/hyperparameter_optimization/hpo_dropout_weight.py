@@ -35,14 +35,14 @@ def parse_arguments():
     parser.add_argument("--epochs", type=int, default=5, help="number of epochs")
 
     parser.add_argument("--batch_size", type=int, default=8, help="batch size")
-    return parser
 
     parser.add_argument(
         "--learning_rate", type=int, default=0.001, help="learning rate"
     )
     return parser
 
-def create_model(init_mode="uniform", dropout_rate=0.2, weight_constraint=1):
+
+def create_model(args, init_mode="uniform", dropout_rate=0.2, weight_constraint=1):
     # """Make a CNN model"""
 
     s = CNN10_model(64, 64, 1, True)
@@ -59,6 +59,7 @@ def create_model(init_mode="uniform", dropout_rate=0.2, weight_constraint=1):
     )
 
     return model
+
 
 # Function to create model, required for KerasClassifier
 def main():
@@ -80,7 +81,7 @@ def main():
     callback = tf.keras.callbacks.EarlyStopping(monitor="loss", patience=3)
 
     model = KerasClassifier(
-        model=create_model,
+        model=create_model(args=args),
         loss="categorical_crossentropy",
         optimizer="adam",
         callbacks=[callback],

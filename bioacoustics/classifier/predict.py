@@ -73,9 +73,7 @@ def main():
             normval_dir=args.normVal_dir,
         )
 
-    if args.model == "resnet":
-        s = RESNET_model()
-    elif args.model == "cnn":
+    if args.model == "cnn":
         s = CNN_model()
     elif args.model == "cnn10":
         s = CNN10_model()

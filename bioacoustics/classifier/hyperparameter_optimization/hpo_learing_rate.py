@@ -56,6 +56,7 @@ def create_model(init_mode="uniform", dropout_rate=0.2, weight_constraint=1):
 
     return model
 
+
 def main():
     parser = parse_arguments()
     args = parser.parse_args()
@@ -103,6 +104,7 @@ def main():
 
     d = {"best_score": [grid_result.best_score_], "best_params": [grid_result.best_params_]}
     pd.DataFrame(data=d).to_csv(args.output_dir + "_best_params.csv", index=False)
+
 
 if __name__ == "__main__":
     main()
