@@ -1,4 +1,4 @@
-from model.acoustic_model import AcousticModel
+from acoustic_model import AcousticModel
 
 from tensorflow import keras
 

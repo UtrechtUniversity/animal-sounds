@@ -1,4 +1,4 @@
-from .acoustic_model import AcousticModel
+from acoustic_model import AcousticModel
 from sklearn.model_selection import GridSearchCV
 from sklearn.svm import SVC
 import pickle

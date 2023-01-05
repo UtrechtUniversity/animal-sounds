@@ -7,6 +7,7 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
+   bioacoustics.classifier.hyperparameter_optimization
    bioacoustics.classifier.model
 
 Submodules
@@ -28,26 +29,10 @@ bioacoustics.classifier.data\_preparation\_svm module
    :undoc-members:
    :show-inheritance:
 
-bioacoustics.classifier.data\_prepration\_svm module
-----------------------------------------------------
-
-.. automodule:: bioacoustics.classifier.data_prepration_svm
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 bioacoustics.classifier.predict module
 --------------------------------------
 
 .. automodule:: bioacoustics.classifier.predict
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-bioacoustics.classifier.preprocess\_old module
-----------------------------------------------
-
-.. automodule:: bioacoustics.classifier.preprocess_old
    :members:
    :undoc-members:
    :show-inheritance:

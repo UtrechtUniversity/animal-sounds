@@ -7,17 +7,9 @@ from model.cnn_model import CNN_model
 from model.cnn10_model import CNN10_model
 from model.cnn8_model import CNN8_model
 from model.cnn6_model import CNN6_model
-from model.resnet_model import RESNET_model
 
-# import statistics
 import os
 import argparse
-
-
-# import pandas as pd
-# from tensorflow.keras.applications import ResNet50
-# from tensorflow.keras.applications.resnet50 import preprocess_input
-# import sys
 
 
 def parse_arguments():
