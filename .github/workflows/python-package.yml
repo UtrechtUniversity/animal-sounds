@@ -28,7 +28,7 @@ jobs:
           options: "--check --verbose"
           src: "./bioacoustics"
       - name: Lint with flake8
-        run: flake8 bioacoustics
+        run: python poetry run flake8 bioacoustics
       - name: Check if documentation builds.
         run: |
           cd docs; make html SPHINXOPTS="-W --keep-going"
