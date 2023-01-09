@@ -105,7 +105,7 @@ if __name__ == "__main__":
                 # collect all relevant files
                 index_s = filenames.index(Path(row["Begin Path"]).name)
                 index_e = filenames.index(Path(row["End Path"]).name)
-                files_involved = filenames[index_s: (index_e + 1)]
+                files_involved = filenames[index_s : (index_e + 1)]
 
                 # iterate over all involved files of this record
                 for i, name in enumerate(files_involved):

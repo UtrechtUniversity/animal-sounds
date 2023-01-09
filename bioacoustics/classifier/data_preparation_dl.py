@@ -92,8 +92,8 @@ def get_dataset(features_path, without_label, num_channels, fraction=1):
     y = None if without_label else df_features["label_1"]
     x, y = get_dl_format(x, y, num_channels)
 
-    x_frac = x[0: int(fraction * len(x))]
-    y_frac = y[0: int(fraction * len(y))]
+    x_frac = x[0 : int(fraction * len(x))]
+    y_frac = y[0 : int(fraction * len(y))]
 
     return x_frac, y_frac
 
@@ -167,10 +167,10 @@ def prepare_data_dl(
     if trained_model_path == "":  # prepare data for train model scenario
         # split dataset to train and test set
 
-        X_train = x[0: int(round((1 - test_size) * len(x)))]
-        y_train = y[0: int(round((1 - test_size) * len(y)))]
-        X_test = x[int(round((1 - test_size) * len(x))):]
-        y_test = y[int(round((1 - test_size) * len(x))):]
+        X_train = x[0 : int(round((1 - test_size) * len(x)))]
+        y_train = y[0 : int(round((1 - test_size) * len(y)))]
+        X_test = x[int(round((1 - test_size) * len(x))) :]
+        y_test = y[int(round((1 - test_size) * len(x))) :]
 
         X_train = normalize_data(X_train, normval_fp=normval_fp, train_mode=True)
         normdf = pd.read_csv(normval_fp)

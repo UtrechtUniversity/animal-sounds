@@ -208,7 +208,7 @@ class Extractor:
             # take a small frequency band over time (all columns)
             # and sort all db values found in this band
             # reshape to a single array
-            values = np.sort(dbs[i: i + window_y, :].reshape(-1))
+            values = np.sort(dbs[i : i + window_y, :].reshape(-1))
             # # set all negative values to 0 (power lower than median)
             # values[values < 0] = 0
             # create bins for these sorted values
@@ -230,7 +230,7 @@ class Extractor:
     ):
         # collect all db values
         x_sample = np.sort(
-            dbs[y_start: y_start + window_y, x_start: x_start + window_x].reshape(-1)
+            dbs[y_start : y_start + window_y, x_start : x_start + window_x].reshape(-1)
         )
         sample_cum = (1 + np.arange(len(x_sample))) / len(x_sample)
         # and arrange a similar cumulative power/db distribution

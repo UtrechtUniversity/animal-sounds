@@ -56,7 +56,7 @@ def main(workload):
     cores = args["cores"]
     # chop up the workload into chunks
     max_open = int(200 / cores)
-    workload = [workload[x: x + max_open] for x in range(0, len(workload), max_open)]
+    workload = [workload[x : x + max_open] for x in range(0, len(workload), max_open)]
     lld = LLD(
         workload,
         frame_length=args["frame_length"],

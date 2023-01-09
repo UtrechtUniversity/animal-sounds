@@ -113,7 +113,7 @@ def read_file(file, dim):
         DataFrames containing features (x) and labels (y)
     """
     df = pd.read_csv(file)
-    x = df.iloc[:, dim[0]: dim[1]]
+    x = df.iloc[:, dim[0] : dim[1]]
     y = df["label_1"]
     return x, y
 
@@ -357,11 +357,11 @@ def split_test(features_path, index, dim, test_size=0.2):
     """
     subset = 1
     df = read_features(features_path, index)
-    x_train = df.iloc[0: int(round((1 - test_size) * len(df))), dim[0]: dim[1]]
-    y_train = df["label_1"][0: int(round((1 - test_size) * len(df)))]
-    x_test = df.iloc[int(round((1 - test_size) * len(df))): -1, dim[0]: dim[1]]
-    y_test = df["label_1"][int(round((1 - test_size) * len(df))): -1]
-    y_file = df["file_path"][int(round((1 - test_size) * len(df))): -1]
+    x_train = df.iloc[0 : int(round((1 - test_size) * len(df))), dim[0] : dim[1]]
+    y_train = df["label_1"][0 : int(round((1 - test_size) * len(df)))]
+    x_test = df.iloc[int(round((1 - test_size) * len(df))) : -1, dim[0] : dim[1]]
+    y_test = df["label_1"][int(round((1 - test_size) * len(df))) : -1]
+    y_file = df["file_path"][int(round((1 - test_size) * len(df))) : -1]
 
     if subset and x_train.shape[0] > 10000:
         sample_idx = np.random.choice(x_train.shape[0], replace=False, size=10000)

@@ -179,16 +179,16 @@ class FeatureVector:
         # -----> Then extend to all domains
         for i, domain in enumerate(self.domains):
             self.featuresFunctions[
-                i * self.n_features: (i + 1) * self.n_features
+                i * self.n_features : (i + 1) * self.n_features
             ] = featuresFunctionsUnique
             self.featuresOptArguments[
-                i * self.n_features: (i + 1) * self.n_features
+                i * self.n_features : (i + 1) * self.n_features
             ] = featuresOptArgumentsUnique
-            self.featuresRef[i * self.n_features: (i + 1) * self.n_features] = [
+            self.featuresRef[i * self.n_features : (i + 1) * self.n_features] = [
                 domain[0] + f for f in featuresRefUnique
             ]
             self.featuresComputationDomains[
-                i * self.n_features: (i + 1) * self.n_features
+                i * self.n_features : (i + 1) * self.n_features
             ] = [domain[0].upper()] * self.n_features
 
     def _intermComputation(self, signal_in_domain, fs):

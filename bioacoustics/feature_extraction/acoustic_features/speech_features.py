@@ -3,7 +3,7 @@ import numpy as np
 
 
 def labels(prefix, postfix, matrix):
-    """ Create a list of labels for feature names.
+    """Create a list of labels for feature names.
 
     Parameters
     ----------
@@ -24,7 +24,7 @@ def labels(prefix, postfix, matrix):
 
 
 def extract_speech_features(signal, sr=48000):
-    """ Extract MFCC and RASTA-PLPC speech features from a signal.
+    """Extract MFCC and RASTA-PLPC speech features from a signal.
 
     Parameters
     ----------

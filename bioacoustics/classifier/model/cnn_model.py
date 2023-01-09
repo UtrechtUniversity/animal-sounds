@@ -93,6 +93,7 @@ class CNN_model(AcousticModel):
         self.acoustic_model.add(
             Dense(self.num_labels, activation="softmax", kernel_initializer=init_mode)
         )
+
     # NOTE: REMOVE THIS PART?
     # def _compile(self):
     #     # Compile the model

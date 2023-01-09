@@ -93,7 +93,7 @@ def fft2barkmx(fft_length, fs, nfilts=0, band_width=1, min_freq=0, max_freq=0):
         f_bark_mid = min_bark + np.multiply(i, step_barks)
         lof = np.subtract(np.subtract(binbarks, f_bark_mid), 0.5)
         hif = np.add(np.subtract(binbarks, f_bark_mid), 0.5)
-        wts[i, 0: int(fft_length / 2) + 1] = np.power(
+        wts[i, 0 : int(fft_length / 2) + 1] = np.power(
             10,
             np.minimum(
                 0, np.divide(np.minimum(hif, np.multiply(-2.5, lof)), band_width)
@@ -112,7 +112,7 @@ def rastafilt(x):
     for i in range(x.shape[0]):
         y1, zi = signal.lfilter(numer, 1, x[i, 0:4], axis=0, zi=zi * x[i, 0])
         y1 = y1 * 0
-        y2, _ = signal.lfilter(numer, denom, x[i, 4: x.shape[1]], axis=0, zi=zi)
+        y2, _ = signal.lfilter(numer, denom, x[i, 4 : x.shape[1]], axis=0, zi=zi)
         y[i, :] = np.append(y1, y2)
     return y
 
@@ -141,7 +141,7 @@ def dolpc(x, modelorder=8):
             y_tmp, e_tmp, _ = spectrum.LEVINSON(
                 r[:, i], modelorder, allow_singularity=True
             )
-            y[i, 1: modelorder + 1] = y_tmp
+            y[i, 1 : modelorder + 1] = y_tmp
             e[i, 0] = e_tmp
 
     y = np.divide(y.T, np.add(np.tile(e.T, (modelorder + 1, 1)), 1e-8))
@@ -333,7 +333,7 @@ def fft2melmx(
         hislope = np.divide(
             np.subtract(fs_tmp[2], fftfrqs), np.subtract(fs_tmp[2], fs_tmp[1])
         )
-        wts[i, 0: int(fft_length / 2) + 1] = np.maximum(
+        wts[i, 0 : int(fft_length / 2) + 1] = np.maximum(
             0, np.minimum(loslope, hislope)
         )
 
@@ -342,7 +342,7 @@ def fft2melmx(
             np.diag(
                 np.divide(
                     2,
-                    np.subtract(binfrqs[2: int(nfilts) + 2], binfrqs[0: int(nfilts)]),
+                    np.subtract(binfrqs[2 : int(nfilts) + 2], binfrqs[0 : int(nfilts)]),
                 )
             ),
             wts,
@@ -401,7 +401,7 @@ def postaud(x, fmax, fbtype="bark", broaden=0):
     elif fbtype == "htkmel" or fbtype == "fcmel":
         bandcfhz = mel2hz(np.linspace(0, hz2mel(fmax, htk=True), nfpts), htk=True)
 
-    bandcfhz = bandcfhz[broaden: (nfpts - broaden)]
+    bandcfhz = bandcfhz[broaden : (nfpts - broaden)]
 
     fsq = np.power(bandcfhz, 2)
     ftmp = np.add(fsq, 1.6e5)
@@ -416,12 +416,12 @@ def postaud(x, fmax, fbtype="bark", broaden=0):
     if broaden:
         y = np.zeros((z.shape[0] + 2, z.shape[1]))
         y[0, :] = z[0, :]
-        y[1: nbands + 1, :] = z
+        y[1 : nbands + 1, :] = z
         y[nbands + 1, :] = z[z.shape[0] - 1, :]
     else:
         y = np.zeros((z.shape[0], z.shape[1]))
         y[0, :] = z[1, :]
-        y[1: nbands - 1, :] = z[1: z.shape[0] - 1, :]
+        y[1 : nbands - 1, :] = z[1 : z.shape[0] - 1, :]
         y[nbands - 1, :] = z[z.shape[0] - 2, :]
 
     return y, eql
@@ -539,8 +539,8 @@ def lpc2spec(lpcas, nout=17, FMout=False):
                     tmp_F_list = np.append(tmp_F_list, dummy[i])
                     tmp_M_list = np.append(tmp_M_list, mags[ix[i]])
 
-            M[c, 0: tmp_M_list.shape[0]] = tmp_M_list
-            F[c, 0: tmp_F_list.shape[0]] = tmp_F_list
+            M[c, 0 : tmp_M_list.shape[0]] = tmp_M_list
+            F[c, 0 : tmp_F_list.shape[0]] = tmp_F_list
 
     return features, F, M
 
@@ -557,7 +557,7 @@ def deltas(x, w=9):
     )
 
     d = signal.lfilter(win, 1, xx, axis=1)
-    d = d[:, int(2 * hlen): int(2 * hlen + cols)]
+    d = d[:, int(2 * hlen) : int(2 * hlen + cols)]
     return d
 
 
@@ -634,7 +634,7 @@ def invpostaud(y, fmax, fbtype="bark", broaden=0):
     elif fbtype == "htkmel" or fbtype == "fcmel":
         bandcfhz = mel2hz(np.linspace(0, hz2mel(fmax, htk=True), nbands), htk=True)
 
-    bandcfhz = bandcfhz[broaden: (nbands - broaden)]
+    bandcfhz = bandcfhz[broaden : (nbands - broaden)]
 
     fsq = np.power(bandcfhz, 2)
     ftmp = np.add(fsq, 1.6e5)
@@ -650,7 +650,7 @@ def invpostaud(y, fmax, fbtype="bark", broaden=0):
         eql[-1] = eql[-2]
 
     x = np.divide(
-        x[broaden: (nbands - broaden + 1), :],
+        x[broaden : (nbands - broaden + 1), :],
         np.add(np.tile(eql.T, (nframes, 1)).T, 1e-8),
     )
 
@@ -722,7 +722,7 @@ def invaudspec(
             nfft, fs, nfilts, band_width, min_freq, max_freq, htk=True, constamp=False
         )
 
-    wts = wts[:, 0: int(nfft / 2 + 1)]
+    wts = wts[:, 0 : int(nfft / 2 + 1)]
 
     ww = np.matmul(wts.T, wts)
     itws = np.divide(
