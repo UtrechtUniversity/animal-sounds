@@ -33,4 +33,5 @@ jobs:
       - name: Check if documentation builds.
         run: |
           sudo apt-get install -y libsndfile-dev
+          poetry run sphinx-apidoc -o docs/source/ bioacoustics/
           cd docs; poetry run make html SPHINXOPTS="-W --keep-going"
