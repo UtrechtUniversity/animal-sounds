@@ -29,3 +29,13 @@ numba = "^0.56.4"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+max-line-length = 99
+
+[tool.flake8]
+ignore = ['E203', 'E402', 'W503']
+max-line-length = 99
+per-file-ignores = [
+    'bioacoustics/__init__.py:F401,F403 bioacoustics/feature_extraction/acoustic_features/features.py:F405',
+]

@@ -38,7 +38,7 @@
 
 import numpy as np
 from .tools import bestFFTlength
-from .featuresFunctions import *
+from .featuresFunctions import *  # noqa: F403
 
 
 class FeatureVector:
