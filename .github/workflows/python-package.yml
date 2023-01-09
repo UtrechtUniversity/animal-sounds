@@ -29,7 +29,7 @@ jobs:
           src: "./bioacoustics"
       - name: Lint with flake8
         run: |
-          python3.9 -m flake8 bioacoustics/
+          flake8 bioacoustics/
       - name: Check if documentation builds.
         run: |
           cd docs; make html SPHINXOPTS="-W --keep-going"
