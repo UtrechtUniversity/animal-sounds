@@ -32,4 +32,5 @@ jobs:
           poetry run flake8 bioacoustics/
       - name: Check if documentation builds.
         run: |
+          sudo apt-get install -y libsndfile-dev
           cd docs; poetry run make html SPHINXOPTS="-W --keep-going"
