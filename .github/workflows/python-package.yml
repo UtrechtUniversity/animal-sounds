@@ -10,15 +10,6 @@ on:
     branches: [ main ]
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Run black
-        uses: psf/black@stable
-        with:
-          options: "--check --verbose"
-          src: "./bioacoustics"
   build:
     runs-on: ubuntu-latest
     steps:
@@ -30,9 +21,14 @@ jobs:
           python-version: '3.9'
           cache: 'poetry'
       - name: Install dependencies
-        run: poetry install       
-        #      - name: Check if documentation builds.
-        #run: |
-        # python -m pip install --upgrade pip
-        # python -m pip install sphinx sphinx-rtd-theme sphinxcontrib-napoleon sphinx-autodoc-typehints
-        # cd docs; make html SPHINXOPTS="-W --keep-going"
+        run: poetry install
+      - name: Run black
+        uses: psf/black@stable
+          with:
+            options: "--check --verbose"
+            src: "./bioacoustics"
+      - name: Lint with flake8
+        run: flake8 bioacoustics
+      - name: Check if documentation builds.
+        run: |
+          cd docs; make html SPHINXOPTS="-W --keep-going"
