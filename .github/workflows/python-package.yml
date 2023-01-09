@@ -24,9 +24,9 @@ jobs:
         run: poetry install
       - name: Run black
         uses: psf/black@stable
-          with:
-            options: "--check --verbose"
-            src: "./bioacoustics"
+        with:
+          options: "--check --verbose"
+          src: "./bioacoustics"
       - name: Lint with flake8
         run: flake8 bioacoustics
       - name: Check if documentation builds.
