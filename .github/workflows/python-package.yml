@@ -32,4 +32,4 @@ jobs:
           poetry run flake8 bioacoustics/
       - name: Check if documentation builds.
         run: |
-          cd docs; make html SPHINXOPTS="-W --keep-going"
+          cd docs; poetry run make html SPHINXOPTS="-W --keep-going"
