@@ -28,6 +28,7 @@ sphinx-rtd-theme = "^1.1.1"
 sphinxcontrib-napoleon = "^0.7"
 flake8 = "^6.0.0"
 flake8-pyproject = "^1.2.2"
+pylint = "^2.15.10"
 
 
 [build-system]
