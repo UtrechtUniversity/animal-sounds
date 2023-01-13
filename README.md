@@ -41,16 +41,19 @@ The aim of this software is to classify Chimpanze vocalizations in audio recordi
 - Jelle Treep (h.j.treep@uu.nl)
 
 ### Dataset description
-The dataset for this project contains recordings in `.wav` format at 1 minute length and at a sample rate of 48000 samples/second. The recordings are taken at three locations:
-- Chimpanze sanctuary
-- Natural forest
-- Semi-natural Chimanze enclosures  
-The Chimpanze sanctuary and Natural forest are used for training and optimizing the classifiers. The Semi-natural Chimpanze recordings are used as an independent evaulation of the classifiers.
+The audio dataset collected in tropical forests of the Congo Basinand, and Semi-natural Chimanze enclosures in Cameroon. The recordings are taken at three locations:
+- Chimpanze sanctuary - Congo
+- Natural forest - Congo
+- Semi-natural Chimanze enclosures - Cameron 
+
+In a data augmentation process we also generated synthetic data from Congo dataset. The Chimpanze sanctuary and Natural forest are used for training and optimizing the classifiers. The Semi-natural Chimpanze recordings are used as an independent evaulation of the classifiers.
 
 |Dataset| # Chimpanze samples | # Background samples |
 | --- | --- | --- |
 | Sanctuary | 17.921 | 74.163 | 
 | Synthetic | 68.757 | 97.149 | 
+
+The dataset for this project contains recordings in `.wav` format at 1 minute length and at a sample rate of 48000 samples/second.
 
 ### Preprocessing 
 The datasets are labeled into 2 classes (Chimpanze & background) using [Raven Pro](https://ravensoundsoftware.com/software/) annotation software, and extracted from the original recordings. Find scripts [here](./bioacoustics/1_wav_processing/raven_to_wav).
