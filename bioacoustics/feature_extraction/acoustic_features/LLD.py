@@ -1,21 +1,38 @@
+"""Module for feature extraction from audio files."""
+
 import aiofiles
 import asyncio
 import librosa
 import numpy as np
 import pandas as pd
 
-from pathlib import Path
-from scipy.signal import butter, lfilter
-from sklearn import preprocessing
-
 from . import speech_features as sf
 
 from .tools import butter_bandpass_filter, extract_features
-from .config import Config
-from .features import FeatureVector
+
 
 # Low Level Descriptors
 class LLD:
+    """Extracting MFCC and RASTA-PLP features from audio files.
+
+    Parameters
+    ----------
+    file_set : list
+        List of audio files.
+    frame_length : int
+        Length of the FFT window.
+    hop_length : int
+        Number of samples between successive frames.
+    sr : int
+        Sampling rate of audio files.
+    bandpass_filter : tuple, optional
+        Tuple of low and high cut frequencies for bandpass filter.
+    config : dict, optional
+        Configuration dictionary.
+    features : list, optional
+        List of features to extract.
+    """
+
     def __init__(
         self,
         file_set,
@@ -52,6 +69,14 @@ class LLD:
         self.features = features
 
     async def extract(self):
+        """Schedule feature extraction tasks and return results.
+
+        Returns
+        -------
+        pd.DataFrame
+            Dataframe with extracted features.
+        """
+
         result = []
         for chunk in self.file_set:
             tasks = []
@@ -64,6 +89,18 @@ class LLD:
         return pd.concat(result)
 
     async def __open_wav_file(self, path):
+        """Open wav file and return signal.
+
+        Parameters
+        ----------
+        path : str
+            Path to audio file.
+
+        Returns
+        -------
+        np.ndarray
+            Array of audio signal.
+        """
         async with aiofiles.open(path, mode="br") as f:
             contents = await f.read()
             f.close()
@@ -75,14 +112,39 @@ class LLD:
 
     # extract speech features
     def extract_speech_features(self, frames):
+        """Extract speech features from frames.
+
+        Parameters
+        ----------
+        frames : np.ndarray
+            Array of frames.
+
+        Returns
+        -------
+        np.ndarray
+            Array of speech features.
+        """
+
         return np.apply_along_axis(sf.extract_speech_features, 1, frames)
 
     async def __extract_features(self, path):
+        """Extract features from audio file.
+
+        Parameters
+        ----------
+        path : str
+            Path to audio file.
+
+        Returns
+        -------
+        pd.DataFrame
+            Dataframe with extracted features.
+        """
         # filepath
         filepath = str(path)
 
         # this is the async part: wait for the IO reading
-        signal = await self.__open_wav_file(path)
+        signal = await self.__open_wav_file(filepath)
 
         # run bandpass filter if necessary
         if self.bandpass_filter:
@@ -108,7 +170,7 @@ class LLD:
 
         frames_no = np.shape(f)[1]
         # create meta data
-        meta_data = [[path, x] for x in range(frames_no)]
+        meta_data = [[filepath, x] for x in range(frames_no)]
 
         # transpose the frames table: rows = #frames, cols = samples
         learningData = f.T

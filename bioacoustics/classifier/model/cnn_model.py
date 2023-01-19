@@ -1,6 +1,5 @@
-from model.acoustic_model import AcousticModel
+from acoustic_model import AcousticModel
 
-import tensorflow as tf
 from tensorflow import keras
 
 from tensorflow.keras.models import Sequential
@@ -9,13 +8,12 @@ from tensorflow.keras.layers import Conv2D, MaxPooling2D
 from tensorflow.keras.callbacks import ModelCheckpoint
 from datetime import datetime
 from tensorflow.keras import regularizers
-from tensorflow.keras.metrics import Recall
-from tensorflow.keras.models import load_model
 from tensorflow.keras.constraints import MaxNorm
 
 
 class CNN_model(AcousticModel):
 
+    # NOTE: REMOVE THIS PART?
     # num_epochs = 10 #72 500
     # num_batch_size = 32
     # num_channels = 1
@@ -96,9 +94,13 @@ class CNN_model(AcousticModel):
             Dense(self.num_labels, activation="softmax", kernel_initializer=init_mode)
         )
 
+    # NOTE: REMOVE THIS PART?
     # def _compile(self):
     #     # Compile the model
-    #     self.acoustic_model.compile(loss='categorical_crossentropy', metrics=[Recall()], optimizer='adam')  # 'accuracy'
+    #     self.acoustic_model.compile(loss='categorical_crossentropy',
+    #                                 metrics=[Recall()],
+    #                                 optimizer='adam')
+    # # 'accuracy'
     #
     #     # Display model architecture summary
     #     self.acoustic_model.summary()
@@ -112,7 +114,7 @@ class CNN_model(AcousticModel):
         """
         checkpointer = ModelCheckpoint(
             filepath=file_path
-            + "_weights.best.cnn.hdf5",  #'saved_models/weights.best.basic_cnn.hdf5'
+            + "_weights.best.cnn.hdf5",  # 'saved_models/weights.best.basic_cnn.hdf5'
             verbose=1,
             save_best_only=True,
         )

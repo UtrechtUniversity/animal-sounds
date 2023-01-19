@@ -36,8 +36,8 @@
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL
 #
-# Please respect functions signature for them to work properly with the other classes feature(signal, [arg_opt1,
-# arg_opt2, arg_opt3, ...])
+# Please respect functions signature for them to work properly with the
+# other classes feature(signal, [arg_opt1, arg_opt2, arg_opt3, ...])
 
 # External library
 from math import sqrt
@@ -259,12 +259,12 @@ def rate_attack(signal, arg_dict):
     - roa: max(st - st-1/max_energy"""
     # NB: Goes faster than numpy implementation
     E_u = arg_dict["E_u"]
-    l = E_u[1:] - E_u[:-1]
+    delta_E = E_u[1:] - E_u[:-1]
     Emax = energy_maximum(signal, arg_dict)
     if np.isclose(Emax, 0):
         return 0
     else:
-        roa = np.max(l) / energy_maximum(signal, arg_dict)
+        roa = np.max(delta_E) / energy_maximum(signal, arg_dict)
     if np.isfinite(roa):
         return roa
     else:
@@ -280,12 +280,12 @@ def rate_decay(signal, arg_dict):
     - E_u: energy_u
     - roa: min(st+1 - st/max_energy"""
     E_u = arg_dict["E_u"]
-    l = E_u[1:] - E_u[:-1]
+    delta_E = E_u[1:] - E_u[:-1]
     Emax = energy_maximum(signal, arg_dict)
     if np.isclose(Emax, 0):
         return 0
     else:
-        rod = np.min(l) / Emax
+        rod = np.min(delta_E) / Emax
     if np.isfinite(rod):
         return rod
     else:
@@ -352,33 +352,6 @@ def kurtosis_(signal, arg_dict):
         return 0
 
 
-def u_of_e_max(signal, arg_dict):
-    E_u = arg_dict["E_u"]
-    u = arg_dict["u"]
-    f = u[np.where(E_u == np.max(E_u))[0][0]]
-    if np.isfinite(f):
-        return f
-    else:
-        return 0
-
-
-def u_of_u_mean(signal, arg_dict):
-    u = arg_dict["u"]
-    u_bar = u_mean(signal, arg_dict)
-    i = np.where(u < u_bar)[0]
-    try:
-        f = u[i[-1]]
-    except:
-        f = 0  # Case when u_bar was 0
-        # print('except too')
-        #  f = u[-1]
-
-    if np.isfinite(f):
-        return f
-    else:
-        return 0
-
-
 def minimum_signal(signal, arg_dict):
     m = np.min(signal)
     if np.isfinite(m):
@@ -419,36 +392,6 @@ def min_sur_mean(signal, arg_dict):
         else:
             print("min sur mean is not finite")
             return 0
-
-
-def where_min(signal, arg_dict):
-    u = arg_dict["u"]
-    m = minimum_signal(signal, arg_dict)
-    i = np.where(signal == m)[0]
-    try:
-        f = u[i[-1]]
-    except:
-        f = 0
-    if np.isfinite(f):
-        return f
-    else:
-        print("where min is not finite")
-        return 0
-
-
-def where_max(signal, arg_dict):
-    u = arg_dict["u"]
-    m = maximum_signal(signal, arg_dict)
-    i = np.where(signal == m)[0]
-    try:
-        f = u[i[-1]]
-    except:
-        f = 0
-    if np.isfinite(f):
-        return f
-    else:
-        print("where max is not finite")
-        return 0
 
 
 def shannon(signal, arg_dict):
@@ -520,14 +463,6 @@ def silence_ratio(signal, arg_dict):
         # print(signal)
         silent = np.where(signal == -100)[0]
         return len(silent) / len(signal)
-
-
-# def mfcc_vector(signal, arg_dict):
-#     n_coeff = arg_dict['n_coeff']
-#     appendEnergy = eval(arg_dict['appendEnergy'])
-#     fs = arg_dict['fs']
-#     winlen = arg_dict['window_length']
-#     return mfcc(signal, samplerate=fs, winlen=winlen, numcep=n_coeff, appendEnergy=appendEnergy)
 
 
 def threshold(data, threshmin, newval):

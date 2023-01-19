@@ -1,16 +1,43 @@
-import pandas as pd
 from . import rasta
 import numpy as np
 
 
-def extract_speech_features(signal, sr=48000):
-    # ====
-    # MFCC
-    # ====
+def labels(prefix, postfix, matrix):
+    """Create a list of labels for feature names.
 
-    # mfcc = rasta.melfcc(signal, fs=sr, max_freq=8000, n_mfcc=25, n_bands=24,
-    #     fbtype='fcmel', dcttype=1, usecmp=True, window_time=0.025, hop_time=0.010,
-    #     preemph=0, dither=1)
+    Parameters
+    ----------
+    prefix: str
+        The prefix of the label.
+    postfix: str
+        The postfix of the label.
+    matrix: np.ndarray
+        The matrix of features to create labels for.
+
+    Returns
+    -------
+    list:
+        A list of labels for the features dataset.
+    """
+
+    return [f"{prefix}[{x + 1}]_{postfix}" for x in range(matrix.shape[0])]
+
+
+def extract_speech_features(signal, sr=48000):
+    """Extract MFCC and RASTA-PLPC speech features from a signal.
+
+    Parameters
+    ----------
+    signal: np.ndarray
+        The signal to extract features from.
+    sr: int
+        The sample rate of the signal.
+
+    Returns
+    -------
+    dict:
+        A dictionary with all features.
+    """
 
     mfcc = rasta.melfcc(
         signal,
@@ -180,9 +207,7 @@ def extract_speech_features(signal, sr=48000):
     # ========
     # ASSEMBLY
     # ========
-    labels = lambda prefix, postfix, matrix: [
-        f"{prefix}[{x + 1}]_{postfix}" for x in range(matrix.shape[0])
-    ]
+
     row = np.array([])
     label_list = []
 

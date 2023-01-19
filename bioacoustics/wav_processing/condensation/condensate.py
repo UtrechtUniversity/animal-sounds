@@ -72,7 +72,8 @@ if __name__ == "__main__":
     elif Path(args["input"]).is_dir():
         parsed_input = Path(args["input"]).glob("*.WAV")
     else:
-        raise RuntimeError(f"input is not a file or folder")
+        input = eval(args["input"])
+        raise RuntimeError(f"{input} is not a file or folder")
 
     # collect frequencies of interest from CLI
     freqs = eval(args["frequencies"])
@@ -87,7 +88,7 @@ if __name__ == "__main__":
         max_vol = volume[1]
     else:
         raise RuntimeError(
-            f"volume must be a single value of tuple containing 2 values"
+            f"{volume} must be a single value of tuple containing 2 values"
         )
 
     # list used to collect the csv data

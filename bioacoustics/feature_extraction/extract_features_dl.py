@@ -1,4 +1,4 @@
-"""Script to extract features of .wav files using melspectrogram."""
+"""Extracting features of audio files using melspectrogram."""
 
 import glob
 import librosa
@@ -6,7 +6,6 @@ import pandas as pd
 import numpy as np
 import argparse
 import os
-import sys
 from acoustic_features.tools import butter_bandpass_filter
 from PIL import Image
 
@@ -68,7 +67,8 @@ def parse_arguments():
 def extract_features(
     fp, sample_rate, window_length, hop_length, n_mel, new_img_size, low_cut, high_cut
 ):
-    """Load audio from .wav file, filter it, and pass it to compute_melspectrogram_with_fixed_length() function .
+    """Load audio from .wav file, filter it, and pass it to function
+    compute_melspectrogram_with_fixed_length().
 
     Parameters
     ----------

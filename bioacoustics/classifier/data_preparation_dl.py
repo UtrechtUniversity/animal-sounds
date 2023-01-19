@@ -32,8 +32,7 @@ def read_features(features_path):
 
 def get_dl_format(df_features, labels):
     """Convert features and corresponding classification labels into numpy
-    arrays and categorical
-       values
+    arrays and categorical values
 
     Parameters
     ----------
@@ -62,11 +61,7 @@ def get_dl_format(df_features, labels):
     return x_values, yy_values
 
 
-def normalize_data(x_values,
-                   x_mean=None,
-                   x_std=None,
-                   normval_fp="",
-                   train_mode=True):
+def normalize_data(x_values, x_mean=None, x_std=None, normval_fp="", train_mode=True):
     """Normalize the given dataset
 
     Parameters
@@ -106,22 +101,21 @@ def get_dataset(features_path, without_label, fraction=1):
         Indicates if labels are available in the dataset.
         E.g. In test set no label could be available
     fraction: float
-         The percentage of given data that should be returned.
-         E.g. for hyper parameter optimization we use only 60% of the given
-         dataset
+        The percentage of given data that should be returned.
+        E.g. for hyper parameter optimization we use only 60% of the given
+        dataset
     Returns
     -------
     DataFrames:
-         x_frac, y_frac
+        x_frac, y_frac
     """
     df_features = read_features(features_path)
-    x_values = df_features[
-        df_features.columns.difference(["file_path", "label_1"])]
+    x_values = df_features[df_features.columns.difference(["file_path", "label_1"])]
     y_values = None if without_label else df_features["label_1"]
     x_values, y_values = get_dl_format(x_values, y_values)
 
-    x_frac = x_values[0: int(fraction * len(x_values))]
-    y_frac = y_values[0: int(fraction * len(y_values))]
+    x_frac = x_values[0 : int(fraction * len(x_values))]
+    y_frac = y_values[0 : int(fraction * len(y_values))]
 
     return x_frac, y_frac
 
@@ -143,19 +137,19 @@ def prepare_data_dl(
         Indicates if labels are available in the dataset.
         E.g. In test set no label could be available
     trained_model_path: str
-         The file path of a trained model.
-         E.g. for prediction purposes
+        The file path of a trained model.
+        E.g. for prediction purposes
     norm_val_dir: str
-         The file path of normalization values, created based on training and
-         used for test dataset.
+        The file path of normalization values, created based on training and
+        used for test dataset.
     fraction: float
-         The percentage of given data that should be returned.
-         E.g. for hyper parameter optimization we use only 60% of the given
-         dataset
+        The percentage of given data that should be returned.
+        E.g. for hyper parameter optimization we use only 60% of the given
+        dataset
     Returns
     -------
-    DataFrames:
-         X_train, y_train, X_test, y_test in four different dataframe
+    Dataframes:
+        X_train, y_train, X_test, y_test in four different dataframe
     """
 
     x_values, y_values = get_dataset(features_path, without_label, fraction)
@@ -166,14 +160,12 @@ def prepare_data_dl(
     if trained_model_path == "":  # prepare data for train model scenario
         # split dataset to train and test set
 
-        x_train = x_values[0: int(round((1 - test_size) * len(x_values)))]
-        y_train = y_values[0: int(round((1 - test_size) * len(y_values)))]
-        x_test = x_values[int(round((1 - test_size) * len(x_values))):]
-        y_test = y_values[int(round((1 - test_size) * len(x_values))):]
+        x_train = x_values[0 : int(round((1 - test_size) * len(x_values)))]
+        y_train = y_values[0 : int(round((1 - test_size) * len(y_values)))]
+        x_test = x_values[int(round((1 - test_size) * len(x_values))) :]
+        y_test = y_values[int(round((1 - test_size) * len(x_values))) :]
 
-        x_train = normalize_data(x_train,
-                                 normval_fp=normval_fp,
-                                 train_mode=True)
+        x_train = normalize_data(x_train, normval_fp=normval_fp, train_mode=True)
         normdf = pd.read_csv(normval_fp)
         x_test = normalize_data(
             x_test,

@@ -1,6 +1,8 @@
-"""Script of a class with 10 nn blocks"""
-from datetime import datetime
+"""A class for acoustic model with 10 nn blocks"""
+from acoustic_model import AcousticModel
+
 import tensorflow as tf
+import datetime as datetime
 from tensorflow import keras
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, BatchNormalization
@@ -8,13 +10,12 @@ from tensorflow.keras.layers import Activation, Dropout
 from tensorflow.keras.layers import Conv2D, AveragePooling2D
 from tensorflow.keras.layers import GlobalAveragePooling2D
 from tensorflow.keras.callbacks import ModelCheckpoint
-from tensorflow.keras import regularizers
 from tensorflow.keras.constraints import MaxNorm
-from model.acoustic_model import AcousticModel
 
 
 class CNN10Model(AcousticModel):
     """A class for acoustic model with 10 nn blocks"""
+
     num_labels = 2
 
     def __init__(self, *args):
@@ -58,7 +59,7 @@ class CNN10Model(AcousticModel):
                 input_shape=input_shape,
                 data_format=data_format,
                 padding="same",
-                #kernel_regularizer=regularizers.l2(l=0.1),  # 0.01
+                # kernel_regularizer=regularizers.l2(l=0.1),  # 0.01
                 kernel_initializer=init_mode,
                 kernel_constraint=MaxNorm(weight_constraint),
             )
@@ -80,7 +81,7 @@ class CNN10Model(AcousticModel):
         self._cnn_block(512, data_format, init_mode, weight_constraint)
         self._cnn_block(512, data_format, init_mode, weight_constraint)
         self.acoustic_model.add(AveragePooling2D(pool_size=2))
-        self.acoustic_model.add(Dropout(dropout_rate)) ## add new
+        self.acoustic_model.add(Dropout(dropout_rate))  # add new
         self.acoustic_model.add(GlobalAveragePooling2D())
         self.acoustic_model.add(Dropout(dropout_rate))  # Dropout(0.5)
 
@@ -96,17 +97,10 @@ class CNN10Model(AcousticModel):
         self.acoustic_model.add(Dropout(dropout_rate))  # new added
         # self.acoustic_model.add(Dense(256, activation='relu'))
         self.acoustic_model.add(
-            Dense(self.num_labels, activation="softmax",
-                  kernel_initializer=init_mode)
+            Dense(self.num_labels, activation="softmax", kernel_initializer=init_mode)
         )
 
-    def _train(self,
-               x_train,
-               y_train,
-               x_test,
-               y_test,
-               file_path, epochs,
-               batch_size):
+    def _train(self, x_train, y_train, x_test, y_test, file_path, epochs, batch_size):
         """Train a CNN model
         Parameters
         ----------
@@ -120,7 +114,7 @@ class CNN10Model(AcousticModel):
             save_best_only=True,
         )
 
-        callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=3)
+        callback = tf.keras.callbacks.EarlyStopping(monitor="loss", patience=3)
         start = datetime.now()
 
         print("self.acoustic_model", self.acoustic_model)
@@ -134,7 +128,7 @@ class CNN10Model(AcousticModel):
             validation_data=(x_test, y_test),
             shuffle=True,
             class_weight=weights,
-            callbacks=[checkpointer,callback],
+            callbacks=[checkpointer, callback],
             verbose=1,
         )
         self.plot_measures(history, file_path, "_CNN10")
@@ -142,18 +136,14 @@ class CNN10Model(AcousticModel):
         duration = datetime.now() - start
         print("Training completed in time: ", duration)
 
-    def _cnn_block(self,
-                   in_channels,
-                   data_format,
-                   init_mode,
-                   weight_constraint):
+    def _cnn_block(self, in_channels, data_format, init_mode, weight_constraint):
         self.acoustic_model.add(
             Conv2D(
                 filters=in_channels,
                 kernel_size=3,
                 data_format=data_format,
                 padding="same",
-                #kernel_regularizer=regularizers.l2(l=0.1),  # 0.01
+                # kernel_regularizer=regularizers.l2(l=0.1),  # 0.01
                 kernel_initializer=init_mode,
                 kernel_constraint=MaxNorm(weight_constraint),
             )
