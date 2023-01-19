@@ -41,7 +41,8 @@ The aim of this software is to classify Chimpanze vocalizations in audio recordi
 - Jelle Treep (h.j.treep@uu.nl)
 
 ### Dataset description
-The dataset for this project contains recordings in `.wav` format at 1 minute length and at a sample rate of 48000 samples/second. The recordings are taken at three locations in (or close to) the tropical rainforest of Cameroon and Congo:
+The initial dataset for this project contains recordings in `.wav` format at 1 minute length and at a sample rate of 48000 samples/second. The recordings are taken at three locations in (or close to) the tropical rainforest of Cameroon and Congo:
+
 - Chimpanze sanctuary - Congo
 - Natural forest - Congo
 - Semi-natural Chimanze enclosures - Cameron 
