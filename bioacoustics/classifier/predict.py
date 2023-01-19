@@ -4,20 +4,12 @@ from data_preparation_dl import prepare_data_dl
 from data_preparation_svm import prepare_data_svm
 from model.svm_model import SVM_model
 from model.cnn_model import CNN_model
-from model.cnn10_model import CNN10_model
+from model.cnn10_model import CNN10Model
 from model.cnn8_model import CNN8_model
 from model.cnn6_model import CNN6_model
-from model.resnet_model import RESNET_model
-
-# import statistics
+from model.cnn12_model import CNN12_model
 import os
 import argparse
-
-
-# import pandas as pd
-# from tensorflow.keras.applications import ResNet50
-# from tensorflow.keras.applications.resnet50 import preprocess_input
-# import sys
 
 
 def parse_arguments():
@@ -26,7 +18,9 @@ def parse_arguments():
 
     # File path to the data.
     parser.add_argument(
-        "--feature_dir", type=str, help="File path to the dataset of features"
+        "--feature_dir",
+        type=str,
+        help="File path to the dataset of features"
     )
 
     parser.add_argument(
@@ -35,7 +29,10 @@ def parse_arguments():
         help="File path to the mean and std values of trained data to normalize test dataset",
     )
     parser.add_argument(
-        "--model", type=str, default="cnn", help="machine learning model "
+        "--model",
+        type=str,
+        default="cnn10",
+        help="machine learning model "
     )
 
     parser.add_argument(
@@ -51,9 +48,17 @@ def parse_arguments():
         default=False,
         help="indicate if dataset is labeled",
     )
-    parser.add_argument("--output_dir", type=str, default=None, help="output dir")
     parser.add_argument(
-        "--num_channels", type=int, default=3, help="number of channels"
+        "--output_dir",
+        type=str,
+        default=None,
+        help="output dir"
+    )
+    parser.add_argument(
+        "--num_channels",
+        type=int,
+        default=1,
+        help="number of channels"
     )
 
     return parser
@@ -77,21 +82,19 @@ def main():
             args.feature_dir,
             without_label=args.without_label,
             trained_model_path=args.trained_model_path,
-            num_channels=args.num_channels,
-            normval_dir=args.normVal_dir,
+            norm_val_dir=args.normVal_dir,
         )
 
-    if args.model == "resnet":
-        s = RESNET_model()
-    elif args.model == "cnn":
+    if args.model == "cnn":
         s = CNN_model()
     elif args.model == "cnn10":
-        s = CNN10_model()
+        s = CNN10Model()
     elif args.model == "cnn8":
         s = CNN8_model()
     elif args.model == "cnn6":
         s = CNN6_model()
-
+    elif args.model == "cnn12":
+        s = CNN12_model()
     if args.model == "svm":
         s = SVM_model()
         dl_model = False
