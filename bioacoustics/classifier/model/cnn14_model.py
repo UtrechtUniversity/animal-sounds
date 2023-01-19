@@ -1,29 +1,17 @@
-"""A class for acoustic model with 10 nn blocks"""
-
-from acoustic_model import AcousticModel
+from model.acoustic_model import AcousticModel
 
 from tensorflow import keras
+import tensorflow as tf
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import (
-    Dense,
-    BatchNormalization,
-    Activation,
-    Dropout,
-    MaxPooling2D,
-    Flatten,
-)
-from tensorflow.keras.layers import (
-    Conv2D,
-)
+from tensorflow.keras.layers import Dense, BatchNormalization, Activation, Dropout
+from tensorflow.keras.layers import Conv2D, AveragePooling2D, GlobalAveragePooling2D
 from tensorflow.keras.callbacks import ModelCheckpoint
-from datetime import datetime
-
 from tensorflow.keras import regularizers
 from tensorflow.keras.constraints import MaxNorm
+from datetime import datetime
 
 
-class CNN2_model(AcousticModel):
-    """CNN2 model"""
+class CNN14_model(AcousticModel):
 
     num_labels = 2
 
@@ -40,7 +28,7 @@ class CNN2_model(AcousticModel):
         args[3]: bool
             Indicates if the number-of-channels is the first input or not
         """
-        super(CNN2_model, self).__init__()
+        super(CNN14_model, self).__init__()
 
         self.predicts = None
         if len(args) > 0:
@@ -67,38 +55,54 @@ class CNN2_model(AcousticModel):
                 input_shape=input_shape,
                 data_format=data_format,
                 padding="same",
-                kernel_regularizer=regularizers.l2(l=0.01),
-                kernel_initializer=init_mode,
-                kernel_constraint=MaxNorm(weight_constraint),
-            )
-        )
-        self.acoustic_model.add(
-            Conv2D(
-                filters=64,
-                kernel_size=3,
-                data_format=data_format,
-                padding="same",
-                kernel_regularizer=regularizers.l2(l=0.01),
+                kernel_regularizer=regularizers.l2(l=0.1),
                 kernel_initializer=init_mode,
                 kernel_constraint=MaxNorm(weight_constraint),
             )
         )
         self.acoustic_model.add(BatchNormalization())
         self.acoustic_model.add(Activation("relu"))
+        self._cnnBlock(64, data_format, init_mode, weight_constraint)
+        self.acoustic_model.add(AveragePooling2D(pool_size=2))
+        self.acoustic_model.add(Dropout(dropout_rate))  # Dropout(0.2)
+        self._cnnBlock(128, data_format, init_mode, weight_constraint)
+        self._cnnBlock(128, data_format, init_mode, weight_constraint)
+        self.acoustic_model.add(AveragePooling2D(pool_size=2))
+        self.acoustic_model.add(Dropout(dropout_rate))  # Dropout(0.2)
+        self._cnnBlock(256, data_format, init_mode, weight_constraint)
+        self._cnnBlock(256, data_format, init_mode, weight_constraint)
+        self.acoustic_model.add(AveragePooling2D(pool_size=2))
+        self.acoustic_model.add(Dropout(dropout_rate))  # Dropout(0.2)
 
-        self.acoustic_model.add(Dropout(dropout_rate))
-        self.acoustic_model.add(MaxPooling2D(pool_size=2))
-        self.acoustic_model.add(Flatten())
+        self._cnnBlock(512, data_format, init_mode, weight_constraint)
+        self._cnnBlock(512, data_format, init_mode, weight_constraint)
+        self.acoustic_model.add(AveragePooling2D(pool_size=2))
+        self.acoustic_model.add(Dropout(dropout_rate))  # Dropout(0.2)
+
+        self._cnnBlock(1024, data_format, init_mode, weight_constraint)
+        self._cnnBlock(1024, data_format, init_mode, weight_constraint)
+        self.acoustic_model.add(AveragePooling2D(pool_size=2))
+        self.acoustic_model.add(Dropout(dropout_rate))  # Dropout(0.2)
+
+        self._cnnBlock(2048, data_format, init_mode, weight_constraint)
+        self._cnnBlock(2048, data_format, init_mode, weight_constraint)
+        self.acoustic_model.add(AveragePooling2D(pool_size=2))
+        self.acoustic_model.add(Dropout(dropout_rate))  # Dropout(0.2)
+
+        self.acoustic_model.add(GlobalAveragePooling2D())
+        self.acoustic_model.add(Dropout(dropout_rate))  # Dropout(0.5)
+
         self.acoustic_model.add(
             Dense(
-                100,
+                2048,
                 activation="relu",
-                kernel_regularizer=regularizers.l2(l=0.01),
                 kernel_initializer=init_mode,
                 kernel_constraint=MaxNorm(weight_constraint),
             )
         )
-        self.acoustic_model.add(Dropout(dropout_rate))
+
+        self.acoustic_model.add(Dropout(dropout_rate))  # new added
+        # self.acoustic_model.add(Dense(256, activation='relu'))
         self.acoustic_model.add(
             Dense(self.num_labels, activation="softmax", kernel_initializer=init_mode)
         )
@@ -117,6 +121,8 @@ class CNN2_model(AcousticModel):
             verbose=1,
             save_best_only=True,
         )
+        callback = tf.keras.callbacks.EarlyStopping(monitor="loss", patience=3)
+
         start = datetime.now()
 
         print("self.acoustic_model", self.acoustic_model)
@@ -130,10 +136,25 @@ class CNN2_model(AcousticModel):
             validation_data=(X_test, y_test),
             shuffle=True,
             class_weight=weights,
-            callbacks=[checkpointer],
+            callbacks=[checkpointer, callback],
             verbose=1,
         )
-        self.plot_measures(history, file_path, "_CNN2")
+        self.plot_measures(history, file_path, "_CNN10")
 
         duration = datetime.now() - start
         print("Training completed in time: ", duration)
+
+    def _cnnBlock(self, in_channels, data_format, init_mode, weight_constraint):
+        self.acoustic_model.add(
+            Conv2D(
+                filters=in_channels,
+                kernel_size=3,
+                data_format=data_format,
+                padding="same",
+                kernel_regularizer=regularizers.l2(l=0.1),
+                kernel_initializer=init_mode,
+                kernel_constraint=MaxNorm(weight_constraint),
+            )
+        )
+        self.acoustic_model.add(BatchNormalization())
+        self.acoustic_model.add(Activation("relu"))

@@ -13,7 +13,7 @@ The aim of this software is to classify Chimpanze vocalizations in audio recordi
   - [Table of Contents](#table-of-contents)
   - [About the Project](#about-the-project)
     - [Dataset description](#dataset-description)
-    - [Processing](#processing)
+    - [Preprocessing](#preprocessing)
     - [Feature extraction](#feature-extraction)
     - [Classification](#classification)
     - [Built with](#built-with)
@@ -41,26 +41,30 @@ The aim of this software is to classify Chimpanze vocalizations in audio recordi
 - Jelle Treep (h.j.treep@uu.nl)
 
 ### Dataset description
-The dataset for this project contains recordings in `.wav` format at 1 minute length and at a sample rate of 48000 samples/second. The recordings are taken at three locations:
-- Chimpanze sanctuary
-- Natural forest
-- Semi-natural Chimanze enclosures  
-The Chimpanze sanctuary and Natural forest are used for training and optimizing the classifiers. The Semi-natural Chimpanze recordings are used as an independent evaulation of the classifiers.
+The initial dataset for this project contains recordings in `.wav` format at 1 minute length and at a sample rate of 48000 samples/second. The recordings are taken at three locations in (or close to) the tropical rainforest of Cameroon and Congo:
+
+- Chimpanze sanctuary - Congo
+- Natural forest - Congo
+- Semi-natural Chimanze enclosures - Cameron 
+
+### Preprocessing 
+1. The Chimpanze sanctuary recordings are labeled into 2 classes (Chimpanze & background) using [Raven Pro](https://ravensoundsoftware.com/software/) annotation software, and extracted from the original recordings. Find scripts [here](./bioacoustics/1_wav_processing/raven_to_wav).
+
+2. To speed up the labeling process we developed an energy-change based algorithm to filter out irrelevant parts of the recordings, see [Condensation](./bioacoustics/1_wav_processing/condensation). This was done after a first labelling effort. After this another labelling effort took place on the condensed files.
+
+3. To increase and diversify our training set we have created synthetic samples by embedding the sanctuary vocalizations into the recorded jungle audio that is labeled as 'background', see [Synthetic data](./bioacoustics/1_wav_processing/syntetic_data).
+
+The labeled sections of audio signal from the steps above are then split into frames of 0.5 seconds length with 0.25 seconds overlap. This results in the following input dataset for training the classifiers: 
 
 |Dataset| # Chimpanze samples | # Background samples |
 | --- | --- | --- |
 | Sanctuary | 17.921 | 74.163 | 
 | Synthetic | 68.757 | 97.149 | 
 
-### Preprocessing 
-The datasets are labeled into 2 classes (Chimpanze & background) using [Raven Pro](https://ravensoundsoftware.com/software/) annotation software, and extracted from the original recordings. Find scripts [here](./bioacoustics/1_wav_processing/raven_to_wav).
-
-To speed up the labeling process we developed an energy-change based algorithm to filter out irrelevant parts of the recordings, see [Condensation](./bioacoustics/1_wav_processing/condensation).
-
-To increase and diversify our training set we have created synthetic samples by embedding the sanctuary vocalizations into the recorded jungle audio that is labeled as 'background', see [Synthetic data](./bioacoustics/1_wav_processing/syntetic_data).
+The recordings from the Semi-natural Chimpanze enclosures are used as an independent evaluation of the classifiers that are described below.
 
 ### Feature extraction
-We trained the models on frames of 0.5 seconds.  
+We trained the models on frames of 0.5 seconds.   
 Before calculating features we apply a Butterworth bandpass filter with low cutoff at 100 Hz and a high cutoff at 2000 Hz.  
 For classification using SVM we extract statistical features from different representations of the audio signal.  
 For classification using Deep learning we use a mel spectrogram representation as input. 
