@@ -7,7 +7,7 @@ import sys
 
 sys.path.append(".")
 
-from model.cnn10_model import CNN10_model
+from model.cnn10_model import CNN10Model
 from data_preparation_dl import prepare_data_dl
 
 import os
@@ -64,7 +64,7 @@ def parse_arguments():
 def create_model(init_mode="glorot_uniform", dropout_rate=0.2, weight_constraint=3):
     # """Make a CNN model"""
 
-    s = CNN10_model(64, 64, 1, True)
+    s = CNN10Model(64, 64, 1, True)
 
     model = s.make_model(
         init_mode=init_mode,

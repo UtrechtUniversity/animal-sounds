@@ -4,10 +4,10 @@ from sklearn.model_selection import GridSearchCV
 from scikeras.wrappers import KerasClassifier
 import pandas as pd
 import sys
-
+from joblib import dump, load
 sys.path.append(".")
 
-from model.cnn10_model import CNN10_model
+from model.cnn10_model import CNN10Model
 from data_preparation_dl import prepare_data_dl
 
 import os
@@ -54,14 +54,14 @@ def parse_arguments():
     parser.add_argument(
         "--batch_size",
         type=int,
-        default=32,
+        default=16,
         help="batch size"
     )
 
     parser.add_argument(
         "--learning_rate",
         type=int,
-        default=0.001,
+        default=0.0001,
         help="learning rate"
     )
     return parser
@@ -76,7 +76,7 @@ args = parser.parse_args()
 def create_model(init_mode, dropout_rate, weight_constraint):
     # """Make a CNN model"""
 
-    s = CNN10_model(64, 64, 1, True)
+    s = CNN10Model(64, 64, 1, True)
     print("inside create_model init_mode", init_mode)
     print("inside create_model dropout_rate", dropout_rate)
     print("inside create_model weight_constraint", weight_constraint)
@@ -100,7 +100,7 @@ seed = 7
 tf.random.set_seed(seed)
 
 X_train, y_train, X_test, y_test = prepare_data_dl(
-    args.feature_dir, norm_val_dir=args.normVal_dir, fraction=0.6
+    args.feature_dir, norm_val_dir=args.normVal_dir, fraction=1
 )
 
 # create model
@@ -117,16 +117,16 @@ model = KerasClassifier(
 )
 
 # define the grid search parameters
-init_mode = ["glorot_uniform","uniform","he_normal"]
-weight_constraint = [1.0, 3.0, 5.0]
-dropout_rate = [0.2,0.5]
+init_mode = ["glorot_uniform"] #,"uniform","he_normal"
+weight_constraint = [3.0] #1.0, 3.0, 5.0
+dropout_rate = [0.2] #,0.5
 param_grid = dict(
     model__init_mode=init_mode,
     model__dropout_rate=dropout_rate,
     model__weight_constraint=weight_constraint,
 )
 
-grid = GridSearchCV(estimator=model, param_grid=param_grid, n_jobs=1, cv=3)
+grid = GridSearchCV(estimator=model, param_grid=param_grid, n_jobs=1, cv=3, refit=True)
 grid_result = grid.fit(X_train, y_train)
 
 # summarize results
@@ -142,3 +142,7 @@ pd.DataFrame(data=d).to_csv(args.output_dir + "_params.csv", index=False)
 
 d = {"best_score": [grid_result.best_score_], "best_params": [grid_result.best_params_]}
 pd.DataFrame(data=d).to_csv(args.output_dir + "_best_params.csv", index=False)
+
+## save model
+estimator = grid_result.best_estimator_
+dump(estimator, args.output_dir +"best_estimator.joblib")

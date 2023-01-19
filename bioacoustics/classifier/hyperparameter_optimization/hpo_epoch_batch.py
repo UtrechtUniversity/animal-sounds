@@ -6,7 +6,7 @@ import pandas as pd
 import sys
 sys.path.append('.')
 
-from model.cnn10_model import CNN10_model
+from model.cnn10_model import CNN10Model
 
 from data_preparation_dl import prepare_data_dl
 
@@ -53,7 +53,7 @@ def parse_arguments():
 def create_model():
     # """Make a CNN model"""
 
-    s = CNN10_model(64, 64, 1, True)
+    s = CNN10Model(64, 64, 1, True)
 
     c_model = s.make_model()
 
