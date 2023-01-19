@@ -62,6 +62,7 @@ def create_model(init_mode, dropout_rate, weight_constraint):
 
     return model
 
+
 if __name__ == "__main__":
     parser = parse_arguments()
     args = parser.parse_args()
@@ -100,7 +101,9 @@ if __name__ == "__main__":
         model__weight_constraint=weight_constraint,
     )
 
-    grid = GridSearchCV(estimator=model, param_grid=param_grid, n_jobs=1, cv=3, refit=True)
+    grid = GridSearchCV(
+        estimator=model, param_grid=param_grid, n_jobs=1, cv=3, refit=True
+    )
     grid_result = grid.fit(X_train, y_train)
 
     # summarize results
@@ -114,7 +117,10 @@ if __name__ == "__main__":
     d = {"mean": means, "stdev": stds, "param": params}
     pd.DataFrame(data=d).to_csv(args.output_dir + "_params.csv", index=False)
 
-    d = {"best_score": [grid_result.best_score_], "best_params": [grid_result.best_params_]}
+    d = {
+        "best_score": [grid_result.best_score_],
+        "best_params": [grid_result.best_params_],
+    }
     pd.DataFrame(data=d).to_csv(args.output_dir + "_best_params.csv", index=False)
 
     # save model
