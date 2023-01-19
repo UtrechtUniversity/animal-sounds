@@ -47,7 +47,6 @@ The initial dataset for this project contains recordings in `.wav` format at 1 m
 - Natural forest - Congo
 - Semi-natural Chimanze enclosures - Cameron 
 
-In a data augmentation process we also generated synthetic data from Congo dataset. The Chimpanze sanctuary and Natural forest are used for training and optimizing the classifiers. The Semi-natural Chimpanze recordings are used as an independent evaulation of the classifiers.
 
 |Dataset| # Chimpanze samples | # Background samples |
 | --- | --- | --- |
