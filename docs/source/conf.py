@@ -14,7 +14,13 @@ import os
 import sys
 import sphinx_rtd_theme
 sys.path.insert(0, os.path.abspath(os.path.join('..', '..')))
+sys.path.insert(0, os.path.abspath('../../bioacoustics/feature_extraction'))
+sys.path.insert(0, os.path.abspath('../../bioacoustics/classifier'))
+sys.path.insert(0, os.path.abspath('../../bioacoustics/classifier/model'))
+sys.path.insert(0, os.path.abspath('../../bioacoustics/wav_processing'))
+sys.path.insert(0, os.path.abspath('../../bioacoustics/wav_processing/condensation'))
 
+autodoc_mock_imports = ["tensorflow", "pydub", "scikeras"]
 
 # -- Project information -----------------------------------------------------
 

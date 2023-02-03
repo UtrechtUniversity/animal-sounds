@@ -18,9 +18,7 @@ def parse_arguments():
 
     # File path to the data.
     parser.add_argument(
-        "--feature_dir",
-        type=str,
-        help="File path to the dataset of features"
+        "--feature_dir", type=str, help="File path to the dataset of features"
     )
 
     parser.add_argument(
@@ -29,10 +27,7 @@ def parse_arguments():
         help="File path to the mean and std values of trained data to normalize test dataset",
     )
     parser.add_argument(
-        "--model",
-        type=str,
-        default="cnn10",
-        help="machine learning model "
+        "--model", type=str, default="cnn10", help="machine learning model "
     )
 
     parser.add_argument(
@@ -48,17 +43,9 @@ def parse_arguments():
         default=False,
         help="indicate if dataset is labeled",
     )
+    parser.add_argument("--output_dir", type=str, default=None, help="output dir")
     parser.add_argument(
-        "--output_dir",
-        type=str,
-        default=None,
-        help="output dir"
-    )
-    parser.add_argument(
-        "--num_channels",
-        type=int,
-        default=1,
-        help="number of channels"
+        "--num_channels", type=int, default=1, help="number of channels"
     )
 
     return parser

@@ -1,36 +1,30 @@
-from model.acoustic_model import AcousticModel
+"""A class for acoustic model with 10 nn blocks"""
 
-import tensorflow as tf
+from acoustic_model import AcousticModel
+
 from tensorflow import keras
-
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import (
     Dense,
     BatchNormalization,
     Activation,
     Dropout,
-    GlobalAveragePooling2D,
     MaxPooling2D,
     Flatten,
 )
 from tensorflow.keras.layers import (
     Conv2D,
-    AveragePooling2D,
-)  # AveragePooling2D, GlobalAveragePooling2D
+)
 from tensorflow.keras.callbacks import ModelCheckpoint
 from datetime import datetime
 
 from tensorflow.keras import regularizers
-from tensorflow.keras.metrics import Recall
-from tensorflow.keras.models import load_model
 from tensorflow.keras.constraints import MaxNorm
 
 
 class CNN2_model(AcousticModel):
+    """CNN2 model"""
 
-    # num_epochs = 10 #72 500
-    # num_batch_size = 32
-    # num_channels = 1
     num_labels = 2
 
     def __init__(self, *args):
@@ -109,24 +103,6 @@ class CNN2_model(AcousticModel):
             Dense(self.num_labels, activation="softmax", kernel_initializer=init_mode)
         )
 
-        # self.acoustic_model.add(GlobalAveragePooling2D())
-        # self.acoustic_model.add(Dropout(dropout_rate))  # Dropout(0.2)
-        # self.acoustic_model.add(
-        #     Dense(128, activation='relu', kernel_initializer=init_mode, kernel_constraint=MaxNorm(weight_constraint)))
-        #
-        # self.acoustic_model.add(Dropout(dropout_rate))  # new added
-        # # self.acoustic_model.add(Dense(256, activation='relu'))
-        # self.acoustic_model.add(Dense(self.num_labels, activation='softmax', kernel_initializer=init_mode))
-
-    # def _compile(self):
-    #     optimizer = keras.optimizers.Adam(lr=0.0001)
-    #
-    #     # Compile the model
-    #     self.acoustic_model.compile(loss='categorical_crossentropy', metrics=[Recall()], optimizer=optimizer)# optimizer='adam')  # 'accuracy'
-    #
-    #     # Display model architecture summary
-    #     self.acoustic_model.summary()
-
     def _train(self, X_train, y_train, X_test, y_test, file_path, epochs, batch_size):
         """Train a CNN model
         Parameters
@@ -135,13 +111,9 @@ class CNN2_model(AcousticModel):
                 file path to save the trained model
         """
 
-        # m = X_train.max()
-        # X_train = X_train / m
-        # X_test = X_test / m
-
         checkpointer = ModelCheckpoint(
             filepath=file_path
-            + "_weights.best.cnn.hdf5",  #'saved_models/weights.best.basic_cnn.hdf5'
+            + "_weights.best.cnn.hdf5",  # 'saved_models/weights.best.basic_cnn.hdf5'
             verbose=1,
             save_best_only=True,
         )

@@ -1,21 +1,11 @@
 import argparse
 import json
-import os
 import sys
 from pathlib import Path
-from random import sample, shuffle
+from random import shuffle
 
-import numpy as np
-import pandas as pd
-import soundfile as sf
-
-# this hacky bit allows us to include the Extractor
-# class from the extractor module in the condensation
-# folder
-script_path = os.path.realpath(os.path.dirname(__name__))
-os.chdir(script_path)
-sys.path.append("../condensation")
-from extractor import Extractor
+sys.path.append("..")
+from condensation.extractor import Extractor
 
 
 def parse_arguments():
@@ -69,7 +59,7 @@ if __name__ == "__main__":
 
             no_frames += counted_frames
             print(str(f), no_frames)
-        except:
+        except Exception:
             print("error")
         if no_frames > args["frames"]:
             break

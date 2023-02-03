@@ -1,3 +1,5 @@
+"""A class for acoustic model with 10 nn blocks"""
+
 from model.acoustic_model import AcousticModel
 
 from tensorflow import keras
@@ -6,19 +8,13 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, BatchNormalization, Activation, Dropout
 from tensorflow.keras.layers import Conv2D, AveragePooling2D, GlobalAveragePooling2D
 from tensorflow.keras.callbacks import ModelCheckpoint
-from datetime import datetime
-
 from tensorflow.keras import regularizers
-from tensorflow.keras.metrics import Recall
-
 from tensorflow.keras.constraints import MaxNorm
+from datetime import datetime
 
 
 class CNN12_model(AcousticModel):
 
-    # num_epochs = 10 #72 500
-    # num_batch_size = 32
-    # num_channels = 1
     num_labels = 2
 
     def __init__(self, *args):
@@ -107,14 +103,6 @@ class CNN12_model(AcousticModel):
             Dense(self.num_labels, activation="softmax", kernel_initializer=init_mode)
         )
 
-    # def _compile(self ): #learning_rate , optimizer
-    #     # Compile the model
-    #     #opt = keras.optimizers.Adam(learning_rate=learning_rate)
-    #     self.acoustic_model.compile(optimizer='adam',loss='categorical_crossentropy', metrics=[Recall()])  # 'accuracy' 'adam'
-    #
-    #     # Display model architecture summary
-    #     self.acoustic_model.summary()
-
     def _train(self, X_train, y_train, X_test, y_test, file_path, epochs, batch_size):
         """Train a CNN model
         Parameters
@@ -123,17 +111,13 @@ class CNN12_model(AcousticModel):
                 file path to save the trained model
         """
 
-        # m = X_train.max()
-        # X_train = X_train / m
-        # X_test = X_test / m
-
         checkpointer = ModelCheckpoint(
             filepath=file_path
-            + "_weights.best.cnn.hdf5",  #'saved_models/weights.best.basic_cnn.hdf5'
+            + "_weights.best.cnn.hdf5",  # 'saved_models/weights.best.basic_cnn.hdf5'
             verbose=1,
             save_best_only=True,
         )
-        callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=3)
+        callback = tf.keras.callbacks.EarlyStopping(monitor="loss", patience=3)
 
         start = datetime.now()
 
@@ -148,7 +132,7 @@ class CNN12_model(AcousticModel):
             validation_data=(X_test, y_test),
             shuffle=True,
             class_weight=weights,
-            callbacks=[checkpointer,callback],
+            callbacks=[checkpointer, callback],
             verbose=1,
         )
         self.plot_measures(history, file_path, "_CNN10")

@@ -1,16 +1,16 @@
 bioacoustics.wav\_processing package
 ====================================
 
-Submodules
-----------
+Subpackages
+-----------
 
-bioacoustics.wav\_processing.make\_chunks module
-------------------------------------------------
+.. toctree::
+   :maxdepth: 4
 
-.. automodule:: bioacoustics.wav_processing.make_chunks
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   bioacoustics.wav_processing.chunk_wav
+   bioacoustics.wav_processing.condensation
+   bioacoustics.wav_processing.raven_to_wav
+   bioacoustics.wav_processing.synthetic_data
 
 Module contents
 ---------------

@@ -53,7 +53,8 @@ class ProcessRaven:
     def read_raven(self):
         """Read Raven annotations .txt file.
 
-        Reads Raven annotations file as pandas dataframe and removes uppercase characters in column names
+        Reads Raven annotations file as pandas dataframe and
+        removes uppercase characters in column names
 
         Returns
         -------
@@ -70,7 +71,9 @@ class ProcessRaven:
     def compute_file_lengths(self, wav_path):
         """Compute file lenghts of .WAV files.
 
-        Lists .wav files from a specific folder, gets the length of the files in seconds and combines them in a dataframe
+        Lists .wav files from a specific folder,
+        gets the length of the files in seconds and
+        combines them in a dataframe
 
         Parameters
         ----------

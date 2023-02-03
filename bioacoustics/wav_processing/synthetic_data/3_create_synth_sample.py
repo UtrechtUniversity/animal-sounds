@@ -1,11 +1,9 @@
 import argparse
 import json
-from pathlib import Path
-from random import choice, shuffle
-
 import numpy as np
-import pandas as pd
-import soundfile as sf
+
+from pathlib import Path
+from random import choice
 from pydub import AudioSegment, effects
 
 

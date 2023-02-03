@@ -22,10 +22,11 @@ class AcousticModel(ABC):
 
     def _compile(self, learning_rate):
         """Compile acoustic model
+
         Parameters
         ----------
         learning_rate: float
-                Learning rate for adam optimizer
+            Learning rate for adam optimizer
         """
         optimizer = keras.optimizers.Adam(learning_rate=learning_rate) #, decay=0.001
 
@@ -47,46 +48,48 @@ class AcousticModel(ABC):
         y_test=None,
         file_path=None,
         epochs=5,
-        batch_size=32
-
+        batch_size=32,
     ):
         """Train acoustic model
-                Parameters
-                ----------
-                x_train: pandas.DataFrame
-                        A dataframe of training data
-                y_train: pandas.DataFrame
-                        A dataframe of data labels
-                x_test: pandas.DataFrame
-                        A dataframe of testing data
-                y_test: pandas.DataFrame
-                        A dataframe of testing labels
-                epochs: int
-                        The number of epochs
-                batch_size: int
-                        The batch size
-                file_path: str
-                        file path to save the trained model
+
+        Parameters
+        ----------
+        x_train: pandas.DataFrame
+            A dataframe of training data
+        y_train: pandas.DataFrame
+            A dataframe of data labels
+        x_test: pandas.DataFrame
+            A dataframe of testing data
+        y_test: pandas.DataFrame
+            A dataframe of testing labels
+        epochs: int
+            The number of epochs
+        batch_size: int
+            The batch size
+        file_path: str
+            file path to save the trained model
         """
 
     def _predict(self, x_test):
         """Apply the Acoustic model on x_test
-                Parameters
-                ----------
-                x_test: pandas.DataFrame
-                        A dataframe of testing data
+
+        Parameters
+        ----------
+        x_test: pandas.DataFrame
+            A dataframe of testing data
         """
         self.predicts = self.acoustic_model.predict(x_test)
         print("prediction is done!")
 
     def _load_model(self, file_path, dl_model):
         """Load the model from the given file path
+
         Parameters
         ----------
         file_path: str
-                file path of the trained model
+            file path of the trained model
         dl_model: bool
-                indicates if it is a deep-learning model or not
+           indicates if it is a deep-learning model or not
         """
         if dl_model:
             self.acoustic_model = load_model(file_path)
@@ -99,23 +102,24 @@ class AcousticModel(ABC):
         dropout_rate=0.2,
         weight_constraint=3,
         learning_rate=0.001,
-        compile_model=True
+        compile_model=True,
     ):
         """Make a model with the given configuration and compile it in case of
         compile_model=True
-                Parameters
-                ----------
-                init_mode: str
-                        statistical distribution or function to use for
-                        initialising the weights.
-                dropout_rate: float
-                        drop-out rate
-                weight_constraint: float
-                        weight constraint
-                learning_rate: float
-                        learning rate for the optimizer, in our case adam.
-                compile_model: bool
-                        indicates if the model needs to be compiled or not
+
+        Parameters
+        ----------
+        init_mode: str
+            statistical distribution or function to use for
+            initialising the weights.
+        dropout_rate: float
+            drop-out rate
+        weight_constraint: float
+            weight constraint
+        learning_rate: float
+            learning rate for the optimizer, in our case adam.
+        compile_model: bool
+            indicates if the model needs to be compiled or not
         """
         self._make_cnn_model(init_mode, dropout_rate, weight_constraint)
         if compile_model:
@@ -126,31 +130,30 @@ class AcousticModel(ABC):
         self, x_train, y_train, x_test, y_test, file_path, epochs, batch_size
     ):
         """Train a model and make a prediction on test dataset
-                        Parameters
-                        ----------
-                        x_train: pandas.DataFrame
-                                A dataframe of training data
-                        y_train: pandas.DataFrame
-                                A dataframe of data labels
-                        x_test: pandas.DataFrame
-                                A dataframe of testing data
-                        y_test: pandas.DataFrame
-                                A dataframe of testing labels
-                        file_path: str
-                                file path to save the trained model
-                        epochs: int
-                                The number of epochs
-                        batch_size: int
-                                The batch size
-
+        Parameters
+        ----------
+        x_train: pandas.DataFrame
+            A dataframe of training data
+        y_train: pandas.DataFrame
+            A dataframe of data labels
+        x_test: pandas.DataFrame
+            A dataframe of testing data
+        y_test: pandas.DataFrame
+            A dataframe of testing labels
+        file_path: str
+            file path to save the trained model
+        epochs: int
+            The number of epochs
+        batch_size: int
+            The batch size
         """
-        self._train(x_train, y_train, x_test, y_test, file_path,
-                    epochs, batch_size)
+        self._train(x_train, y_train, x_test, y_test, file_path, epochs, batch_size)
         self._predict(x_test)
 
     def predict_model(self, x_test, file_path, dl_model):
 
         """Load a trained model and make a prediction
+
         Parameters
         ----------
         x_test: pandas.DataFrame
@@ -163,14 +166,13 @@ class AcousticModel(ABC):
         self._load_model(file_path, dl_model)
         self._predict(x_test)
 
-    def save_results(
-        self, y_test, file_path, predicts_only=False
-    ):
+    def save_results(self, y_test, file_path, predicts_only=False):
         """Save predictions of the test dataset
+
         Parameters
         ----------
         y_test: pandas.DataFrame
-             A dataframe of testing labels
+            A dataframe of testing labels
         file_path: str
             file path to save the predictions
         predicts_only: bool
@@ -190,14 +192,15 @@ class AcousticModel(ABC):
 
     def plot_measures(self, history, file_path, title=""):
         """Summarize history for recall
-                Parameters
-                ----------
-                history: tf.keras.callbacks.History
-                     model history
-                file_path: str
-                    file path to save the image of the graph
-                title: str
-                    Title of the graph
+
+        Parameters
+        ----------
+        history: tf.keras.callbacks.History
+            model history
+        file_path: str
+            file path to save the image of the graph
+        title: str
+            Title of the graph
         """
         # summarize history for loss
         plt.plot(history.history['loss'])

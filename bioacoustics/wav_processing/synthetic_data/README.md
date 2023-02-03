@@ -46,13 +46,14 @@ The first script `1_collect_background.py` reads any number of Raven annotation 
 $ python 1_collect_background.py \
     --input_dir './test_data/recordings/' \
     --annotation_dir './test_data' \
-    --output_dir './test_data/results/background'
+    --output_dir './test_data/results/background' \
+    --one_file 'False'
 ```
-where `--input_dir` denotes the folder that contains the jungle recordings, `--annotation_dir` denotes the folder with the Raven annotation files and `--output_dir` denotes the folder in which the scripts collects the background noise fragments.
+where `--input_dir` denotes the folder that contains the jungle recordings, `--annotation_dir` denotes the folder with the Raven annotation files and `--output_dir` denotes the folder in which the scripts collects the background noise fragments. '--one_file' determines whether output is saved in one file or multiple files (default). 
 
 ### Step 2
 
-The second script, `2_create_overview.py` takes an input set of WAV files and registers their absolute filepaths and their duration. It produces a json file containing these registrations. In the next step we need such overviews for the set of background noise fragments and vocalizations so we can mix and match properly. 
+The second script, `2_create_overview.py` takes an input set of WAV files and registers their absolute filepaths and their duration. It produces a json file containing these registrations. In the next step we need such overviews for the set of background noise fragments and vocalizations so we can mix and match properly.
 
 Provided you have executed the previous step on the test data, you can run the second script like this:
 ```
@@ -71,7 +72,7 @@ $ python 2_create_overview.py \
 
 In the third and final step, performed by the `3_create_synth_sample.py` script, we mix the vocalizations into the background fragments. Per vocalization a suitable candidate from the background collection is randomly selected. In case the algorithm can't find a suitable candidate (because the duration of the vocalization is too long), the vocalization is chopped up into smaller fragments and the selection is repeated for these smaller fragments.
 
-Per vocalization 4 new versions are created in which the loudness of the vocalization is increasingly dampened. Every version gets its own numerical suffix, denoting the amount of dampening in dB, multiplied by 10. 
+Per vocalization 4 new versions are created in which the loudness of the vocalization is increasingly dampened. Every version gets its own numerical suffix, denoting the amount of dampening in dB, multiplied by 10.
 
 If we continue our test example, we run the third script like this:
 ```
@@ -84,9 +85,8 @@ $ python 3_create_synth_sample.py \
 ### Shell script
 A convenient shell script that runs all the demonstration steps consecutively can be found in this folder as well, and can be executed with:
 ```
-$ ./synth_pipeline.sh 
+$ ./synth_pipeline.sh
 ```
 
 ## Remarks
 Dampening the vocalization can be done to a certain extent. When the volume of the vocalizations is reduced too much, this sometimes leads to unusable samples.
-

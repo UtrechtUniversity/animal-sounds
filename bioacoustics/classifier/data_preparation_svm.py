@@ -1,3 +1,4 @@
+"""Data preparation for SVM classifier."""
 import pandas as pd
 import numpy as np
 import glob
@@ -9,15 +10,6 @@ from sklearn.svm import SVC
 from sklearn.model_selection import StratifiedKFold
 from sklearn.feature_selection import RFECV
 from sklearn.ensemble import ExtraTreesClassifier
-from sklearn.model_selection import cross_val_score
-from sklearn.model_selection import RepeatedStratifiedKFold
-from sklearn.feature_selection import RFE
-from sklearn.linear_model import LogisticRegression
-from sklearn.linear_model import Perceptron
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.ensemble import GradientBoostingClassifier
-from sklearn.pipeline import Pipeline
 from matplotlib import pyplot
 from pickle import dump, load
 
@@ -441,7 +433,7 @@ def prepare_data_svm(features_path, output_dir, trained_model_path=""):
         # recursive_features(x_train, y_train, temp_x_test.columns, output_dir)
 
         # normalize first time for feature selection purposes
-        x_train_tmp = normalize_fit(x_train.to_numpy(), output_dir, scaler_dir)
+        x_train_tmp = normalize_fit(x_train.to_numpy(), output_dir)
         model = feature_importance(x_train_tmp, y_train)
         x_train, x_test = feature_selection(
             x_train.to_numpy(),

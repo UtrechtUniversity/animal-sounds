@@ -1,4 +1,4 @@
-"""Script to apply a model on a set of features_old and make a prediction"""
+"""Script to train and test a model on a set of features"""
 
 from data_preparation_dl import prepare_data_dl
 from data_preparation_svm import prepare_data_svm
@@ -21,9 +21,7 @@ def parse_arguments():
 
     # File path to the data.
     parser.add_argument(
-        "--feature_dir",
-        type=str,
-        help="File path to the dataset of features"
+        "--feature_dir", type=str, help="File path to the dataset of features"
     )
 
     parser.add_argument(
@@ -32,37 +30,20 @@ def parse_arguments():
         help="File path to the mean and std values of trained data to normalize test dataset",
     )
     parser.add_argument(
-        "--model",
-        type=str,
-        default="cnn10",
-        help="machine learning model "
+        "--model", type=str, default="cnn10", help="machine learning model "
     )
 
-    parser.add_argument(
-        "--output_dir",
-        type=str,
-        default=None,
-        help="output dir"
-    )
+    parser.add_argument("--output_dir", type=str, default=None, help="output dir")
 
-    ##### params for hyperparameter optimization
+    # params for hyperparameter optimization
     parser.add_argument(
-        "--nrow_input",
-        type=int,
-        default=64,
-        help="first dimension of input"
+        "--nrow_input", type=int, default=64, help="first dimension of input"
     )
     parser.add_argument(
-        "--ncol_input",
-        type=int,
-        default=64,
-        help="second dimension of input"
+        "--ncol_input", type=int, default=64, help="second dimension of input"
     )
     parser.add_argument(
-        "--num_channels",
-        type=int,
-        default=1,
-        help="number of channels"
+        "--num_channels", type=int, default=1, help="number of channels"
     )
     parser.add_argument(
         "--channel_first",
@@ -71,42 +52,18 @@ def parse_arguments():
         help="indicate if the channel is the first dimension",
     )
 
-    parser.add_argument(
-        "--epochs",
-        type=int,
-        default=5,
-        help="number of epochs"
-    )
-    parser.add_argument(
-        "--batch_size",
-        type=int,
-        default=32,
-        help="batch size"
-    )
+    parser.add_argument("--epochs", type=int, default=5, help="number of epochs")
+    parser.add_argument("--batch_size", type=int, default=32, help="batch size")
 
+    parser.add_argument("--dropout_rate", type=float, default=0.2, help="dropout rate")
     parser.add_argument(
-        "--dropout_rate",
-        type=float,
-        default=0.2,
-        help="dropout rate"
+        "--weight_constraint", type=int, default=3, help="weight constraint"
     )
     parser.add_argument(
-        "--weight_constraint",
-        type=int,
-        default=3,
-        help="weight constraint"
+        "--learning_rate", type=float, default=0.001, help="learning rate"
     )
     parser.add_argument(
-        "--learning_rate",
-        type=float,
-        default=0.001,
-        help="learning rate"
-    )
-    parser.add_argument(
-        "--init_mode",
-        type=str,
-        default="glorot_uniform",
-        help="init mode"
+        "--init_mode", type=str, default="glorot_uniform", help="init mode"
     )
     return parser
 
