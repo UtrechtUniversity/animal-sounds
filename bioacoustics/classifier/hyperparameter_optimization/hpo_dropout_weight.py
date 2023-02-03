@@ -117,9 +117,9 @@ model = KerasClassifier(
 )
 
 # define the grid search parameters
-init_mode = ["glorot_uniform"] #,"uniform","he_normal"
-weight_constraint = [3.0] #1.0, 3.0, 5.0
-dropout_rate = [0.2] #,0.5
+init_mode = ["glorot_uniform","uniform","he_normal"]
+weight_constraint = [1.0, 3.0, 5.0]
+dropout_rate = [0.2, 0.5]
 param_grid = dict(
     model__init_mode=init_mode,
     model__dropout_rate=dropout_rate,

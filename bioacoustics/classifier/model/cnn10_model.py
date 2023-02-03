@@ -58,7 +58,7 @@ class CNN10Model(AcousticModel):
                 input_shape=input_shape,
                 data_format=data_format,
                 padding="same",
-                #kernel_regularizer=regularizers.l2(l=0.1),  # 0.01
+                kernel_regularizer=regularizers.l2(l=0.01),  # 0.01
                 kernel_initializer=init_mode,
                 kernel_constraint=MaxNorm(weight_constraint),
             )
@@ -153,7 +153,7 @@ class CNN10Model(AcousticModel):
                 kernel_size=3,
                 data_format=data_format,
                 padding="same",
-                #kernel_regularizer=regularizers.l2(l=0.1),  # 0.01
+                kernel_regularizer=regularizers.l2(l=0.01),  # 0.01
                 kernel_initializer=init_mode,
                 kernel_constraint=MaxNorm(weight_constraint),
             )

@@ -10,7 +10,6 @@ from tensorflow import keras
 from tensorflow.keras.metrics import Recall
 
 
-
 class AcousticModel(ABC):
     """Base class for creating acoustic models"""
 
@@ -28,12 +27,12 @@ class AcousticModel(ABC):
         learning_rate: float
                 Learning rate for adam optimizer
         """
-        optimizer = keras.optimizers.Adam(learning_rate=learning_rate, decay=0.001)
+        optimizer = keras.optimizers.Adam(learning_rate=learning_rate) #, decay=0.001
 
         # Compile the model
         self.acoustic_model.compile(
-            loss="categorical_crossentropy",
-            metrics=[Recall()],
+            loss="binary_crossentropy", #"categorical_crossentropy"
+            metrics=['accuracy'], #Recall()
             optimizer=optimizer
         )
 
@@ -200,21 +199,18 @@ class AcousticModel(ABC):
                 title: str
                     Title of the graph
         """
-        plt.plot(history.history["recall"])
-        plt.plot(history.history["val_recall"])
-        plt.title("model recall " + title)
-        plt.ylim([0, 1])
-        plt.ylabel("recall")
-        plt.xlabel("epoch")
-        plt.legend(["train", "val"], loc="upper left")
-        fp_recall = os.path.join(file_path, "recall.png")
-        plt.savefig(fp_recall)
-        # # summarize history for loss
-        # plt.plot(history.history['loss'])
-        # plt.plot(history.history['val_loss'])
-        # plt.title('model loss')
-        # plt.ylabel('loss')
-        # plt.xlabel('epoch')
-        # plt.legend(['train', 'val'], loc='upper left')
-        # fp_loss = os.path.join(file_path, 'loss.png')
-        # plt.savefig(fp_loss)
+        # summarize history for loss
+        plt.plot(history.history['loss'])
+        plt.plot(history.history['val_loss'])
+        plt.title('model loss')
+        plt.ylabel('loss')
+        plt.xlabel('epoch')
+        plt.legend(['train', 'val'], loc='upper left')
+        fp_loss = os.path.join(file_path, 'loss.png')
+        plt.savefig(fp_loss)
+
+        # convert the history.history dict to a pandas DataFrame:
+        hist_df = pd.DataFrame(history.history)
+        hist_csv_file = os.path.join(file_path, "history.csv")
+        with open(hist_csv_file, mode='w') as f:
+            hist_df.to_csv(f)
