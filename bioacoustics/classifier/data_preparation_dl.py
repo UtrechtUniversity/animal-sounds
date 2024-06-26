@@ -1,4 +1,5 @@
 """Script to prepare train and test data to feed into a model"""
+
 import glob
 import os
 import numpy as np

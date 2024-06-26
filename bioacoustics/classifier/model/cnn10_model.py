@@ -1,4 +1,5 @@
 """A class for acoustic model with 10 nn blocks"""
+
 from acoustic_model import AcousticModel
 
 import tensorflow as tf
@@ -59,7 +60,6 @@ class CNN10Model(AcousticModel):
                 input_shape=input_shape,
                 data_format=data_format,
                 padding="same",
-
                 kernel_regularizer=regularizers.l2(l=0.01),
                 kernel_initializer=init_mode,
                 kernel_constraint=MaxNorm(weight_constraint),

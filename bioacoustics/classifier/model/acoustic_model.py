@@ -1,4 +1,5 @@
 """Script of a base class for acoustic models"""
+
 import os
 from abc import ABC
 import pickle
@@ -28,13 +29,13 @@ class AcousticModel(ABC):
         learning_rate: float
             Learning rate for adam optimizer
         """
-        optimizer = keras.optimizers.Adam(learning_rate=learning_rate) #, decay=0.001
+        optimizer = keras.optimizers.Adam(learning_rate=learning_rate)  # , decay=0.001
 
         # Compile the model
         self.acoustic_model.compile(
-            loss="binary_crossentropy", #"categorical_crossentropy"
-            metrics=['accuracy'], #Recall()
-            optimizer=optimizer
+            loss="binary_crossentropy",  # "categorical_crossentropy"
+            metrics=["accuracy"],  # Recall()
+            optimizer=optimizer,
         )
 
         # Display model architecture summary
@@ -151,7 +152,6 @@ class AcousticModel(ABC):
         self._predict(x_test)
 
     def predict_model(self, x_test, file_path, dl_model):
-
         """Load a trained model and make a prediction
 
         Parameters
@@ -203,17 +203,17 @@ class AcousticModel(ABC):
             Title of the graph
         """
         # summarize history for loss
-        plt.plot(history.history['loss'])
-        plt.plot(history.history['val_loss'])
-        plt.title('model loss')
-        plt.ylabel('loss')
-        plt.xlabel('epoch')
-        plt.legend(['train', 'val'], loc='upper left')
-        fp_loss = os.path.join(file_path, 'loss.png')
+        plt.plot(history.history["loss"])
+        plt.plot(history.history["val_loss"])
+        plt.title("model loss")
+        plt.ylabel("loss")
+        plt.xlabel("epoch")
+        plt.legend(["train", "val"], loc="upper left")
+        fp_loss = os.path.join(file_path, "loss.png")
         plt.savefig(fp_loss)
 
         # convert the history.history dict to a pandas DataFrame:
         hist_df = pd.DataFrame(history.history)
         hist_csv_file = os.path.join(file_path, "history.csv")
-        with open(hist_csv_file, mode='w') as f:
+        with open(hist_csv_file, mode="w") as f:
             hist_df.to_csv(f)

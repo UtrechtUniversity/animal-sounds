@@ -1,4 +1,5 @@
 """ Module that uses scikit-learn for grid search on the dropout rate """
+
 import tensorflow as tf
 from sklearn.model_selection import GridSearchCV
 from scikeras.wrappers import KerasClassifier
@@ -61,6 +62,7 @@ def create_model(init_mode, dropout_rate, weight_constraint):
     )
 
     return model
+
 
 if __name__ == "__main__":
     parser = parse_arguments()
@@ -125,4 +127,3 @@ if __name__ == "__main__":
     # save model
     estimator = grid_result.best_estimator_
     dump(estimator, args.output_dir + "best_estimator.joblib")
-

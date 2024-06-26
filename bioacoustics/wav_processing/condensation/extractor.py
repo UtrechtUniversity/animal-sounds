@@ -83,7 +83,7 @@ class Extractor:
 
         # get all indexes of dbs rows of every band that we're
         # interested in
-        for (low, high) in freqs:
+        for low, high in freqs:
             idx_low = (np.abs(f - low)).argmin() - 1
             idx_low = 0 if idx_low < 0 else idx_low
             idx_high = (np.abs(f - high)).argmin() + 1

@@ -178,9 +178,9 @@ class FeatureVector:
             featuresRefUnique[i] = str(i_feature)
         # -----> Then extend to all domains
         for i, domain in enumerate(self.domains):
-            self.featuresFunctions[
-                i * self.n_features : (i + 1) * self.n_features
-            ] = featuresFunctionsUnique
+            self.featuresFunctions[i * self.n_features : (i + 1) * self.n_features] = (
+                featuresFunctionsUnique
+            )
             self.featuresOptArguments[
                 i * self.n_features : (i + 1) * self.n_features
             ] = featuresOptArgumentsUnique
@@ -240,15 +240,15 @@ class FeatureVector:
                     new_dictionary.update(
                         self.featuresOptArguments[i * self.n_features + j]
                     )
-                    self.featuresValues[
-                        i * self.n_features + j
-                    ] = self.featuresFunctions[i * self.n_features + j](
-                        signals[i], new_dictionary
+                    self.featuresValues[i * self.n_features + j] = (
+                        self.featuresFunctions[i * self.n_features + j](
+                            signals[i], new_dictionary
+                        )
                     )
                 # Otherwise directly compute feature value.
                 else:
-                    self.featuresValues[
-                        i * self.n_features + j
-                    ] = self.featuresFunctions[i * self.n_features + j](
-                        signals[i], self.intermValues
+                    self.featuresValues[i * self.n_features + j] = (
+                        self.featuresFunctions[i * self.n_features + j](
+                            signals[i], self.intermValues
+                        )
                     )

@@ -241,9 +241,7 @@ def energy_kurtosis(signal, arg_dict):
         E_kur = 0
     else:
         E_kur = (
-            (1 / len(signal) / 2)
-            * np.sum((E_u / len(signal) - E_bar) ** 4)
-            / E_bar**4
+            (1 / len(signal) / 2) * np.sum((E_u / len(signal) - E_bar) ** 4) / E_bar**4
         )
     if np.isfinite(E_kur):
         return E_kur
