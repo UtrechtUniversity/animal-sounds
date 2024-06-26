@@ -1,7 +1,5 @@
 # Feature extraction
-
-Feature extraction scripts are used to extract acoustic features from '.wav' files. 
-The output is two types of features that are input for the [classifiers](../classifier), i.e. svm and cnn.
+The modules in this directory are used to extract acoustic and/or deep learning features from '.wav' files. The features are used as input for the  [classifiers](../classifier), i.e. svm and cnn.
 
 ## Instructions
 
