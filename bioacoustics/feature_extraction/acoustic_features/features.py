@@ -36,10 +36,9 @@
 # The fact that you are presently reading this means that you have had
 # knowledge of the CeCILL
 
-from os.path import isfile
-from .featuresFunctions import *
+import numpy as np
 from .tools import bestFFTlength
-import json
+from .featuresFunctions import *  # noqa: F403
 
 
 class FeatureVector:
@@ -47,21 +46,42 @@ class FeatureVector:
     Feature vector object to compute and store features values for a given signal
     A feature vector object can be computed many times for various signals.
     It is a pattern.
-    The basic idea is to create a feature vector object as a 'pattern' of features to be computed on a dataset.
-    Only one feature vector is create, and it is computed as many times as there are data to analyze.
-    - pathToFeatureConfig: path to configuration file. Why do we need this path if the config object is passed as argument in __init__ ???
-    - domains: list of domains in which the features are to be cocmputed (as str). I.E. ['time', 'frequeny', 'cepstral']. Is automatically read from onfig object.
-    - n_domains: number of domains in whih the features are omputed (len of domains)
-    - n_features: number of features to compute IN ONE DOMAIN. /!\ /!\ /!\ /!\ /!\ (value set when _readFeaturesFunctions is called)
-    - featuresFunctions: functions needed to compute the features, read from config file when _readFeaturesFunctions is called
-    - intermValues: needed intermediate values, factorized to optimize computation times.
-    - featuresValues: value of all features, is of size (n_domains*n_features, ), init full of zeros in compute,
-    takes actual values when _computation is called in compute.
-    - featuresRef: ref of all features, is of size (n_domains*n_features, )
-    - featuresOptArguments: opt arguments for each feature function, is of size (n_domains*n_features, ), each element is None or a dict
-    - featuresComputationDomains: feature computation domain for each feature, is of size (n_domains*n_features, )
-    - _verbatim: how chatty do you want your computer to be?
-    - _readFeaturesFunctions: reads the feature vector "pattern" from config files, loads all the function, etc (proper init of the object needed before calling compute)
+    The basic idea is to create a feature vector object as a 'pattern' of
+    features to be computed on a dataset. Only one feature vector is created,
+    and it is computed as many times as there are data to analyze.
+
+    Parameters
+    ----------
+    config: Config object
+        Configuration object, containing all parameters needed to compute the features.
+    domains: list
+        domains in which the features are to be cocmputed (as str).
+        I.E. ['time', 'frequeny', 'cepstral']. Is automatically read from onfig object.
+    n_domains: int
+        number of domains in which the features are computed (len of domains)
+    n_features: int
+        number of features to compute IN ONE DOMAIN. Is automatically read from config object.
+    featuresFunctions: list
+        functions needed to compute the features,
+        read from config file when _readFeaturesFunctions is called
+    intermValues: dict
+        intermediate values, factorized to optimize computation times.
+        Init None, takes actual values when _computation is called.
+    featuresValues: np.array
+        value of all features, is of size (n_domains*n_features, ),
+        init None, takes actual values when _computation is called.
+    featuresRef:  np.array
+        ref of all features, is of size (n_domains*n_features, )
+    featuresOptArguments: np.array
+        optional arguments for each feature function, is of size (n_domains*n_features, ),
+        each element is None or a dict
+    featuresComputationDomains: np.array
+        feature computation domain for each feature, is of size (n_domains*n_features, )
+    _verbatim: int, default 0
+        how chatty do you want your computer to be?
+    _readFeaturesFunctions: method
+        reads the feature vector "pattern" from config files, loads all the function,
+        etc (proper init of the object needed before calling compute)
     """
 
     def __init__(self, config, verbatim=0):
@@ -86,8 +106,17 @@ class FeatureVector:
 
     def compute(self, signal, fs):
         """
-        Compute features from signal, according to configuration information given at __init__
-        /!\ signal is already in the proper bandwidth
+        Computes domain signals from original signals and starts
+        computation function to compute features values.
+
+        signal is already in the proper bandwidth
+
+        Parameters
+        ----------
+        signal: np.array
+            signal to compute features from
+        fs: int
+            sampling frequency of the signal
         """
 
         # Get signals for all domains
@@ -166,8 +195,13 @@ class FeatureVector:
         """
         Proceed to interm computation in one domain. Interm values are needed
         before computation (computation factorization)
-        - signal_in_domain : shape (length,) contains signal in the needed domain
-        - fs: sampling frequency
+
+        Parameters
+        ----------
+        signal_in_domain: np.array
+            shape (length,) contains signal in the needed domain
+        fs: int
+            sampling frequency
         """
         # /!\ intermValues for ONE domain. Need to recompute for each domain.
         self.intermValues = dict()
@@ -185,8 +219,14 @@ class FeatureVector:
     def _computation(self, signals, fs):
         """
         Compute featuresValues associated to self FeatureVector pattern
-        - signals : shape (n_domains,) contains signals in all the domains
-        - self.featuresValues is defined and set in this function
+        self.featuresValues is defined and set in this function
+
+        Parameters
+        ----------
+        signals: list of np.array
+            contains signals in all the domains, shape (n_domains, length)
+        fs: int
+            sampling frequency
         """
         for i, domain in enumerate(self.domains):
             # Compute needed interm values (needed for computation)

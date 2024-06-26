@@ -1,19 +1,22 @@
 # Feature extraction
 
-Feature extraction scripts are used to extract acoustic features from '.wav' files. 
-The output is two types of features that are input for the [classifiers](../classifier), i.e. svm and cnn.
+The modules in this directory are used to extract acoustic and/or deep learning features from '.wav' files. The features are used as input for the classifier ([step 3](../3_classifier)).
 
 ## Instructions
-###Todo: fix link
-[Installation instructions](https://github.com/UtrechtUniversity/animal-sounds/tree/documenation_svm#getting-started)
 
-## Feature extraction for Support Vector Machines
-We extract several feature sets from using:
+[Installation instructions](https://github.com/UtrechtUniversity/animal-sounds#getting-started)
+
+### Feature extraction for Support Vector Machines
+We extract several feature sets using:
+
 - a [python version](https://github.com/mystlee/rasta_py) of the [rasta-mat](https://www.ee.columbia.edu/~dpwe/resources/matlab/rastamat/) library.
 - an [Automatic Analysis Architecture](https://doi.org/10.5281/zenodo.1216028)
 
 For our analyses we chunk all recordings into 0.5 second frames (with 0.25 second overlap between the chunks).
-We apply a Butterworth bandpass filter for filtering audio between 100 and 2000.
+We apply a Butterworth bandpass filter for filtering audio between 100 and 2000 before extracting features. 
+We create MFCC and RASTA-PLPC low level descriptors (LLDs) from the filtered signal. For each horizontal band of the MFCC and RASTA-PLPC representation we calculate $\Delta$ and $\Delta^2$, and extract statistical features from the plain LLDs, $\Delta$ and $\Delta^2$.
+
+We extend the feature set with the features from an [Automatic Analysis Architecture](https://doi.org/10.5281/zenodo.1216028)
 
 The script results in a feature set of 1140 features per audio frame.
 

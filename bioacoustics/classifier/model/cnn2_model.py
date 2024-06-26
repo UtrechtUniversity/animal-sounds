@@ -1,28 +1,30 @@
-from model.acoustic_model import AcousticModel
+"""A class for acoustic model with 10 nn blocks"""
 
-import tensorflow as tf
+from acoustic_model import AcousticModel
+
 from tensorflow import keras
-
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, BatchNormalization, Activation, Dropout
 from tensorflow.keras.layers import (
-    Conv1D,
-    MaxPooling1D,
-)  # AveragePooling2D, GlobalAveragePooling2D
+    Dense,
+    BatchNormalization,
+    Activation,
+    Dropout,
+    MaxPooling2D,
+    Flatten,
+)
+from tensorflow.keras.layers import (
+    Conv2D,
+)
 from tensorflow.keras.callbacks import ModelCheckpoint
 from datetime import datetime
 
 from tensorflow.keras import regularizers
-from tensorflow.keras.metrics import Recall
-from tensorflow.keras.models import load_model
 from tensorflow.keras.constraints import MaxNorm
 
 
 class CNN2_model(AcousticModel):
+    """CNN2 model"""
 
-    # num_epochs = 10 #72 500
-    # num_batch_size = 32
-    # num_channels = 1
     num_labels = 2
 
     def __init__(self, *args):
@@ -59,38 +61,37 @@ class CNN2_model(AcousticModel):
 
         self.acoustic_model = Sequential()
         self.acoustic_model.add(
-            Conv1D(
-                filters=512,
-                kernel_size=10,
+            Conv2D(
+                filters=64,
+                kernel_size=3,
                 input_shape=input_shape,
                 data_format=data_format,
                 padding="same",
                 kernel_regularizer=regularizers.l2(l=0.01),
-                activation="relu",
                 kernel_initializer=init_mode,
                 kernel_constraint=MaxNorm(weight_constraint),
             )
         )
-        self.acoustic_model.add(MaxPooling1D(pool_size=4))
-
         self.acoustic_model.add(
-            Conv1D(
-                filters=512,
-                kernel_size=5,
-                input_shape=input_shape,
+            Conv2D(
+                filters=64,
+                kernel_size=3,
                 data_format=data_format,
                 padding="same",
                 kernel_regularizer=regularizers.l2(l=0.01),
-                activation="relu",
                 kernel_initializer=init_mode,
                 kernel_constraint=MaxNorm(weight_constraint),
             )
         )
-        self.acoustic_model.add(MaxPooling1D(pool_size=4))
+        self.acoustic_model.add(BatchNormalization())
+        self.acoustic_model.add(Activation("relu"))
 
+        self.acoustic_model.add(Dropout(dropout_rate))
+        self.acoustic_model.add(MaxPooling2D(pool_size=2))
+        self.acoustic_model.add(Flatten())
         self.acoustic_model.add(
             Dense(
-                256,
+                100,
                 activation="relu",
                 kernel_regularizer=regularizers.l2(l=0.01),
                 kernel_initializer=init_mode,
@@ -98,30 +99,9 @@ class CNN2_model(AcousticModel):
             )
         )
         self.acoustic_model.add(Dropout(dropout_rate))
-
-        self.acoustic_model.add(
-            Dense(
-                128,
-                activation="relu",
-                kernel_regularizer=regularizers.l2(l=0.01),
-                kernel_initializer=init_mode,
-                kernel_constraint=MaxNorm(weight_constraint),
-            )
-        )
-        self.acoustic_model.add(Dropout(dropout_rate))
-
         self.acoustic_model.add(
             Dense(self.num_labels, activation="softmax", kernel_initializer=init_mode)
         )
-
-    # def _compile(self):
-    #     optimizer = keras.optimizers.Adam(lr=0.0001)
-    #
-    #     # Compile the model
-    #     self.acoustic_model.compile(loss='categorical_crossentropy', metrics=[Recall()], optimizer=optimizer)# optimizer='adam')  # 'accuracy'
-    #
-    #     # Display model architecture summary
-    #     self.acoustic_model.summary()
 
     def _train(self, X_train, y_train, X_test, y_test, file_path, epochs, batch_size):
         """Train a CNN model
@@ -131,13 +111,9 @@ class CNN2_model(AcousticModel):
                 file path to save the trained model
         """
 
-        # m = X_train.max()
-        # X_train = X_train / m
-        # X_test = X_test / m
-
         checkpointer = ModelCheckpoint(
             filepath=file_path
-            + "_weights.best.cnn.hdf5",  #'saved_models/weights.best.basic_cnn.hdf5'
+            + "_weights.best.cnn.hdf5",  # 'saved_models/weights.best.basic_cnn.hdf5'
             verbose=1,
             save_best_only=True,
         )

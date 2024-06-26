@@ -1,21 +1,10 @@
 import argparse
-import json
-import os
 import sys
-from pathlib import Path
-from random import sample
-
-import numpy as np
 import pandas as pd
-import soundfile as sf
+from pathlib import Path
 
-# this hacky bit allows us to include the Extractor
-# class from the extractor module in the condensation
-# folder
-script_path = os.path.realpath(os.path.dirname(__name__))
-os.chdir(script_path)
-sys.path.append("../condensation")
-from extractor import Extractor
+sys.path.append("..")
+from condensation.extractor import Extractor
 
 
 def parse_arguments():
@@ -47,6 +36,13 @@ def parse_arguments():
         help="folder to collect the output (WAV fragments)",
     )
 
+    parser.add_argument(
+        "--one_file",
+        type=str,
+        default=False,
+        help="save output in one file (when True) or multiple files (default)",
+    )
+
     return parser
 
 
@@ -59,6 +55,8 @@ if __name__ == "__main__":
 
     parser = parse_arguments()
     args = vars(parser.parse_args())
+
+    one_file = args["one_file"]
 
     k = 0
 

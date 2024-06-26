@@ -1,11 +1,10 @@
 import librosa
 import librosa.filters
-import scipy
 import scipy.fftpack as fft
 from scipy import signal
 import numpy as np
-import matplotlib.pyplot as plt
 import spectrum
+import warnings
 
 
 def rastaplp(x, fs=16000, win_time=0.040, hop_time=0.020, dorasta=True, modelorder=8):
@@ -247,7 +246,7 @@ def melfcc(
 
     cepstra = lifter(cepstra, lift=lifterexp)
 
-    if useenergy == True:
+    if useenergy:
         cepstra[0, :] = logE
 
     return cepstra
@@ -338,7 +337,7 @@ def fft2melmx(
             0, np.minimum(loslope, hislope)
         )
 
-    if constamp == False:
+    if not constamp:
         wts = np.matmul(
             np.diag(
                 np.divide(
@@ -429,7 +428,9 @@ def postaud(x, fmax, fbtype="bark", broaden=0):
 
 
 def spec2cep(spec, ncep, dcttype):
-    nrow, ncol = spec.shape[0], spec.shape[1]
+    nrow = spec.shape[0]
+
+    # ncol = spec.shape[1]
     dctm = np.zeros((ncep, nrow))
 
     if dcttype == 2 or dcttype == 3:
@@ -508,7 +509,7 @@ def lpc2spec(lpcas, nout=17, FMout=False):
     F = np.zeros((cols, int(np.ceil(rows / 2))))
     M = F
 
-    if FMout == True:
+    if FMout:
         for c in range(cols):
             aaa = aa[:, c]
             rr = np.roots(aaa)
@@ -530,7 +531,7 @@ def lpc2spec(lpcas, nout=17, FMout=False):
 
             ix = np.argsort(ff_tmp)
             dummy = np.sort(ff_tmp)
-            mp_F_list = []
+            tmp_F_list = []
             tmp_M_list = []
 
             for i in range(ff.shape[0]):
@@ -731,7 +732,7 @@ def invaudspec(
             (nfilts, 1),
         ).T,
     )
-    if sumpower == True:
+    if sumpower:
         spec = np.matmul(itws, aspectrum)
     else:
         spec = np.power(np.matmul(itws, np.sqrt(aspectrum)))
@@ -766,7 +767,7 @@ def invmelfcc(
 
     pspc, _ = cep2spec(cep, nfreq=int(n_bands + 2 * broaden), dcttype=dcttype)
 
-    if usecmp == True:
+    if usecmp:
         aspc, _ = invpostaud(pspc, fmax=max_freq, fbtype=fbtype, broaden=broaden)
     else:
         aspc = pspc
