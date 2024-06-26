@@ -11,6 +11,7 @@ from tensorflow.keras.layers import Activation, Dropout
 from tensorflow.keras.layers import Conv2D, AveragePooling2D
 from tensorflow.keras.layers import GlobalAveragePooling2D
 from tensorflow.keras.callbacks import ModelCheckpoint
+from tensorflow.keras import regularizers
 from tensorflow.keras.constraints import MaxNorm
 
 

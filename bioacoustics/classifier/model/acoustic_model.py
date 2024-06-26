@@ -8,7 +8,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from tensorflow.keras.models import load_model
 from tensorflow import keras
-from tensorflow.keras.metrics import Recall
 
 
 class AcousticModel(ABC):
