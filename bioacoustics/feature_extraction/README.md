@@ -39,7 +39,7 @@ To extract audio features for CNN classifier, .wav files are converted to Log-me
 Log-Melspectrograms had the best results in [[1]](#ref). As a future work we can try others such as Log-Spectrograms, and Gammatone-Spectrograms.
 
 In this study, first we apply a [Butterworth (bandpass) filter](https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.butter.html) to filter frequencies between 100 and 2000 hz for further processing. Then the short time Fourier transform (STFT) is applied to create spectrograms. 
-Then mel filter banks are applied on the spectrograms followed by a logarithmic operation to extract log mel spectrograms. 
+Then we convert the spectrograms to MFCC (Mel-Frequency Cepstral coefficient) representation, which is often done for speech processing (Find more info [here](https://speechprocessingbook.aalto.fi/Representations/Melcepstrum.html)).
 
 | <img src="../../img/melspectrogram.png" width="400" /> | 
 
