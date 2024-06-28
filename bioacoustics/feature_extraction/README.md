@@ -35,7 +35,7 @@ If you get an error saying something about a 'snd_file' dependency on an ubuntu 
 sudo apt-get install libsndfile-dev
 ```
 ## Feature extraction for Convolutional Neural Network (CNN)
-To extract audio features for CNN classifier, .wav files are converted to Log-mel Spectrograms using [librosa](https://zenodo.org/badge/latestdoi/6309729) library. 
+To extract audio features for CNN classifier, .wav files are converted to Log-mel Spectrograms using [librosa](https://zenodo.org/badge/latestdoi/6309729). 
 Log- Melspectrograms had the best results in [[1]](#ref). As a future work we can try others such as Log-Spectrograms, and Gammatone-Spectrogram.
 
 In this process, first we apply butter_bandpass filter to select frequencies among 100, 2000 hz. Then the short time Fourier transform (STFT) is applied on time-domain waveforms to calculate spectrograms. 
