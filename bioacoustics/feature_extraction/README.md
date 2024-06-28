@@ -38,7 +38,7 @@ sudo apt-get install libsndfile-dev
 To extract audio features for CNN classifier, .wav files are converted to Log-mel Spectrograms using [librosa](https://zenodo.org/badge/latestdoi/6309729). 
 Log-Melspectrograms had the best results in [[1]](#ref). As a future work we can try others such as Log-Spectrograms, and Gammatone-Spectrograms.
 
-In this process, first we apply butter_bandpass filter to select frequencies among 100, 2000 hz. Then the short time Fourier transform (STFT) is applied on time-domain waveforms to calculate spectrograms. 
+In this study, first we apply a [Butterworth (bandpass) filter](https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.butter.html) to filter frequencies between 100 and 2000 hz for further processing. Then the short time Fourier transform (STFT) is applied to create spectrograms. 
 Then mel filter banks are applied on the spectrograms followed by a logarithmic operation to extract log mel spectrograms. 
 
 | <img src="../../img/melspectrogram.png" width="400" /> | 
