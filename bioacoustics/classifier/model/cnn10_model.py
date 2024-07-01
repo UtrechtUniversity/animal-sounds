@@ -1,4 +1,5 @@
 """A class for acoustic model with 10 nn blocks"""
+
 from acoustic_model import AcousticModel
 
 import tensorflow as tf
@@ -10,6 +11,7 @@ from tensorflow.keras.layers import Activation, Dropout
 from tensorflow.keras.layers import Conv2D, AveragePooling2D
 from tensorflow.keras.layers import GlobalAveragePooling2D
 from tensorflow.keras.callbacks import ModelCheckpoint
+from tensorflow.keras import regularizers
 from tensorflow.keras.constraints import MaxNorm
 
 
@@ -59,7 +61,6 @@ class CNN10Model(AcousticModel):
                 input_shape=input_shape,
                 data_format=data_format,
                 padding="same",
-
                 kernel_regularizer=regularizers.l2(l=0.01),
                 kernel_initializer=init_mode,
                 kernel_constraint=MaxNorm(weight_constraint),

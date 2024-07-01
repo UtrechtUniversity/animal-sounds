@@ -1,4 +1,5 @@
 """ Module that uses scikit-learn for grid search on the dropout rate """
+
 import tensorflow as tf
 from sklearn.model_selection import GridSearchCV
 from scikeras.wrappers import KerasClassifier

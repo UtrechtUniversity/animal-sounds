@@ -1,4 +1,5 @@
 """Script to make .wav files of the same length."""
+
 import os
 import glob
 import argparse
