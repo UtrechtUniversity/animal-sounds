@@ -48,11 +48,11 @@ The initial dataset for this project contains recordings in `.wav` format at 1 m
 - Semi-natural Chimanze enclosures - Cameron 
 
 ### Preprocessing 
-1. The Chimpanze sanctuary recordings are labeled into 2 classes (Chimpanze & background) using [Raven Pro](https://ravensoundsoftware.com/software/) annotation software, and extracted from the original recordings. Find scripts [here](./bioacoustics/1_wav_processing/raven_to_wav).
+1. The Chimpanze sanctuary recordings are labeled into 2 classes (Chimpanze & background) using [Raven Pro](https://ravensoundsoftware.com/software/) annotation software, and extracted from the original recordings. Find scripts [here](./bioacoustics/wav_processing/raven_to_wav).
 
-2. To speed up the labeling process we developed an energy-change based algorithm to filter out irrelevant parts of the recordings, see [Condensation](./bioacoustics/1_wav_processing/condensation). This was done after a first labelling effort. After this another labelling effort took place on the condensed files.
+2. To speed up the labeling process we developed an energy-change based algorithm to filter out irrelevant parts of the recordings, see [Condensation](./bioacoustics/wav_processing/condensation). This was done after a first labelling effort. After this another labelling effort took place on the condensed files.
 
-3. To increase and diversify our training set we have created synthetic samples by embedding the sanctuary vocalizations into the recorded jungle audio that is labeled as 'background', see [Synthetic data](./bioacoustics/1_wav_processing/syntetic_data).
+3. To increase and diversify our training set we have created synthetic samples by embedding the sanctuary vocalizations into the recorded jungle audio that is labeled as 'background', see [Synthetic data](./bioacoustics/wav_processing/syntetic_data).
 
 The labeled sections of audio signal from the steps above are then split into frames of 0.5 seconds length with 0.25 seconds overlap. This results in the following input dataset for training the classifiers: 
 
@@ -100,7 +100,7 @@ We trained several architectures of Convolutional Neural Networks (CNN) and a Re
 <!-- Do not forget to also include the license in a separate file(LICENSE[.txt/.md]) and link it properly. -->
 ### License
 
-The code that is developed in this project is released under [Apache 2.0](LICENSE.md). Some of the scripts for [feature extraction](/bioacoustics/2_feature_extraction) that we use in this project are available under [CeCILL 1.1](https://github.com/malfante/AAA/blob/master/LICENSE_EN.txt) license. The scripts where this is the case contain license information at the header lines of the scripst. The original versions of these scripts are created by Marielle Malfante and are available via [GitHub](https://github.com/malfante/AAA).
+The code that is developed in this project is released under [Apache 2.0](LICENSE.md). Some of the scripts for [feature extraction](/bioacoustics/feature_extraction) that we use in this project are available under [CeCILL 1.1](https://github.com/malfante/AAA/blob/master/LICENSE_EN.txt) license. The scripts where this is the case contain license information at the header lines of the scripst. The original versions of these scripts are created by Marielle Malfante and are available via [GitHub](https://github.com/malfante/AAA).
 
 ### Relevant publications
 
@@ -131,7 +131,7 @@ python -m pip install -r requirements.txt
 
 
 There are two situations in which you can directly apply the scripts in this repository and we tailored the documentation towards these situations:
-1. You have audio data and a set of manual annotations (in e.g. txt or csv format) and want to use the whole pipeline including training your own model. Find getting started instructions for each step in the respective folders: [1_wav_processing](./bioacoustics/1_wav_processing), [2_feature_extraction](./bioacoustics/2_feature_extraction) and [3_classifier](./bioacoustics/3_classifier) 
+1. You have audio data and a set of manual annotations (in e.g. txt or csv format) and want to use the whole pipeline including training your own model. Find getting started instructions for each step in the respective folders: [1_wav_processing](./bioacoustics/wav_processing), [2_feature_extraction](./bioacoustics/feature_extraction) and [3_classifier](./bioacoustics/classifier) 
 2. [You have a highly similar dataset and want to use one of our models to help find Chimpanze vocalizations.](docs/tutorial.md)
 
 ### Project structure
