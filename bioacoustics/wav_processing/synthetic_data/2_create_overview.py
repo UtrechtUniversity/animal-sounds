@@ -4,8 +4,7 @@ import sys
 from pathlib import Path
 from random import shuffle
 
-sys.path.append("..")
-from condensation.extractor import Extractor
+from bioacoustics.wav_processing.condensation.extractor import Extractor
 
 
 def parse_arguments():
