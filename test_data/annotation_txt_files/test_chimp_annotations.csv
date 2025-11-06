@@ -1,0 +1,9 @@
+Selection,View,Channel,Begin Time (s),End Time (s),Low Freq (Hz),High Freq (Hz),Delta Time (s),Begin Path,End Path,File Offset (s),Species,Type,Part of a bout,Multiple animals?,Notes
+4,Spectrogram 1,1,648.030014173,650.027631071,0,401.786,1.9976,D:\audio_mefou\2\chimpanze\20191220_170820.WAV,D:\audio_mefou\2\chimpanze\20191220_170820.WAV,48.03,Chimpanzee,Food grunts,,,
+5,Spectrogram 1,1,726.440051192,727.795172961,13.393,401.786,1.3551,D:\audio_mefou\2\chimpanze\20191220_171024.WAV,D:\audio_mefou\2\chimpanze\20191220_171024.WAV,6.44,Chimpanzee,Food grunts,,,
+6,Spectrogram 1,1,777.792688084,779.978076445,13.393,1178.571,2.1854,D:\audio_mefou\2\chimpanze\20191220_171024.WAV,D:\audio_mefou\2\chimpanze\20191220_171024.WAV,57.7927,Chimpanzee,Food grunts,,,
+7,Spectrogram 1,1,791.47195296,793.055567715,40.179,495.536,1.5836,D:\audio_mefou\2\chimpanze\20191220_171126.WAV,D:\audio_mefou\2\chimpanze\20191220_171126.WAV,11.472,Chimpanzee,?,,,
+9,Spectrogram 1,1,2556.669708859,2558.358984112,13.393,468.75,1.6893,D:\audio_mefou\2\chimpanze\20191220_174124.WAV,D:\audio_mefou\2\chimpanze\20191220_174124.WAV,36.6697,Chimpanzee,Food grunts,,,
+10,Spectrogram 1,1,2658.430115439,2661.347954512,0,455.357,2.9178,D:\audio_mefou\2\chimpanze\20191220_174328.WAV,D:\audio_mefou\2\chimpanze\20191220_174328.WAV,18.4301,Chimpanzee,Food grunts,,,
+11,Spectrogram 1,1,4281.245631954,4283.523594038,0,1299.107,2.278,D:\audio_mefou\2\chimpanze\20191220_181122.WAV,D:\audio_mefou\2\chimpanze\20191220_181122.WAV,21.2456,Chimpanzee,Food grunts,,,
+12,Spectrogram 1,1,6623.580499764,6628.317531135,35.545,1464.455,4.737,D:\audio_mefou\2\chimpanze\20191220_185140.WAV,D:\audio_mefou\2\chimpanze\20191220_185140.WAV,23.5805,Chimpanzee,Pant hoot,,,

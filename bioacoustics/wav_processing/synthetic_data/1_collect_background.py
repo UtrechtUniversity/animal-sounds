@@ -3,8 +3,7 @@ import sys
 import pandas as pd
 from pathlib import Path
 
-sys.path.append("..")
-from condensation.extractor import Extractor
+from bioacoustics.wav_processing.condensation.extractor import Extractor
 
 
 def parse_arguments():

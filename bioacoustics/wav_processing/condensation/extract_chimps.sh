@@ -6,8 +6,8 @@
 # extracted fragments to the file signal.wav and the annotations in a csv 
 # file called extracted.csv
 
-python condensate.py --input="./test_data" \
-    --output-csv="timestamps.csv" \
-    --output-signal="out.wav" \
+python bioacoustics/wav_processing/condensation/condensate.py --input="test_data/original_recordings/mefou" \
+    --output-csv="test_data/condensed_files/timestamps.csv" \
+    --output-signal="test_data/condensed_files/test_out.wav" \
     --frequencies="[(200, 1000)]" \
     --volume="(20, 30)"

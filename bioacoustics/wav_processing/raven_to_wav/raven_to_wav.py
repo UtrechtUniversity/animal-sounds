@@ -10,23 +10,23 @@ def parse_arguments():
     parser = argparse.ArgumentParser(description="Process Raven files")
     # File path to the data.
     parser.add_argument(
-        "annotations_file", type=str, help="File path to the annotation dataset"
+        "--annotations_file", type=str, help="File path to the annotation dataset"
     )
     # Annotation class
     parser.add_argument(
-        "species", type=str, help="Only process annotation of this class"
+        "--species", type=str, help="Only process annotation of this class"
     )
     # Raw files location
-    parser.add_argument("wavpath", type=str, help="Location of raw wav files")
-    parser.add_argument("outputdir", type=str, help="Output directory")
-    parser.add_argument("recID", type=str, help="Recorder Identifier")
-    parser.add_argument("min_sig_len", type=float, help="Minimal Signal Length (s)")
+    parser.add_argument("--wavpath", type=str, help="Location of raw wav files")
+    parser.add_argument("--outputdir", type=str, help="Output directory")
+    parser.add_argument("--recID", type=str, help="Recorder Identifier")
+    parser.add_argument("--min_sig_len", type=float, help="Minimal Signal Length (s)")
     parser.add_argument(
-        "bg_padding_len", type=float, help="Standard Background Padding Length (s)"
+        "--bg_padding_len", type=float, help="Standard Background Padding Length (s)"
     )
 
     parser.add_argument(
-        "startindex", type=int, default=0, help="Start index for numbering output files"
+        "--startindex", type=int, default=0, help="Start index for numbering output files"
     )
     parser.add_argument(
         "-c",
@@ -61,12 +61,14 @@ class ProcessRaven:
         DataFrame
             Raven annotations in dataframe format
         """
+        print("reading", self.file)
         if self.file[-3:] == "csv":
             self.df = pd.read_csv(self.file)
         else:
             self.df = pd.read_table(self.file)
         self.df.columns = self.df.columns.str.lower()
-        print(self.df.columns)
+        self.df.columns = self.df.columns.str.replace(" ", "_")
+        print("column names", self.df.columns)
 
     def compute_file_lengths(self, wav_path):
         """Compute file lenghts of .WAV files.
@@ -87,7 +89,7 @@ class ProcessRaven:
         """
         len_file_list = []
         for f in self.filelist:
-            len_file = librosa.get_duration(filename=wav_path + f)
+            len_file = librosa.get_duration(path=wav_path + f)
             len_file_list.append(len_file)
 
         df = pd.DataFrame(columns=["file", "filelength"])
@@ -194,7 +196,7 @@ class ProcessRaven:
         """
         return df.loc[
             (df["species"] == species)
-            & ((df["end time (s)"] - df["begin time (s)"]) > min_sig_len),
+            & ((df["end_time_(s)"] - df["begin_time_(s)"]) > min_sig_len),
             ["file", "end_file", "start_time", "end_time", "type", "filelength"],
         ]
 
@@ -215,16 +217,19 @@ class ProcessRaven:
             Minimal threshold signal length. Annotations shorter than
             this threshold will be excluded.
         """
-        df = self.df.rename(columns={"begin path": "file", "end path": "end_file"})
+        df = self.df.rename(columns={"begin_path": "file", "end_path": "end_file"})
 
         # select only relevant colums
         if "class" in df.columns:
             df = df.rename(columns={"class": "species"})
 
+        # select only relevant colums
+        df['species'] = df['species'].str.lower()
+
         # Change timestamps to timestamps relative to file
-        df["start_time"] = df["file offset (s)"]
+        df["start_time"] = df["file_offset_(s)"]
         df["end_time"] = (
-            df["file offset (s)"] + df["end time (s)"] - df["begin time (s)"]
+            df["file_offset_(s)"] + df["end_time_(s)"] - df["begin_time_(s)"]
         )
 
         # Cut first part of string
@@ -269,9 +274,11 @@ class ProcessRaven:
             will not reach this minimum length the background segments
             will be extended to reach this minimum
         """
-        self.df_pad = pd.DataFrame({"file": [], "start": [], "duration": []})
+        #self.df_pad = pd.DataFrame({"file": [], "start": [], "duration": []})
+        all_padded_rows = []
         for index, row in df.iterrows():
-            file = wav_path + row.begin_path
+            print(row)
+            file = wav_path + row.file
             duration = max(
                 min_length,
                 min(row.end_time - row.start_time + 2 * min_bg_padding, 60.0),
@@ -287,9 +294,9 @@ class ProcessRaven:
                 start = 0.0
                 duration = 60.0
             print(duration)
-            self.df_pad = self.df_pad.append(
-                {"file": file, "start": start, "duration": duration}, ignore_index=True
-            )
+            print(type(self.df_pad))
+            all_padded_rows.append({"file": file, "start": start, "duration": duration})
+            self.df_pad = pd.DataFrame(all_padded_rows)
         self.df_pad["type"] = list(df["type"])
         self.df_pad["filename"] = list(df["file"])
 
@@ -408,8 +415,9 @@ def write_files(
 def main():
     parser = parse_arguments()
     args = parser.parse_args()
-
+    print("i am here")
     p1 = ProcessRaven(args.annotations_file, args.wavpath)
+    print("i am here")
     p1.read_raven()
     p1.compute_file_lengths(args.wavpath)
     p1.process_raven(args.species, args.min_sig_len)

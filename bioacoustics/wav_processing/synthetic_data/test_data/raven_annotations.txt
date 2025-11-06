@@ -1,7 +1,0 @@
-Selection	View	Channel	Begin Time (s)	End Time (s)	Low Freq (Hz)	High Freq (Hz)	Delta Time (s)	Begin Path	End Path	Class	Type	Notes
-1	Spectrogram 1	1	22.080114297	27.220075330	0.0	4103.5	5.1400	D:\audio_mefou\jungledata\CBG_2020\A14\20200205_184848.WAV	D:\audio_mefou\jungledata\CBG_2020\A14\20200205_184848.WAV	Background		
-2	Spectrogram 1	1	47.769784184	53.271714304	0.0	4068.8	5.5019	D:\audio_mefou\jungledata\CBG_2020\A14\20200205_184848.WAV	D:\audio_mefou\jungledata\CBG_2020\A14\20200205_184848.WAV	Background		
-3	Spectrogram 1	1	79.321908176	84.823838296	0.0	4173.1	5.5019	D:\audio_mefou\jungledata\CBG_2020\A14\20200205_185408.WAV	D:\audio_mefou\jungledata\CBG_2020\A14\20200205_185408.WAV	Background		
-4	Spectrogram 1	1	95.755304718	100.822871934	0.0	3947.0	5.0676	D:\audio_mefou\jungledata\CBG_2020\A14\20200205_185408.WAV	D:\audio_mefou\jungledata\CBG_2020\A14\20200205_185408.WAV	Background		
-5	Spectrogram 1	1	123.705106482	129.424218054	0.0	4051.4	5.7191	D:\audio_mefou\jungledata\CBG_2020\A14\20200205_194104.WAV	D:\audio_mefou\jungledata\CBG_2020\A14\20200205_194104.WAV	Background		
-6	Spectrogram 1	1	148.809838147	154.311768266	0.0	4068.8	5.5019	D:\audio_mefou\jungledata\CBG_2020\A14\20200205_194104.WAV	D:\audio_mefou\jungledata\CBG_2020\A14\20200205_194104.WAV	Background

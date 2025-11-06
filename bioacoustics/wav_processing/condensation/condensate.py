@@ -2,7 +2,7 @@ import argparse
 import pandas as pd
 
 from pathlib import Path
-from extractor import Extractor
+from bioacoustics.wav_processing.condensation.extractor import Extractor
 
 
 def parse_arguments():
@@ -101,7 +101,7 @@ if __name__ == "__main__":
     csv_stopwatch = 0.0
 
     for filepath in sorted(parsed_input):
-
+        print(filepath)
         try:
 
             print(f"{counter} - {filepath.name}")
@@ -118,6 +118,8 @@ if __name__ == "__main__":
                 ignore_voc=0.09,
                 padding=0.35,
             )
+
+            print(f"extracted {len(pois)} potential vocalizations")
 
             # extract th potential vocalisations from the wav file
             padding = 0.1
@@ -159,6 +161,7 @@ if __name__ == "__main__":
             print(f"bad file: {filepath}")
 
     # write data and signal_out to files
+    print(type(signal_out))
     signal_out.to_wav(Path(args["output_signal"]))
     df = pd.DataFrame(
         csv_data,
