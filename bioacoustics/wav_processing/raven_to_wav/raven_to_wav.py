@@ -50,6 +50,14 @@ class ProcessRaven:
         self.file_lengths = None
         self.wav_path = wav_path
 
+    def check_columns(self):
+        for col in ["begin path", "end path", "species", "file offset (s)", "begin time (s)", "end time (s)"]:
+            if col.replace(" ", "_") not in self.df.columns:
+                raise ValueError(
+                    "No '" + col + "' column found in Raven annotations file"
+                )
+
+
     def read_raven(self):
         """Read Raven annotations .txt file.
 
@@ -61,14 +69,13 @@ class ProcessRaven:
         DataFrame
             Raven annotations in dataframe format
         """
-        print("reading", self.file)
+        print("Reading annotations file", self.file)
         if self.file[-3:] == "csv":
             self.df = pd.read_csv(self.file)
         else:
             self.df = pd.read_table(self.file)
         self.df.columns = self.df.columns.str.lower()
         self.df.columns = self.df.columns.str.replace(" ", "_")
-        print("column names", self.df.columns)
 
     def compute_file_lengths(self, wav_path):
         """Compute file lenghts of .WAV files.
@@ -159,7 +166,7 @@ class ProcessRaven:
                     filelist.index(df.loc[i, "file"]) + 1,
                     filelist.index(df.loc[i, "end_file"]),
                 ):
-                    print(j)
+                    
                     len_file = librosa.get_duration(filename=wav_path + filelist[j])
                     df_temp = pd.DataFrame(
                         [[filelist[j], filelist[j], 0.0, len_file, len_file]],
@@ -217,6 +224,9 @@ class ProcessRaven:
             Minimal threshold signal length. Annotations shorter than
             this threshold will be excluded.
         """
+
+
+
         df = self.df.rename(columns={"begin_path": "file", "end_path": "end_file"})
 
         # select only relevant colums
@@ -277,7 +287,7 @@ class ProcessRaven:
         #self.df_pad = pd.DataFrame({"file": [], "start": [], "duration": []})
         all_padded_rows = []
         for index, row in df.iterrows():
-            print(row)
+            #print(row)
             file = wav_path + row.file
             duration = max(
                 min_length,
@@ -293,8 +303,7 @@ class ProcessRaven:
             else:
                 start = 0.0
                 duration = 60.0
-            print(duration)
-            print(type(self.df_pad))
+            
             all_padded_rows.append({"file": file, "start": start, "duration": duration})
             self.df_pad = pd.DataFrame(all_padded_rows)
         self.df_pad["type"] = list(df["type"])
@@ -302,7 +311,7 @@ class ProcessRaven:
 
 
 def write_files(
-    df, output_path, species, rec_id, createframes, k_start, frame_len, jump_len
+    df, output_path, species, rec_id, createframes, fileindex_start, frame_len, jump_len
 ):
     """Write annotations to new .wav files
 
@@ -319,8 +328,19 @@ def write_files(
 
         This description can span multiple lines and/or paragraphs as
         well.
-    param2 : str, optional
-        another description
+
+    species : str
+        Species (or class) of interest
+
+    rec_id : str
+        Recorder Identifier
+
+    createframes : bool
+        If True, cut annotations into multiple frames
+
+    fileindex_start : int
+        Start index for numbering output files
+
     *args
         Variable length argument list.
     **kwargs
@@ -331,8 +351,8 @@ def write_files(
     bool
         True if successful, False otherwise.
     """
-    k = k_start
-    kk = 0  # second fileindex for output files (when n raven files > 1)
+    fileindex = fileindex_start
+    fileindex2 = 0  # second fileindex for output files (when n raven files > 1)
     df2 = pd.DataFrame(
         columns=["id", "recorder_id", "file", "start", "duration", "type", "wav"]
     )
@@ -340,7 +360,7 @@ def write_files(
     for index in range(len(df)):
         file = df["file"].iloc[index]
         filename = df["filename"].iloc[index]
-        print(index, file[0:-4])
+        print("Processing file ", index, file[0:-4])
         y, sr = librosa.load(
             file,
             sr=48000,
@@ -354,10 +374,9 @@ def write_files(
             )
             nframes = len(frames)
             # nframes = int(np.floor(df['duration'].iloc[index] - jump_len))
-            print(nframes)
             for i in range(nframes):
                 outfile1 = (
-                    str(k)
+                    str(fileindex)
                     + "_"
                     + str(index)
                     + "_"
@@ -369,21 +388,21 @@ def write_files(
                 out_file = output_path + outfile1
                 sf.write(out_file, frames[i], sr)
 
-                df2.at[kk, "id"] = k
-                df2.iloc[kk, 1:6] = [
+                df2.at[fileindex2, "id"] = fileindex
+                df2.iloc[fileindex2, 1:6] = [
                     rec_id,
                     filename,
                     str(round(df["start"].iloc[index] + i, 6)),
                     frame_len,
                     df["type"].iloc[index],
                 ]
-                df2.at[kk, "wav"] = outfile1
-                k = k + 1
-                kk = kk + 1
+                df2.at[fileindex2, "wav"] = outfile1
+                fileindex = fileindex + 1
+                fileindex2 = fileindex2 + 1
 
         else:
             outfile1 = (
-                str(k)
+                str(fileindex)
                 + "_"
                 + rec_id
                 + "_"
@@ -394,31 +413,31 @@ def write_files(
             )
             out_file = output_path + outfile1
             sf.write(out_file, y, sr)
-            df2.at[kk, "id"] = k
-            df2.iloc[kk, 1:6] = [
+            df2.at[fileindex2, "id"] = fileindex
+            df2.iloc[fileindex2, 1:6] = [
                 rec_id,
                 filename,
                 str(round(df["start"].iloc[index], 6)),
                 df["duration"].iloc[index],
                 df["type"].iloc[index],
             ]
-            df2.at[kk, "wav"] = outfile1
-            k = k + 1
-            kk = kk + 1
+            df2.at[fileindex2, "wav"] = outfile1
+            fileindex = fileindex + 1
+            fileindex2 = fileindex2 + 1
 
-    if k_start == 0:
+    if fileindex_start == 0:
         df2.to_csv(output_path + species.lower() + ".csv")
     else:
         df2.to_csv(output_path + species.lower() + ".csv", mode="a", header=False)
 
+    print("Written", len(df2), "wav files in: " + output_path + " and a summary in " + output_path + species.lower() + ".csv")
 
 def main():
     parser = parse_arguments()
     args = parser.parse_args()
-    print("i am here")
     p1 = ProcessRaven(args.annotations_file, args.wavpath)
-    print("i am here")
     p1.read_raven()
+    p1.check_columns()
     p1.compute_file_lengths(args.wavpath)
     p1.process_raven(args.species, args.min_sig_len)
     p1.padding(p1.df_2, args.wavpath, args.bg_padding_len, min_length=0.5)
