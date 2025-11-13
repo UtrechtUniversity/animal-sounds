@@ -117,7 +117,7 @@ Run
 
 ## 2.3 Synthetic data
 
-This step is done using the `synth_pipeline.sh` shell script. The purpose of this step is to create synthetic data by combining the audio segments created in the 2.1 and annotated background segments.
+This step is done using the `synth_pipeline.sh` shell script. The purpose of this step is to create synthetic data by combining the audio segments created in the 2.1 and background sounds. The script doesn't use all the segments at once, but takes a random sample of 30 files as input. To create more synthetic data, simply run the script another time. The resulting data is saved in the `synth_data` folder. 
 
 Run
 `./bioacoustics/wav_processing/synthetic_data/synth_pipeline.sh`
