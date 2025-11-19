@@ -103,7 +103,7 @@ class LLD:
         """
         async with aiofiles.open(path, mode="br") as f:
             contents = await f.read()
-            f.close()
+            await f.close()
             # first 22 bytes are not relevant
             signal = np.frombuffer(contents, self.dtype)[22:]
             # librosa divides by min-value of int dtype

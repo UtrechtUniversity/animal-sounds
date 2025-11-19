@@ -326,9 +326,6 @@ def write_files(
     output_path : str
         location where to store the .wav files
 
-        This description can span multiple lines and/or paragraphs as
-        well.
-
     species : str
         Species (or class) of interest
 
@@ -357,34 +354,24 @@ def write_files(
         columns=["id", "recorder_id", "file", "start", "duration", "type", "wav"]
     )
 
-    for index in range(len(df)):
-        file = df["file"].iloc[index]
-        filename = df["filename"].iloc[index]
+    for index, row in df.iterrows():
+        file = row.file
+        filename = row.filename
         print("Processing file ", index, file[0:-4])
         y, sr = librosa.load(
             file,
             sr=48000,
-            offset=df["start"].iloc[index],
-            duration=df["duration"].iloc[index],
+            offset=row.start,
+            duration=row.duration,
         )
 
-        if createframes and df["duration"].iloc[index] >= frame_len + jump_len:
+        if createframes and row.duration >= frame_len + jump_len:
             frames = librosa.util.frame(
                 y, frame_length=frame_len * sr, hop_length=jump_len * sr, axis=0
             )
             nframes = len(frames)
-            # nframes = int(np.floor(df['duration'].iloc[index] - jump_len))
             for i in range(nframes):
-                outfile1 = (
-                    str(fileindex)
-                    + "_"
-                    + str(index)
-                    + "_"
-                    + filename[0:-4]
-                    + "_"
-                    + str(round(df["start"].iloc[index] + i, 6))
-                    + ".wav"
-                )
+                outfile1 = f"{str(fileindex).zfill(4)}_{filename[0:-4]}_{round(row.start + i, 6)}.wav"
                 out_file = output_path + outfile1
                 sf.write(out_file, frames[i], sr)
 
@@ -392,38 +379,29 @@ def write_files(
                 df2.iloc[fileindex2, 1:6] = [
                     rec_id,
                     filename,
-                    str(round(df["start"].iloc[index] + i, 6)),
+                    str(round(row.start + i, 6)),
                     frame_len,
-                    df["type"].iloc[index],
+                    row.type,
                 ]
                 df2.at[fileindex2, "wav"] = outfile1
-                fileindex = fileindex + 1
-                fileindex2 = fileindex2 + 1
+                fileindex += 1
+                fileindex2 += 1
 
         else:
-            outfile1 = (
-                str(fileindex)
-                + "_"
-                + rec_id
-                + "_"
-                + filename[0:-4]
-                + "_"
-                + str(round(df["start"].iloc[index], 6))
-                + ".wav"
-            )
+            outfile1 = f"{str(fileindex).zfill(4)}.wav"
             out_file = output_path + outfile1
             sf.write(out_file, y, sr)
             df2.at[fileindex2, "id"] = fileindex
             df2.iloc[fileindex2, 1:6] = [
                 rec_id,
                 filename,
-                str(round(df["start"].iloc[index], 6)),
-                df["duration"].iloc[index],
-                df["type"].iloc[index],
+                str(round(row.start, 6)),
+                row.duration,
+                row.type,
             ]
             df2.at[fileindex2, "wav"] = outfile1
-            fileindex = fileindex + 1
-            fileindex2 = fileindex2 + 1
+            fileindex += 1
+            fileindex2 += 1
 
     if fileindex_start == 0:
         df2.to_csv(output_path + species.lower() + ".csv")
