@@ -9,9 +9,9 @@ import time
 from pathlib import Path
 from itertools import product
 
-from acoustic_features.config import Config
-from acoustic_features.features import FeatureVector
-from acoustic_features.LLD import LLD
+from bioacoustics.feature_extraction.acoustic_features.config import Config
+from bioacoustics.feature_extraction.acoustic_features.features import FeatureVector
+from bioacoustics.feature_extraction.acoustic_features.LLD import LLD
 
 
 def parse_arguments():
@@ -47,7 +47,7 @@ def parse_arguments():
 
 
 def main(workload):
-    path = "config/features/features_01.json"
+    path = "bioacoustics/feature_extraction/config/features/features_01.json"
     config = Config(path)
     config.read()
     features = FeatureVector(config)
