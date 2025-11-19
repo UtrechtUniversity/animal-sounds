@@ -53,7 +53,7 @@ bioacoustics/
 └── ...
 ```
 
-### 🗂️ 1.2 Prepare Input Data
+### 🗂️ Step 0: Prepare Input Data
 
 ✅ **Annotations**:  
 Ensure that annotation files are in the correct **format**:
@@ -79,18 +79,19 @@ animal-sounds/
 │   │   └── background/
 │   ├── condensed_wav_files/
 │   ├── synthetic_intermediate/
+│   ├── features/
 │   └── synth_data/
 |     ├── vocalizations/
 |     └── background/
 └── ...
 ```
 
-### 🛠️ 1.3 Configure Script Paths
+🛠️ **Configure Script Paths**
 
 > [!IMPORTANT]
 > If you are organizing your data in a different way, please make sure to adapt the `.sh` scripts that are used below to point to the correct folders.
 
-## 2.1 Create audio segments for annotated segments
+### Step 1: Create audio segments for annotated segments
 
 This step is done using the `raven_to_wav.sh` shell script. The purpose of this step is to cut out audio segments from the original recordings that are annotated to contain a particular sound (e.g. a chimp vocalization, or background sound).
 
@@ -102,7 +103,7 @@ Run:
 ```
 If all went correctly, you should now have `.wav` files in the `processed_wav_files/vocalizations` folder. If you are planning to run this script for multiple species, please organize the output into folders for each species.
 
-## 2.2 Condensation (optional)
+### Step 2:Condensation (optional)
 
 This step is done using the `extract_chimps.sh` shell script. The purpose of this step is to capture audio segments from the original recordings that show an increase in energy and are therefore more likely to contain a chimp vocalization. This condensed audio still needs to be annotated by a human, but it is expected to be faster than using the original recordings.
 
@@ -115,9 +116,19 @@ Run
 > This step is optional. If you are not planning to run this step, make sure to read the extended instructions [here](https://github.com/UtrechtUniversity/animal-sounds/tree/main/bioacoustics/wav_processing/condensation), some initial annotations are needed to tune the parameters for better results.
 
 
-## 2.3 Synthetic data
+### Step 3: Synthetic data
 
 This step is done using the `synth_pipeline.sh` shell script. The purpose of this step is to create synthetic data by combining the audio segments created in the 2.1 and background sounds. The script doesn't use all the segments at once, but takes a random sample of 30 files as input. To create more synthetic data, simply run the script another time. The resulting data is saved in the `synth_data` folder. 
 
 Run
 `./bioacoustics/wav_processing/synthetic_data/synth_pipeline.sh`
+
+## 3. Feature extraction
+
+The purpose of this step is to transform the audio segments into features (a set of numerical values) that can be used for training an SVM classifier. We are combining several feature extraction methods in this step. The resulting features are saved in the `features` folder.
+
+Run
+
+```bash
+./bioacoustics/feature_extraction/run_feature_extraction_svm.sh
+```
