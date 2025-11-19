@@ -5,6 +5,7 @@ import asyncio
 import librosa
 import numpy as np
 import pandas as pd
+from tqdm import tqdm
 
 from . import speech_features as sf
 
@@ -86,12 +87,12 @@ class LLD:
                 if file is not None:
                     t = asyncio.create_task(self.__extract_features(file))
                     tasks.append(t)
-                    total = len(tasks)
+            pbar = tqdm(total=len(tasks))
+            
             for task in tasks:
                 result_task = await task
                 result.append(result_task)
-                progress += 1
-                print(f"Progress: {progress}/{total}")
+                pbar.update(1)
                 
         result = [r for r in result if r is not False]
         return pd.concat(result)

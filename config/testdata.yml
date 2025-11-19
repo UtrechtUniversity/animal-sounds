@@ -1,0 +1,30 @@
+raven_to_wav:
+  annotations_file: test_data/annotation_txt_files/vocalizations/test_chimp_annotations.csv
+  species: chimpanzee
+  wavpath: test_data/mefou/
+  outputdir: test_data/processed_wav_files/vocalizations/
+  recID: 2C
+  min_sig_len: 0.2
+  bg_padding_len: 0.05
+  startindex: 0
+  createframes: False
+
+condensation:
+  input: test_data/original_recordings/mefou
+  output-csv: test_data/condensed_wav_files/timestamps.csv
+  output-signal: test_data/condensed_wav_files/test_out.wav
+  frequencies: [(200, 1000)]
+  volume: (20, 30)
+
+synth_pipeline_vocalizations:
+  input_dir_background_original: None
+  background_annotation_dir: None
+  output_dir_background: None
+  input_dir_temp_background: test_data/synthetic_intermediate/background
+  overview_temp_background: test_data/synthetic_intermediate/overviews/background_orig_test.json
+  input_dir_vocalizations: test_data/processed_wav_files/vocalizations
+  overview_vocalizations: test_data/synthetic_intermediate/overviews/vocalizations_test.json
+  input_dir_background: test_data/processed_wav_files/background
+  overview_background: test_data/synthetic_intermediate/overviews/background_test.json
+  output_vocalizations: test_data_dir/synth_data/vocalizations
+  output_background: test_data_dir/synth_data/background
