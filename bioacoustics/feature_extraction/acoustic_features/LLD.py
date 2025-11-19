@@ -78,13 +78,21 @@ class LLD:
         """
 
         result = []
+        progress = 0
+
         for chunk in self.file_set:
             tasks = []
             for file in chunk:
                 if file is not None:
                     t = asyncio.create_task(self.__extract_features(file))
                     tasks.append(t)
-            result += [await task for task in tasks]
+                    total = len(tasks)
+            for task in tasks:
+                result_task = await task
+                result.append(result_task)
+                progress += 1
+                print(f"Progress: {progress}/{total}")
+                
         result = [r for r in result if r is not False]
         return pd.concat(result)
 

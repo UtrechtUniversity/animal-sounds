@@ -41,7 +41,8 @@ if __name__ == "__main__":
     parser = parse_arguments()
     args = vars(parser.parse_args())
 
-    input_files = list(Path(args["input_dir"]).glob("**/*.wav"))
+    input_files = list(Path(args["input_dir"]).glob("**/*.wav", case_sensitive=False))
+    
     # shuffle
     shuffle(input_files)
 

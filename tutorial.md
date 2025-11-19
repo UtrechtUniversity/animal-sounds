@@ -60,7 +60,8 @@ Ensure that annotation files are in the correct **format**:
 
 The pipeline expects a text file with output from Raven. Within Raven Pro the user can select which columns should be printed in the `.txt` file. The columns that are needed are:
 
-```| begin path | end path | class | file offset (s) | start time (s) | end time (s) |
+```
+| begin path | end path | class | file offset (s) | start time (s) | end time (s) |
 ---- | --------- | ------ | ---------- | ------| ---- | 
 ```
 
