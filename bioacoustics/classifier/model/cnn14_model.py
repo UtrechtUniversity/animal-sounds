@@ -1,4 +1,4 @@
-from model.acoustic_model import AcousticModel
+from bioacoustics.classifier.model.acoustic_model import AcousticModel
 
 from tensorflow import keras
 import tensorflow as tf

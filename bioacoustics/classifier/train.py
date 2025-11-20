@@ -13,6 +13,7 @@ from model.cnn12_model import CNN12_model
 from model.cnn14_model import CNN14_model
 import os
 import argparse
+import yaml
 
 
 def parse_arguments():
@@ -21,7 +22,7 @@ def parse_arguments():
 
     # File path to the data.
     parser.add_argument(
-        "--feature_dir", type=str, help="File path to the dataset of features"
+        "--config_file", type=str, help="File path to the config file"
     )
 
     parser.add_argument(
@@ -30,10 +31,9 @@ def parse_arguments():
         help="File path to the mean and std values of trained data to normalize test dataset",
     )
     parser.add_argument(
-        "--model", type=str, default="cnn10", help="machine learning model "
+        "--model", type=str, default="None", help="machine learning model "
     )
 
-    parser.add_argument("--output_dir", type=str, default=None, help="output dir")
 
     # params for hyperparameter optimization
     parser.add_argument(
@@ -73,17 +73,22 @@ def main():
     parser = parse_arguments()
     args = parser.parse_args()
 
-    if not os.path.exists(os.path.dirname(args.output_dir)):
-        os.makedirs(os.path.dirname(args.output_dir))
+    with open(args.config_file, 'r') as f:
+        config = yaml.safe_load(f)
 
-    if args.model == "svm":
+    if not os.path.exists(os.path.dirname(config["model_training"]["output_dir"])):
+        os.makedirs(os.path.dirname(config["model_training"]["output_dir"]))
+
+    if args.model == "svm" or config["model_training"]["model"] == "svm":
+        print("SVM model")
         X_train, y_train, X_test, y_test = prepare_data_svm(
-            args.feature_dir, args.output_dir
+            config["feature_extraction"]["feature_dir"], config["model_training"]["output_dir"]
         )
 
     else:
+        print("DL model")
         X_train, y_train, X_test, y_test = prepare_data_dl(
-            args.feature_dir, norm_val_dir=args.normVal_dir
+            config["feature_extraction"]["feature_dir"], norm_val_dir=args.normVal_dir
         )
 
     if args.model == "cnn":
@@ -115,7 +120,7 @@ def main():
         s = CNN14_model(
             args.nrow_input, args.ncol_input, args.num_channels, args.channel_first
         )
-    elif args.model == "svm":
+    elif args.model == "svm" or config["model_training"]["model"] == "svm":
         s = SVM_model()
         # cv_results = True
 
@@ -124,7 +129,7 @@ def main():
     print(" X_test.shpe", X_test.shape)
     print(" y_test.shpe", y_test.shape)
 
-    if args.model != "svm":
+    if args.model != "svm" and config["model_training"]["model"] != "svm":
         s.make_model(
             init_mode=args.init_mode,
             dropout_rate=args.dropout_rate,
@@ -133,10 +138,15 @@ def main():
             compile_model=True,
         )
 
-    s.apply_model(
-        X_train, y_train, X_test, y_test, args.output_dir, args.epochs, args.batch_size
-    )
-    s.save_results(y_test, args.output_dir)
+        s.apply_model(
+            X_train, y_train, X_test, y_test, config["model_training"]["output_dir"], args.epochs, args.batch_size
+        )
+    else:
+        s.apply_model(
+            X_train, y_train, X_test, y_test, config["model_training"]["output_dir"]
+        )
+
+    s.save_results(y_test, config["model_training"]["output_dir"])
 
 
 # execute main function

@@ -28,3 +28,11 @@ synth_pipeline_vocalizations:
   overview_background: test_data/synthetic_intermediate/overviews/background_test.json
   output_vocalizations: test_data_dir/synth_data/vocalizations
   output_background: test_data_dir/synth_data/background
+
+feature_extraction:
+  input_dir: test_data_dir/synth_data
+  feature_dir: test_data/features
+
+model_training:
+  model: svm
+  output_dir: test_data/models/svm/
