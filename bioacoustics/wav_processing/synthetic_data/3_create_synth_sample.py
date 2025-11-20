@@ -93,7 +93,6 @@ if __name__ == "__main__":
         if frames > max_bg_frames:
             no_chunks = int(np.ceil(frames / avg_bg_frames))
             chunk_size = frames / no_chunks
-
             raw_data = np.frombuffer(item["voc"].raw_data, dtype=np.int16)
 
             # divide signal in chunks
@@ -103,7 +102,7 @@ if __name__ == "__main__":
             # if the chunks are bigger than the minimal frame length
             for postfix, sig in enumerate(signals):
                 new_frames = len(sig) / frame_length
-                if new_frames >= min_primate_frames:
+                if new_frames >= min(min_primate_frames, 15):  # 15 is min frame length chimp vocalizations
 
                     new_voc = AudioSegment(
                         data=sig.tobytes(), sample_width=2, frame_rate=sr, channels=1
@@ -115,6 +114,7 @@ if __name__ == "__main__":
                         "voc": new_voc,
                         "postfix": f"_{postfix}",
                     }
+                    print(new_item)
                     primate_set.append(new_item)
         else:
             primate_set.append(item)

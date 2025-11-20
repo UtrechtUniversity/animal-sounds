@@ -127,7 +127,7 @@ class AcousticModel(ABC):
         return self.acoustic_model
 
     def apply_model(
-        self, x_train, y_train, x_test, y_test, file_path, epochs, batch_size
+        self, x_train, y_train, x_test, y_test, file_path, epochs=None, batch_size=None
     ):
         """Train a model and make a prediction on test dataset
         Parameters
@@ -147,7 +147,10 @@ class AcousticModel(ABC):
         batch_size: int
             The batch size
         """
-        self._train(x_train, y_train, x_test, y_test, file_path, epochs, batch_size)
+        if epochs is not None and batch_size is not None:
+            self._train(x_train, y_train, x_test, y_test, file_path, epochs, batch_size)
+        else:
+            self._train(x_train, y_train, x_test, y_test, file_path)
         self._predict(x_test)
 
     def predict_model(self, x_test, file_path, dl_model):

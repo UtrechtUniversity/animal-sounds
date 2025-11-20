@@ -1,6 +1,6 @@
 """A class for acoustic model with 10 nn blocks"""
 
-from acoustic_model import AcousticModel
+from bioacoustics.classifier.model.acoustic_model import AcousticModel
 
 from tensorflow import keras
 

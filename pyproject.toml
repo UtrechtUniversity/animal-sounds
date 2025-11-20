@@ -23,6 +23,7 @@ dependencies = [
     "soundfile>=0.13.1",
     "spectrum>=0.9.0",
     "sympy>=1.14.0",
+    "tensorflow>=2.20.0",
 ]
 
 [tool.setuptools]

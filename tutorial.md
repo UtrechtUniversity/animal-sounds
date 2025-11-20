@@ -83,6 +83,9 @@ animal-sounds/
 │   ├── condensed_wav_files/
 │   ├── synthetic_intermediate/
 │   ├── features/
+│   ├── models/
+|   |   └── svm/
+|   |       └── scaler
 │   └── synth_data/
 |     ├── vocalizations/
 |     └── background/
@@ -136,3 +139,16 @@ Run
 ```bash
 ./bioacoustics/feature_extraction/run_feature_extraction_svm.sh
 ```
+If all went correctly, you should now have `.csv` files in the `features` folder. This step can take hours to complete, but the script is parallelized, so running it on a (virtual) machine with many cores is recommended. The `--cores` parameter can be used to specify the number of cores to use, by default it uses all cores - 2.
+
+## 4. Training
+
+The purpose of this step is to train an SVM classifier on the features created in the previous step. The resulting model is saved in the `models` folder. The Unweighted Average Recall (UAR) is used as a performance metric and is displayed in the terminal, together with the best hyperparameters.
+
+Run
+
+```bash
+./bioacoustics/classifier/train_svm.sh
+```
+If all went correctly, you should see the UAR and the best hyperparameters in the terminal. 
+

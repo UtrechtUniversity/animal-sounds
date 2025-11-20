@@ -29,7 +29,7 @@ def parse_arguments():
 
     parser.add_argument("--output_dir", type=str, default=None, help="output dir")
 
-    parser.add_argument("--cores", type=int, default=1, help="number of cores")
+    parser.add_argument("--cores", type=int, default=None, help="number of cores")
 
     parser.add_argument("--frame_length", type=int, default=1200, help="frame_length")
 
@@ -53,7 +53,10 @@ def main(workload):
     features = FeatureVector(config)
 
     workload, args = workload
-    cores = args["cores"]
+    if cores is None:
+        cores = mp.cpu_count()-2
+    else:
+        cores = args["cores"]
     # chop up the workload into chunks
     max_open = int(200 / cores)
     workload = [workload[x : x + max_open] for x in range(0, len(workload), max_open)]
@@ -91,7 +94,10 @@ if __name__ == "__main__":
     args["filter"] = tuple(args["filter"])
 
     # required cores
-    cores = args["cores"]
+    if cores is None:
+        cores = mp.cpu_count()-2
+    else:
+        cores = args["cores"]
     print(f"Running on {cores} cores.")
 
     t1 = time.time()

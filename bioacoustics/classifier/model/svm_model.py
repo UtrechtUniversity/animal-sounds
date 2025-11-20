@@ -1,7 +1,7 @@
 """SVM model class."""
 
 import pickle
-from acoustic_model import AcousticModel
+from bioacoustics.classifier.model.acoustic_model import AcousticModel
 from sklearn.model_selection import GridSearchCV
 from sklearn.svm import SVC
 
