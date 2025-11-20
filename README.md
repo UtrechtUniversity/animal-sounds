@@ -122,43 +122,25 @@ To obtain all methods in this repository:
 git clone https://github.com/UtrechtUniversity/animal-sounds.git
 ```
 
+Install the python package manager `uv` ([instructions](https://docs.astral.sh/uv/getting-started/installation/))
+
 Install all required python libraries:
+
 ```
 cd animal-sounds
-python -m pip install -r requirements.txt
+uv sync
 ```
+Activate the python virtual environment and install the bioacoustics packages that is in this repository:
 
-
+```
+source .venv/bin/activate
+uv pip install -e .
+```
 
 There are two situations in which you can directly apply the scripts in this repository and we tailored the documentation towards these situations:
 1. You have audio data and a set of manual annotations (in e.g. txt or csv format) and want to use the whole pipeline including training your own model. Find getting started instructions for each step in the respective folders: [1_wav_processing](./bioacoustics/wav_processing), [2_feature_extraction](./bioacoustics/feature_extraction) and [3_classifier](./bioacoustics/classifier) 
 2. [You have a highly similar dataset and want to use one of our models to help find Chimpanze vocalizations.](docs/tutorial.md)
 
-### Project structure
-This project uses the following directory structure. After cloning the repository on your local PC, organize your data in the repository using the structure below to make sure the scripts 'know' where the data is located. 
-
-```
-.
-├── .gitignore
-├── CITATION.md
-├── LICENSE.md
-├── README.md
-├── requirements.txt
-├── bioacoustics              <- main folder for all source code
-│   ├── 1_wav_processing 
-│   ├── 2_feature_extraction
-│   └── 3_classifier        
-├── data               <- All project data, ignored by git
-│   ├── original_wav_files
-│   ├── processed_wav_files            
-│   └── txt_annotations           
-└── output
-    ├── features        <- Figures for the manuscript or reports, ignored by git
-    ├── models          <- Models and relevant training outputs
-    ├── notebooks       <- Notebooks for analysing results
-    └── results         <- Graphs and tables
-
-```
 
 <!-- CONTRIBUTING -->
 ## Contributing
@@ -182,3 +164,4 @@ To contribute:
 [Research Engineering team](https://utrechtuniversity.github.io/research-engineering/) - research.engineering@uu.nl
 
 Project Link: [https://github.com/UtrechtUniversity/animal-sounds](https://github.com/UtrechtUniversity/animal-sounds)
+
