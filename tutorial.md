@@ -124,11 +124,13 @@ Run
 
 ### Step 3: Synthetic data
 
-This step is done using the `synth_pipeline_<...>.sh` shell scripts. The purpose of this step is to create synthetic data by combining the audio segments created in the 2.1 and background audio from the target area. The script doesn't use all the segments at once, but takes a random sample of 30 files as input. To create more synthetic data, simply run the script another time. The resulting data is saved in the `synth_data` folder. 
+This step is done using the `synth_pipeline_<...>.sh` shell scripts. The purpose of this step is to create synthetic data by combining the audio segments created in the 2.1 and background audio from the target area. Synthetic data is created for both the vocalizations and background segments from step 2.1. The script doesn't use all the segments at once, but takes a random sample of 30 files as input. To create more synthetic data, simply run the script another time. The resulting data is saved in the folders: `synth_data/vocalizations` and `synth_data/background`. 
 
 Run
 `./bioacoustics/wav_processing/synthetic_data/synth_pipeline_vocalizations.sh`
 `./bioacoustics/wav_processing/synthetic_data/synth_pipeline_background.sh`
+
+Read more details [here](https://github.com/UtrechtUniversity/animal-sounds/tree/main/bioacoustics/wav_processing/synthetic_data).
 
 ## 3. Feature extraction
 
