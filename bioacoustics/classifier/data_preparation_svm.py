@@ -326,6 +326,47 @@ def recursive_features(X, y, columnnames, output_dir):
     df.to_csv(output_dir + "feature_rankings.csv")
     print(rfecv.ranking_)
 
+def create_train_test(features_path, dim):
+    """Create train and test datasets.
+
+    This function creates training and test datasets from feature files (.csv).
+
+    Parameters
+    ----------
+    features_path: str
+        File path of the features files.
+
+    dim: list
+        First and last column containing features
+
+    Returns
+    -------
+    DataFrames:
+        DataFrames containing features (x) and labels (y)
+    """
+
+    for i in range(len(glob.glob(features_path + "**/*.csv", recursive=True))):
+        print(i)
+        if i == 0:
+            x_train, x_test, y_train, y_test, y_file = split_test(
+                features_path, i, dim
+            )
+        else:
+            (
+                temp_x_train,
+                temp_x_test,
+                temp_y_train,
+                temp_y_test,
+                temp_y_file,
+            ) = split_test(features_path, i, dim)
+            x_train = pd.concat([x_train, temp_x_train], sort=False)
+            x_test = pd.concat([x_test, temp_x_test], sort=False)
+            y_train = pd.concat([y_train, temp_y_train], sort=False)
+            y_test = pd.concat([y_test, temp_y_test], sort=False)
+            y_file = pd.concat([y_file, temp_y_file], sort=False)
+
+    return x_train, x_test, y_train, y_test, y_file
+
 
 def split_test(features_path, index, dim, test_size=0.2):
     """Split data in train and test datasets.
@@ -372,7 +413,7 @@ def split_test(features_path, index, dim, test_size=0.2):
     return x_train, x_test, y_train, y_test, y_file
 
 
-def prepare_data_svm(features_path, output_dir, trained_model_path=""):
+def prepare_data_svm(features_path, output_dir, trained_model_path="", rfe=False):
     """Preprocess data for SVM training and prediction.
 
     This main function prepares training and testing features and class
@@ -409,44 +450,34 @@ def prepare_data_svm(features_path, output_dir, trained_model_path=""):
     else:
         dim = [5, -1]
     if trained_model_path == "":
-        # create training and test sets
-        for i in range(len(glob.glob(features_path + "**/*.csv", recursive=True))):
-            print(i)
-            if i == 0:
-                x_train, x_test, y_train, y_test, y_file = split_test(
-                    features_path, i, dim
-                )
-            else:
-                (
-                    temp_x_train,
-                    temp_x_test,
-                    temp_y_train,
-                    temp_y_test,
-                    temp_y_file,
-                ) = split_test(features_path, i, dim)
-                x_train = pd.concat([x_train, temp_x_train], sort=False)
-                x_test = pd.concat([x_test, temp_x_test], sort=False)
-                y_train = pd.concat([y_train, temp_y_train], sort=False)
-                y_test = pd.concat([y_test, temp_y_test], sort=False)
-                y_file = pd.concat([y_file, temp_y_file], sort=False)
 
-        y_file.to_csv(output_dir + "test_files.csv")
-        # recursive_features(x_train, y_train, temp_x_test.columns, output_dir)
-
-        # normalize first time for feature selection purposes
-        x_train_tmp = normalize_fit(x_train.to_numpy(), output_dir)
-        model = feature_importance(x_train_tmp, y_train)
-        x_train, x_test = feature_selection(
-            x_train.to_numpy(),
-            x_test.to_numpy(),
-            temp_x_test.columns,
-            model,
-            output_dir,
-            numfeat=50,
+        x_train, x_test, y_train, y_test, y_file = create_train_test(
+            features_path, dim
         )
 
-        # normalize the 50 features of interest of x_train and x_test
-        x_train, x_test = normalize_fit(x_train, output_dir, x_test)
+        y_file.to_csv(output_dir + "test_files.csv")
+        
+        if rfe:
+            # this is only used for explorative purposes and as a basis to
+            # set the number of features to select in the ExtraTreesClassifier method
+            print("running recursive feature elimination")
+            recursive_features(x_train, y_train, x_test.columns, output_dir)
+
+        else:
+            # normalize first time for feature selection purposes
+            x_train_tmp = normalize_fit(x_train.to_numpy(), output_dir)
+            model = feature_importance(x_train_tmp, y_train)
+            x_train, x_test = feature_selection(
+                x_train.to_numpy(),
+                x_test.to_numpy(),
+                x_test.columns,
+                model,
+                output_dir,
+                numfeat=50,
+            )
+
+            # normalize the 50 features of interest of x_train and x_test
+            x_train, x_test = normalize_fit(x_train, output_dir, x_test)
     else:
         # create only test set
         trained_model_dir = os.path.split(trained_model_path)[0] + "/"
