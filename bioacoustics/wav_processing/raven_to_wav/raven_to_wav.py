@@ -252,6 +252,9 @@ class ProcessRaven:
 
         # select only relevant colums
         df['species'] = df['species'].str.lower()
+        if species == "chimpanzee":
+            # replace possible misspellings
+            df['species'] = df['species'].str.replace('chimpansee', 'chimpanzee')
 
         # Change timestamps to timestamps relative to file
         df["start_time"] = df["file_offset_(s)"]
