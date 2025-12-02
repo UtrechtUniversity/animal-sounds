@@ -50,8 +50,23 @@ class ProcessRaven:
         self.file_lengths = None
         self.wav_path = wav_path
 
+    
+    def rename_columns(self):
+        
+        print(self.df.columns)
+        self.df = self.df.rename(columns={"begin_path": "file", "end_path": "end_file"})
+        print(self.df.columns)
+
+        # select only relevant colums
+        if "class" in self.df.columns:
+            self.df = self.df.rename(columns={"class": "species"})
+
+        if "Start time (s)" in self.df.columns:
+            self.df = self.df.rename(columns={"start_time_(s)": "begin_time_(s)"})
+        
+
     def check_columns(self):
-        for col in ["begin path", "end path", "species", "file offset (s)", "begin time (s)", "end time (s)"]:
+        for col in ["file", "end_file", "species", "file offset (s)", "begin time (s)", "end time (s)"]:
             if col.replace(" ", "_") not in self.df.columns:
                 raise ValueError(
                     "No '" + col + "' column found in Raven annotations file"
@@ -74,8 +89,13 @@ class ProcessRaven:
             self.df = pd.read_csv(self.file)
         else:
             self.df = pd.read_table(self.file)
+
         self.df.columns = self.df.columns.str.lower()
         self.df.columns = self.df.columns.str.replace(" ", "_")
+
+        self.rename_columns()
+
+        self.check_columns()
 
     def compute_file_lengths(self, wav_path):
         """Compute file lenghts of .WAV files.
@@ -227,11 +247,8 @@ class ProcessRaven:
 
 
 
-        df = self.df.rename(columns={"begin_path": "file", "end_path": "end_file"})
+        df = self.df       
 
-        # select only relevant colums
-        if "class" in df.columns:
-            df = df.rename(columns={"class": "species"})
 
         # select only relevant colums
         df['species'] = df['species'].str.lower()
@@ -415,7 +432,6 @@ def main():
     args = parser.parse_args()
     p1 = ProcessRaven(args.annotations_file, args.wavpath)
     p1.read_raven()
-    p1.check_columns()
     p1.compute_file_lengths(args.wavpath)
     p1.process_raven(args.species, args.min_sig_len)
     p1.padding(p1.df_2, args.wavpath, args.bg_padding_len, min_length=0.5)
