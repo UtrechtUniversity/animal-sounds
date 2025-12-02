@@ -66,7 +66,7 @@ class ProcessRaven:
         
 
     def check_columns(self):
-        for col in ["file", "end_file", "species", "file offset (s)", "begin time (s)", "end time (s)"]:
+        for col in ["file", "end_file", "species", "file offset (s)", "begin_time_(s)", "end_time_(s)"]:
             if col.replace(" ", "_") not in self.df.columns:
                 raise ValueError(
                     "No '" + col + "' column found in Raven annotations file"
