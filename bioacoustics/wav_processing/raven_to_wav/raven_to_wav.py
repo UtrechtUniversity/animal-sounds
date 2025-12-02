@@ -260,10 +260,15 @@ class ProcessRaven:
         )
 
         # Cut first part of string
-        df["file"] = df["file"].str.replace(".*\\\\", "", regex=True)
-        df["end_file"] = df["end_file"].str.replace(".*\\\\", "", regex=True)
+        df["file"] = df["file"].apply(lambda path: os.path.basename(path.replace("\\", "/")))
+        df["end_file"] = df["end_file"].apply(lambda path: os.path.basename(path.replace("\\", "/")))
+
+
+        print("current row count", df.shape[0])
+        print(df['file'].head())
 
         df = pd.merge(df, self.file_lengths, on="file")
+        print("current row count", df.shape[0])
 
         df = self.split_multifile_annotations(df, self.filelist, self.wav_path)
 
@@ -322,7 +327,7 @@ class ProcessRaven:
                 duration = 60.0
             
             all_padded_rows.append({"file": file, "start": start, "duration": duration})
-            self.df_pad = pd.DataFrame(all_padded_rows)
+        self.df_pad = pd.DataFrame(all_padded_rows)
         self.df_pad["filename"] = list(df["file"])
 
 
@@ -392,7 +397,7 @@ def write_files(
                 sf.write(out_file, frames[i], sr)
 
                 df2.at[fileindex2, "id"] = fileindex
-                df2.iloc[fileindex2, 1:6] = [
+                df2.iloc[fileindex2, 1:5] = [
                     rec_id,
                     filename,
                     str(round(row.start + i, 6)),
@@ -407,7 +412,7 @@ def write_files(
             out_file = output_path + outfile1
             sf.write(out_file, y, sr)
             df2.at[fileindex2, "id"] = fileindex
-            df2.iloc[fileindex2, 1:6] = [
+            df2.iloc[fileindex2, 1:5] = [
                 rec_id,
                 filename,
                 str(round(row.start, 6)),
