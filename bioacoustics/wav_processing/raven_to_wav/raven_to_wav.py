@@ -61,7 +61,7 @@ class ProcessRaven:
         if "class" in self.df.columns:
             self.df = self.df.rename(columns={"class": "species"})
 
-        if "Start time (s)" in self.df.columns:
+        if "start_time_(s)" in self.df.columns:
             self.df = self.df.rename(columns={"start_time_(s)": "begin_time_(s)"})
         
 
