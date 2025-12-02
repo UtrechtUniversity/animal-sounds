@@ -224,7 +224,7 @@ class ProcessRaven:
         return df.loc[
             (df["species"] == species)
             & ((df["end_time_(s)"] - df["begin_time_(s)"]) > min_sig_len),
-            ["file", "end_file", "start_time", "end_time", "type", "filelength"],
+            ["file", "end_file", "start_time", "end_time", "filelength"],
         ]
 
     def process_raven(self, species, min_sig_len):
@@ -323,7 +323,6 @@ class ProcessRaven:
             
             all_padded_rows.append({"file": file, "start": start, "duration": duration})
             self.df_pad = pd.DataFrame(all_padded_rows)
-        self.df_pad["type"] = list(df["type"])
         self.df_pad["filename"] = list(df["file"])
 
 
@@ -368,7 +367,7 @@ def write_files(
     fileindex = fileindex_start
     fileindex2 = 0  # second fileindex for output files (when n raven files > 1)
     df2 = pd.DataFrame(
-        columns=["id", "recorder_id", "file", "start", "duration", "type", "wav"]
+        columns=["id", "recorder_id", "file", "start", "duration", "wav"]
     )
 
     for index, row in df.iterrows():
@@ -398,7 +397,6 @@ def write_files(
                     filename,
                     str(round(row.start + i, 6)),
                     frame_len,
-                    row.type,
                 ]
                 df2.at[fileindex2, "wav"] = outfile1
                 fileindex += 1
@@ -414,7 +412,6 @@ def write_files(
                 filename,
                 str(round(row.start, 6)),
                 row.duration,
-                row.type,
             ]
             df2.at[fileindex2, "wav"] = outfile1
             fileindex += 1
