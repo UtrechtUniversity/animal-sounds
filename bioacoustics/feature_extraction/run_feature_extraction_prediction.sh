@@ -1,7 +1,7 @@
 #!/bin/bash
 # Usage: ./bioacoustics/feature_extraction/run_feature_extraction_svm.sh 
 
-data_dir="${1:-predict_data}"
+data_dir="${1:-data}"
 output_dir="$data_dir/features/"
 
 # Run for real chimp data
