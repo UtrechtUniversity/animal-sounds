@@ -52,11 +52,8 @@ def main(workload):
     config.read()
     features = FeatureVector(config)
 
-    workload, args = workload
-    if cores is None:
-        cores = mp.cpu_count()-2
-    else:
-        cores = args["cores"]
+    workload, cores = workload
+
     # chop up the workload into chunks
     max_open = int(200 / cores)
     workload = [workload[x : x + max_open] for x in range(0, len(workload), max_open)]
@@ -85,19 +82,18 @@ def balance_workload(all_files, cores):
 
 
 if __name__ == "__main__":
-    cores = mp.cpu_count()
-    print("Number of processors on your machine: ", cores)
 
     # get arguments
     parser = parse_arguments()
     args = vars(parser.parse_args())
     args["filter"] = tuple(args["filter"])
 
+    cores = args["cores"]
     # required cores
     if cores is None:
-        cores = mp.cpu_count()-2
-    else:
-        cores = args["cores"]
+        cores = mp.cpu_count()-2    
+
+    print("Number of processors on your machine: ", mp.cpu_count()) 
     print(f"Running on {cores} cores.")
 
     t1 = time.time()
@@ -119,7 +115,7 @@ if __name__ == "__main__":
     result = None
     with mp.Pool(processes=cores) as pool:
         # do it
-        result = pool.map_async(main, product(workload, [args]))
+        result = pool.map_async(main, product(workload, [cores]))
         result = pd.concat(result.get())
     t2 = time.time()
     print(f"Processed in {t2 - t1} sec")
