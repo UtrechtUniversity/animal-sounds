@@ -1,4 +1,4 @@
-data_dir="${1:-predict_data}"
+data_dir="${1:-data}"
 feature_dir="$data_dir/features/"
 trained_model="data/models/svm/svm_model.sav
 output_dir="$data_dir/predictions/
