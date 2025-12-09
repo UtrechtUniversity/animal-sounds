@@ -48,6 +48,11 @@ def parse_arguments():
         "--num_channels", type=int, default=1, help="number of channels"
     )
 
+    parser.add_argument("--prediction-set", 
+        type=str, 
+        default="", 
+        help="name of dataset (e.g. recorder) to apply model on, used for file naming")
+
     return parser
 
 
@@ -90,9 +95,9 @@ def main():
     s.predict_model(X_test, args.trained_model_path, dl_model)
 
     if args.without_label:  # apply model on un-labeled dataset
-        s.save_results(y_test, args.output_dir, predicts_only=True)
+        s.save_results(y_test, args.output_dir, predicts_only = True)
     else:
-        s.save_results(y_test, args.output_dir)
+        s.save_results(y_test, args.output_dir, prediction_set = args.prediction_set)
 
 
 # execute main function

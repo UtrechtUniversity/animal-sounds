@@ -168,7 +168,7 @@ class AcousticModel(ABC):
         self._load_model(file_path, dl_model)
         self._predict(x_test)
 
-    def save_results(self, y_test, file_path, predicts_only=False):
+    def save_results(self, y_test, file_path, prediction_set = "", predicts_only = False):
         """Save predictions of the test dataset
 
         Parameters
@@ -181,7 +181,7 @@ class AcousticModel(ABC):
             Indicates if tests labels need to be saved, Default True
         """
 
-        with open(file_path + "_predictions.txt", "wb") as outfile:
+        with open(file_path + prediction_set + "_predictions.txt", "wb") as outfile:
             np.savetxt(outfile, self.predicts, fmt="%s")
 
         # when a trained model is applied on un-labeled dataset,
@@ -190,7 +190,7 @@ class AcousticModel(ABC):
             return
 
         # save y_test
-        pd.DataFrame(y_test).to_csv(file_path + "_y_test.csv", index=False)
+        pd.DataFrame(y_test).to_csv(file_path + prediction_set + "_y_test.csv", index=False)
 
     def plot_measures(self, history, file_path, title=""):
         """Summarize history for recall

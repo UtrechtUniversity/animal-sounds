@@ -151,7 +151,7 @@ def filter_features(data, file, numfeat=50):
     return data[:, indices]
 
 
-def read_files(file_path, dim, svm_dir, predict=False, hoplength=0.25, output_dir=""):
+def read_files(file_path, dim, svm_dir, predict=False, hoplength=0.25, output_dir="", prediction_set=""):
     """Read and filter feature data.
 
     This function reads features and labels from all relevant files
@@ -205,7 +205,7 @@ def read_files(file_path, dim, svm_dir, predict=False, hoplength=0.25, output_di
             columns=["label_1", "label_2", "frameId", "length[s]"], inplace=True
         )
         print(frame_info)
-        frame_info.to_csv(output_dir + "frame-info.csv")
+        frame_info.to_csv(output_dir + prediction_set + "_frame-info.csv")
         x = x.iloc[:, 5:-1]
 
     x = filter_features(x.to_numpy(), feature_file)
@@ -413,7 +413,7 @@ def split_test(features_path, index, dim, test_size=0.2):
     return x_train, x_test, y_train, y_test, y_file
 
 
-def prepare_data_svm(features_path, output_dir, trained_model_path="", rfe=False):
+def prepare_data_svm(features_path, output_dir, trained_model_path="", rfe=False, prediction_set=""):
     """Preprocess data for SVM training and prediction.
 
     This main function prepares training and testing features and class
@@ -487,6 +487,7 @@ def prepare_data_svm(features_path, output_dir, trained_model_path="", rfe=False
             trained_model_dir,
             predict=True,
             output_dir=output_dir,
+            prediction_set=prediction_set,
         )
         x_test = normalize(x_test, trained_model_dir)
         x_train = None
