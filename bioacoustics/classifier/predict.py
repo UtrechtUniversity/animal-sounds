@@ -48,7 +48,7 @@ def parse_arguments():
         "--num_channels", type=int, default=1, help="number of channels"
     )
 
-    parser.add_argument("--prediction-set", 
+    parser.add_argument("--prediction_set", 
         type=str, 
         default="", 
         help="name of dataset (e.g. recorder) to apply model on, used for file naming")
@@ -103,3 +103,4 @@ def main():
 # execute main function
 if __name__ == "__main__":
     main()
+
