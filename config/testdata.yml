@@ -30,9 +30,52 @@ synth_pipeline_vocalizations:
   output_background: test_data_dir/synth_data/background
 
 feature_extraction:
-  input_dir: test_data_dir/synth_data
-  feature_dir: test_data/features
+  input_dir: test_data_dir/synth_data # this is not used
+  feature_dir: test_data/features/train/
+  sample_rate: 48000
+  window_length: [750]
+  hop_length: [376]
+  n_mel: [64]
+  low_cut: 100
+  high_cut: 2000
+  pcen:
+    gain: 0.98
+    bias: 2
+    power: 0.5
+    time_constant: 1.5
+    eps: 0.000001
+
 
 model_training:
-  model: svm
+  model: svm #cnn10 cnn12
   output_dir: test_data/models/svm/
+  augmentation: True
+  set_threshold: False
+
+evaluate:
+  model: svm #cnn10 cnn12
+  model_dir: test_data/models/svm/
+  feature_dir: test_data/features/test/
+  output_dir: test_data/models/svm/
+
+predict:
+  model: svm #cnn10 cnn12
+  model_dir: test_data/models/svm/
+  feature_dir: test_data/features/test/
+  output_dir: test_data/models/svm/
+
+
+model_setting:
+  num_channels: 3
+  init_mode: "he_normal" # "glorot_uniform"
+  dropout_rate: 0.5
+  weight_constraint: 4
+  weight_decay: 0.001
+  epochs: 20
+  batch_size: 32
+  learning_rate: 0.0001
+  samples_per_epoch: 11200
+  frames_per_chunk: 64
+
+
+
