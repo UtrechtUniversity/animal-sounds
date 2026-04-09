@@ -2,70 +2,33 @@
 
 import glob
 import librosa
+import logging
 import pandas as pd
 import numpy as np
 import argparse
 import os
 from acoustic_features.tools import butter_bandpass_filter
-from PIL import Image
+import yaml
 
 
 def parse_arguments():
     # parse arguments if available
     parser = argparse.ArgumentParser(description="Deep learning features")
-
-    # File path to the data.
+    parser.add_argument(
+        "--config_file", type=str, help="File path to the config file"
+    )
     parser.add_argument(
         "--input_dir", type=str, help="File path to the dataset of .wav files"
     )
 
     parser.add_argument("--output_dir", type=str, default=None, help="output dir")
-
     parser.add_argument("--label", type=str, help='label : "chimpanze" or "background"')
-    parser.add_argument("--sample_rate", type=int, default=48000, help="sample rate")
-    parser.add_argument(
-        "--window_length",
-        type=int,
-        nargs="+",
-        # default= 750 1504 6000
-        help="length of the FFT window",
-    )
-
-    parser.add_argument(
-        "--hop_length",
-        type=int,
-        nargs="+",
-        # default= 376 752 3000
-        help="number of samples between successive frames",
-    )
-
-    parser.add_argument(
-        "--n_mel",
-        type=int,
-        nargs="+",
-        # default=64, for resnet: 64 32 8
-        help="number of mel features, i.e. horizontal bars in spectrogram",
-    )
-
-    parser.add_argument(
-        "--new_img_size",
-        type=int,
-        nargs="+",
-        # default= 64 64, for resnet 224 224
-        help="the target size of the images",
-    )
-
-    parser.add_argument(
-        "--low_cut", type=int, default=100, help="minimum desired frequency"
-    )
-    parser.add_argument(
-        "--high_cut", type=int, default=2000, help="maximum desired frequency"
-    )
     return parser
 
 
 def extract_features(
-    fp, sample_rate, window_length, hop_length, n_mel, new_img_size, low_cut, high_cut
+    fp, sample_rate, window_length, hop_length, n_mel,
+    low_cut, high_cut, pcen_params
 ):
     """Load audio from .wav file, filter it, and pass it to function
     compute_melspectrogram_with_fixed_length().
@@ -94,18 +57,23 @@ def extract_features(
     np.ndarray:
         Mel spectrogram.
     """
-    y, sr = librosa.load(fp, sr=args.sample_rate)
+
+    y, sr = librosa.load(fp, sr=sample_rate)
     y_filtered = butter_bandpass_filter(y, low_cut, high_cut, sr)
     melspectrogram_db = compute_melspectrogram_with_fixed_size(
-        y_filtered, sample_rate, window_length, hop_length, n_mel, new_img_size
+        y_filtered, sample_rate, window_length, hop_length, n_mel,
+        pcen_params
     )
     return melspectrogram_db
 
 
 def compute_melspectrogram_with_fixed_size(
-    audio, sample_rate, window_length_set, hop_length_set, n_mel_set, new_img_size
+    audio, sample_rate, window_length_set, hop_length_set, n_mel_set,
+        pcen_params=None, normalize=True, use_deltas=True
 ):
-    """Create melspectrogram for a given audio
+    """Create PCEN-normalized melspectrogram for a given audio.
+    PCEN (Per-Channel Energy Normalization) suppresses stationary background
+    noise and enhances transient events, making features environment-invariant.
 
     Parameters
     ----------
@@ -125,20 +93,28 @@ def compute_melspectrogram_with_fixed_size(
     Returns
     -------
     np.ndarray:
-        Mel spectrogram.
+        PCEN-normalized Mel spectrogram.
     """
+
+    if pcen_params is None:
+        pcen_params = {
+            "gain": 0.98,
+            "bias": 2,
+            "power": 0.5,
+            "time_constant": 0.4,
+            "eps": 1e-6,
+        }
     try:
         specs = []
         num_channels = len(window_length_set)
-        img_width = new_img_size[0]
-        img_height = new_img_size[1]
+
         for i in range(num_channels):
             window_length = window_length_set[i]
             hop_length = hop_length_set[i]
             n_mel = n_mel_set[i]
 
-            # compute a mel-scaled spectrogram
-            # https://github.com/kamalesh0406/Audio-Classification/blob/master/preprocessing/preprocessingESC.py
+            # compute a mel-scaled spectrogram (linear scale, NOT log)
+            # PCEN requires linear scale input, not log-compressed
             mel_spectrogram = librosa.feature.melspectrogram(
                 y=audio,
                 sr=sample_rate,
@@ -148,20 +124,89 @@ def compute_melspectrogram_with_fixed_size(
                 window="hamming",
             )
 
-            eps = 1e-6
-            spec = np.log(mel_spectrogram + eps)
+            # apply PCEN instead of log compression
+            # hop_length must match the one used above
+            spec = librosa.pcen(
+                mel_spectrogram * (2**31),
+                sr=sample_rate,
+                hop_length=hop_length,
+                **pcen_params,
 
-            if spec.shape[1] != img_height:
-                spec = np.array(Image.fromarray(spec).resize((img_width, img_height)))
+            )
+            spec = spec.astype(np.float32)
+
+            if normalize:
+                spec = per_file_znorm(spec)
+            if use_deltas:
+                spec = add_deltas(spec)  # (n_mels, n_frames) -> (3, n_mels, n_frames)
 
             specs.append(spec)
 
-        print(len(specs))
     except Exception as e:
         print("\nError encountered while parsing files\n>>", e)
         return None
 
     return specs
+
+
+def per_file_znorm(spec, eps=1e-8):
+    """
+    Per-file z-normalization across the time axis for each frequency bin.
+
+    Removes environment-specific absolute energy levels while preserving
+    the relative spectral shape of transient events (e.g., chimp calls).
+
+    Parameters
+    ----------
+    spec : np.ndarray
+        Spectrogram of shape (n_mels, n_frames).
+    axis : int
+        Axis along which to compute stats. Default -1 (time).
+    eps : float
+        Small constant to avoid division by zero.
+
+    Returns
+    -------
+    np.ndarray
+        Z-normalized spectrogram, same shape as input.
+    """
+    mean = spec.mean(axis=1, keepdims=True)
+    std = spec.std(axis=1, keepdims=True) + eps
+    return (spec - mean) / std
+
+
+def add_deltas(spec, width=9):
+    """
+    Add delta and delta2 channels to a spectrogram.
+
+    Parameters
+    ----------
+    spec : np.ndarray
+        Shape (n_mels, n_frames) — single channel spectrogram.
+    width : int
+        Filter width for delta computation. Default 9.
+
+    Returns
+    -------
+    np.ndarray
+        Shape (3, n_mels, n_frames).
+    """
+
+    n_frames = spec.shape[-1]
+
+    # librosa.feature.delta needs at least (width) frames
+    # for very short files, pad temporarily, compute, then trim
+    min_frames = width + 1
+    if n_frames < min_frames:
+        pad_amount = min_frames - n_frames
+        spec_padded = np.pad(spec, ((0, 0), (0, pad_amount)), mode="edge")
+        delta = librosa.feature.delta(spec_padded, order=1, width=width)[:, :n_frames]
+        delta2 = librosa.feature.delta(spec_padded, order=2, width=width)[:, :n_frames]
+    else:
+        delta = librosa.feature.delta(spec, order=1, width=width)
+        delta2 = librosa.feature.delta(spec, order=2, width=width)
+
+    return np.stack([spec, delta, delta2], axis=0)
 
 
 def get_label(lbl):
@@ -170,40 +215,55 @@ def get_label(lbl):
 
 if __name__ == "__main__":
 
-    # get arguments
     parser = parse_arguments()
     args = parser.parse_args()
 
-    out_dir = os.path.dirname(args.output_dir)
+    logging.basicConfig(level=logging.INFO)
 
+    with open(args.config_file, 'r') as f:
+        config = yaml.safe_load(f)
+
+    sample_rate = config["feature_extraction"]["sample_rate"]
+    window_length = config["feature_extraction"]["window_length"]
+    hop_length = config["feature_extraction"]["hop_length"]
+    n_mel = config["feature_extraction"]["n_mel"]
+    low_cut = config["feature_extraction"]["low_cut"]
+    high_cut = config["feature_extraction"]["high_cut"]
+    pcen_params = config["feature_extraction"].get("pcen", None)
+
+    input_dir = args.input_dir
+    output_dir = args.output_dir
+    label = args.label
+
+    out_dir = os.path.dirname(output_dir)
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
 
-    all_files = glob.glob(args.input_dir)
-    print("number of selected files", len(all_files))
+    all_files = glob.glob(input_dir)
+    logging.info("input_dir: %s", input_dir)
+    logging.info("number of selected files: %d", len(all_files))
 
     df_features = pd.DataFrame(columns=["file_path", "features", "label_1"])
     for f in all_files:
 
         melspectrogram = extract_features(
             f,
-            args.sample_rate,
-            args.window_length,
-            args.hop_length,
-            args.n_mel,
-            args.new_img_size,
-            args.low_cut,
-            args.high_cut,
+            sample_rate,
+            window_length,
+            hop_length,
+            n_mel,
+            low_cut,
+            high_cut,
+            pcen_params=pcen_params,
         )
 
-        label_1 = get_label(args.label)
+        label_1 = get_label(label)
         new_df = pd.DataFrame(
             {"file_path": [f], "features": [melspectrogram], "label_1": [label_1]}
         )
-        print("processing file ", f)
+        logging.info("processing file %s", f)
         df_features = pd.concat([df_features, new_df], join="inner").copy()
 
-    print(df_features["file_path"])
     if df_features is not None:
-        df_features.to_pickle(args.output_dir)
-        print("df_features.shape", df_features.shape)
+        df_features.to_pickle(output_dir)
+        logging.info("df_features.shape %s", df_features.shape)
