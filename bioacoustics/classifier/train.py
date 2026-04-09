@@ -3,152 +3,98 @@
 from data_preparation_dl import prepare_data_dl
 from data_preparation_svm import prepare_data_svm
 from model.svm_model import SVM_model
-from model.cnn_model import CNN_model
-from model.cnn10_model import CNN10Model
-from model.cnn8_model import CNN8_model
-from model.cnn6_model import CNN6_model
-from model.cnn2_model import CNN2_model
-
-from model.cnn12_model import CNN12_model
-from model.cnn14_model import CNN14_model
+from model.cnn10_torch import CNN10Model
+from model.cnn12_torch import CNN12Model
+import logging
 import os
 import argparse
 import yaml
 
 
 def parse_arguments():
-    # parse arguments if available
     parser = argparse.ArgumentParser(description="Bioacoustics")
 
-    # File path to the data.
     parser.add_argument(
         "--config_file", type=str, help="File path to the config file"
     )
 
-    parser.add_argument(
-        "--normVal_dir",
-        type=str,
-        help="File path to the mean and std values of trained data to normalize test dataset",
-    )
-    parser.add_argument(
-        "--model", type=str, default="None", help="machine learning model "
-    )
-
-
-    # params for hyperparameter optimization
-    parser.add_argument(
-        "--nrow_input", type=int, default=64, help="first dimension of input"
-    )
-    parser.add_argument(
-        "--ncol_input", type=int, default=64, help="second dimension of input"
-    )
-    parser.add_argument(
-        "--num_channels", type=int, default=1, help="number of channels"
-    )
-    parser.add_argument(
-        "--channel_first",
-        type=bool,
-        default=True,  # False
-        help="indicate if the channel is the first dimension",
-    )
-
-    parser.add_argument("--epochs", type=int, default=5, help="number of epochs")
-    parser.add_argument("--batch_size", type=int, default=32, help="batch size")
-
-    parser.add_argument("--dropout_rate", type=float, default=0.2, help="dropout rate")
-    parser.add_argument(
-        "--weight_constraint", type=int, default=3, help="weight constraint"
-    )
-    parser.add_argument(
-        "--learning_rate", type=float, default=0.001, help="learning rate"
-    )
-    parser.add_argument(
-        "--init_mode", type=str, default="glorot_uniform", help="init mode"
-    )
     return parser
 
 
 def main():
-    # cv_results = False
     parser = parse_arguments()
     args = parser.parse_args()
+    acoustic_model = None
+
+    logging.basicConfig(level=logging.INFO)
 
     with open(args.config_file, 'r') as f:
         config = yaml.safe_load(f)
 
-    if not os.path.exists(os.path.dirname(config["model_training"]["output_dir"])):
-        os.makedirs(os.path.dirname(config["model_training"]["output_dir"]))
+    model = config["model_training"]["model"]
+    output_dir = config["model_training"]["output_dir"]
+    augmentation = config["model_training"]["augmentation"]
+    set_threshold = config["model_training"]["set_threshold"]
+    num_channels = config["model_setting"]["num_channels"]
+    epoch = config["model_setting"]["epochs"]
+    batch_size = config["model_setting"]["batch_size"]
+    dropout_rate = config["model_setting"]["dropout_rate"]
+    weight_constraint = config["model_setting"]["weight_constraint"]
+    learning_rate = config["model_setting"]["learning_rate"]
+    init_mode = config["model_setting"]["init_mode"]
+    weight_decay = config["model_setting"]["weight_decay"]
+    samples_per_epoch = config["model_setting"]["samples_per_epoch"]
+    frames_per_chunk = config["model_setting"]["frames_per_chunk"]
+    feature_dir = config["feature_extraction"]["feature_dir"]
 
-    if args.model == "svm" or config["model_training"]["model"] == "svm":
-        print("SVM model")
-        X_train, y_train, X_test, y_test = prepare_data_svm(
-            config["feature_extraction"]["feature_dir"], config["model_training"]["output_dir"]
+    if not os.path.exists(os.path.dirname(output_dir)):
+        os.makedirs(os.path.dirname(output_dir))
+
+    if model == "svm":
+        logging.info("SVM model")
+        x_train, y_train, x_test, y_test = prepare_data_svm(
+            feature_dir, output_dir
         )
 
     else:
-        print("DL model")
-        X_train, y_train, X_test, y_test = prepare_data_dl(
-            config["feature_extraction"]["feature_dir"], norm_val_dir=args.normVal_dir
+        logging.info("DL model")
+        x_train, y_train, x_val, y_val, x_test, y_test = prepare_data_dl(
+            feature_dir, mode="train"
+        )
+        logging.info("preprocessing is Done!")
+
+    if model == "cnn10":
+        acoustic_model = CNN10Model(num_channels=num_channels, output_dir=output_dir, init_mode=init_mode,
+                                    dropout_rate=dropout_rate, weight_constraint=weight_constraint)
+    elif model == "cnn12":
+        acoustic_model = CNN12Model(num_channels=num_channels, output_dir=output_dir, init_mode=init_mode,
+                                    dropout_rate=dropout_rate, weight_constraint=weight_constraint)
+    elif model == "svm":
+        acoustic_model = SVM_model(output_dir=output_dir)
+
+    if model != "svm":
+        acoustic_model.fit(
+            x_train, y_train, x_val, y_val,
+            epoch=epoch, batch_size=batch_size,learning_rate=learning_rate, weight_decay=weight_decay,
+            frames_per_chunk=frames_per_chunk, samples_per_epoch=samples_per_epoch, augmentation=augmentation,
+            set_threshold=set_threshold
         )
 
-    if args.model == "cnn":
-        s = CNN_model(
-            args.nrow_input, args.ncol_input, args.num_channels, args.channel_first
-        )
-    elif args.model == "cnn2":
-        s = CNN2_model(
-            args.nrow_input, args.ncol_input, args.num_channels, args.channel_first
-        )
-    elif args.model == "cnn6":
-        s = CNN6_model(
-            args.nrow_input, args.ncol_input, args.num_channels, args.channel_first
-        )
-    elif args.model == "cnn8":
-        s = CNN8_model(
-            args.nrow_input, args.ncol_input, args.num_channels, args.channel_first
-        )
-    elif args.model == "cnn10":
-        s = CNN10Model(
-            args.nrow_input, args.ncol_input, args.num_channels, args.channel_first
-        )
+        chunk_results, file_results = acoustic_model.evaluate_model(x_test, y_test, batch_size=batch_size,
+                                                                    frames_per_chunk=frames_per_chunk,
+                                                                    tune_threshold=False)
+        acoustic_model.save_evaluation(probs=chunk_results['probs'], y_true=chunk_results["y_true"],
+                                       metrics=chunk_results["metrics"], predicts=chunk_results["preds"],
+                                       split="test_chunks")
+        acoustic_model.save_evaluation(probs=file_results['probs'], y_true=file_results["y_true"],
+                                       metrics=file_results["metrics"], predicts=file_results["preds"],
+                                       split="test_files")
 
-    elif args.model == "cnn12":
-        s = CNN12_model(
-            args.nrow_input, args.ncol_input, args.num_channels, args.channel_first
-        )
-    elif args.model == "cnn14":
-        s = CNN14_model(
-            args.nrow_input, args.ncol_input, args.num_channels, args.channel_first
-        )
-    elif args.model == "svm" or config["model_training"]["model"] == "svm":
-        s = SVM_model()
-        # cv_results = True
-
-    print(" X_train.shpe", X_train.shape)
-    print(" y_train.shpe", y_train.shape)
-    print(" X_test.shpe", X_test.shape)
-    print(" y_test.shpe", y_test.shape)
-
-    if args.model != "svm" and config["model_training"]["model"] != "svm":
-        s.make_model(
-            init_mode=args.init_mode,
-            dropout_rate=args.dropout_rate,
-            weight_constraint=args.weight_constraint,
-            learning_rate=args.learning_rate,
-            compile_model=True,
-        )
-
-        s.apply_model(
-            X_train, y_train, X_test, y_test, config["model_training"]["output_dir"], args.epochs, args.batch_size
-        )
     else:
-        s.apply_model(
-            X_train, y_train, X_test, y_test, config["model_training"]["output_dir"]
-        )
-
-    s.save_results(y_test, config["model_training"]["output_dir"])
+        acoustic_model.fit(x_train, y_train)
+        accuracy, preds = acoustic_model.evaluate_model(x_test, y_test)
+        acoustic_model.save_evaluation(preds, y_true=y_test, metrics=accuracy, split="test")
 
 
-# execute main function
 if __name__ == "__main__":
     main()
