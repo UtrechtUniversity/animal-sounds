@@ -1,0 +1,1 @@
+python bioacoustics/classifier/predict.py --config_file "config/testdata.yml"

@@ -1,15 +1,13 @@
 """Script to apply a model on a set of features_old and make a prediction"""
-
 from data_preparation_dl import prepare_data_dl
 from data_preparation_svm import prepare_data_svm
 from model.svm_model import SVM_model
-from model.cnn_model import CNN_model
-from model.cnn10_model import CNN10Model
-from model.cnn8_model import CNN8_model
-from model.cnn6_model import CNN6_model
-from model.cnn12_model import CNN12_model
+from model.cnn10_torch import CNN10Model
+from model.cnn12_torch import CNN12Model
+import logging
 import os
 import argparse
+import yaml
 
 
 def parse_arguments():
@@ -18,89 +16,73 @@ def parse_arguments():
 
     # File path to the data.
     parser.add_argument(
-        "--feature_dir", type=str, help="File path to the dataset of features"
+        "--config_file", type=str, help="File path to the config file"
     )
-
-    parser.add_argument(
-        "--normVal_dir",
-        type=str,
-        help="File path to the mean and std values of trained data to normalize test dataset",
-    )
-    parser.add_argument(
-        "--model", type=str, default="cnn10", help="machine learning model "
-    )
-
-    parser.add_argument(
-        "--trained_model_path",
-        type=str,
-        default="",
-        help="file path of a pre-trained model to apply on a given dataset",
-    )
-
-    parser.add_argument(
-        "--without_label",
-        type=bool,
-        default=False,
-        help="indicate if dataset is labeled",
-    )
-    parser.add_argument("--output_dir", type=str, default=None, help="output dir")
-    parser.add_argument(
-        "--num_channels", type=int, default=1, help="number of channels"
-    )
-
-    parser.add_argument("--prediction_set", 
-        type=str, 
-        default="", 
-        help="name of dataset (e.g. recorder) to apply model on, used for file naming")
-
     return parser
 
 
 def main():
-    dl_model = True
     parser = parse_arguments()
     args = parser.parse_args()
 
-    if not os.path.exists(os.path.dirname(args.output_dir)):
-        os.makedirs(os.path.dirname(args.output_dir))
+    logging.basicConfig(level=logging.INFO)
 
-    if args.model == "svm":
-        X_train, y_train, X_test, y_test = prepare_data_svm(
-            args.feature_dir, args.output_dir, args.trained_model_path
+    with open(args.config_file, 'r') as f:
+        config = yaml.safe_load(f)
+
+    init_mode = config["model_setting"]["init_mode"]
+    num_channels = config["model_setting"]["num_channels"]
+    dropout_rate = config["model_setting"]["dropout_rate"]
+    weight_constraint = config["model_setting"]["weight_constraint"]
+
+    frames_per_chunk = config["model_setting"]["frames_per_chunk"]
+    batch_size = config["model_setting"]["batch_size"]
+
+    model = config["predict"]["model"]
+    output_dir = config["predict"]["output_dir"]
+    feature_dir = config["predict"]["feature_dir"]
+    model_dir = config["predict"]["model_dir"]
+    aco_model = None
+
+    if not os.path.exists(os.path.dirname(output_dir)):
+        os.makedirs(os.path.dirname(output_dir))
+
+    if model == "svm":
+        logging.info("SVM model")
+        _, _, x_pred, _ = prepare_data_svm(
+            features_path=feature_dir, output_dir=output_dir,
+            trained_model_path=model_dir
         )
+        aco_model = SVM_model(output_dir=output_dir, model_dir=model_dir)
+        preds = aco_model.predict_model(x_pred)
+        aco_model.save_evaluation(preds, split="preds")
 
     else:
-        X_train, y_train, X_test, y_test = prepare_data_dl(
-            args.feature_dir,
-            without_label=args.without_label,
-            trained_model_path=args.trained_model_path,
-            norm_val_dir=args.normVal_dir,
+        logging.info("DL model")
+        _, _, _, _, x_pred, _ = prepare_data_dl(
+            features_dir=feature_dir, mode="predict",
         )
 
-    if args.model == "cnn":
-        s = CNN_model()
-    elif args.model == "cnn10":
-        s = CNN10Model()
-    elif args.model == "cnn8":
-        s = CNN8_model()
-    elif args.model == "cnn6":
-        s = CNN6_model()
-    elif args.model == "cnn12":
-        s = CNN12_model()
-    if args.model == "svm":
-        s = SVM_model()
-        dl_model = False
+        if model == "cnn10":
+            aco_model = CNN10Model(num_channels=num_channels, output_dir=output_dir, model_dir=model_dir,
+                           init_mode=init_mode, dropout_rate=dropout_rate, weight_constraint=weight_constraint)
+        elif model == "cnn12":
+            aco_model = CNN12Model(num_channels=num_channels, output_dir=output_dir, model_dir=model_dir,
+                           init_mode=init_mode, dropout_rate=dropout_rate, weight_constraint=weight_constraint)
 
-    # s.evaluate_model( X_test, y_test, args.trained_model_path)
-    s.predict_model(X_test, args.trained_model_path, dl_model)
+        results = aco_model.predict_model(x_pred, frames_per_chunk=frames_per_chunk, batch_size=batch_size)
+        chunk_results = results["chunk_results"]
+        file_results = results["file_results"]
 
-    if args.without_label:  # apply model on un-labeled dataset
-        s.save_results(y_test, args.output_dir, predicts_only = True)
-    else:
-        s.save_results(y_test, args.output_dir, prediction_set = args.prediction_set)
+        aco_model.save_evaluation(
+            probs=chunk_results['probs'],
+            predicts=chunk_results['preds'],
+            split="predict_chunk")
+        aco_model.save_evaluation(
+            probs=file_results['probs'],
+            predicts=file_results['preds'],
+            split="predict_file")
 
 
-# execute main function
 if __name__ == "__main__":
     main()
-
