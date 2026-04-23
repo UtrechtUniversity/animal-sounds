@@ -1,6 +1,6 @@
-input_dir="./test_input/"
-output_dir="./test_output/"
+config_file="${1:-../../config/testdata.yml}"
+job_name="test"
 
-echo "Processing $input_dir"
+echo "Processing $job_name"
 
-python3 extract_features_svm.py --input_dir $input_dir --output_dir "${output_dir}test_24000.csv" --frame_length 24000 --hop_length 12000 --cores 1 --filter 100 2000 5 --label1 chimpanze --label2 test
+python3 extract_features_svm.py --config_file "$config_file" --job_name "$job_name"

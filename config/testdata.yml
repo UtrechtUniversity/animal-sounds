@@ -45,6 +45,39 @@ feature_extraction:
     time_constant: 1.5
     eps: 0.000001
 
+feature_extraction_svm:
+  defaults:
+    frame_length: 24000
+    hop_length: 12000
+    cores: 8
+    filter: [100, 2000, 5]
+  jobs:
+    test:
+      input_dir: ./test_input/
+      output_dir: ./test_output/test_24000.csv
+      label1: chimpanze
+      label2: test
+    chimpanze_mefou:
+      input_dir: test_data/processed_wav_files/vocalizations/
+      output_dir: test_data/features/train/chimpanze_mefou_24000.csv
+      label1: chimpanze
+      label2: train
+    chimpanze_synthetic:
+      input_dir: test_data/synth_data/vocalizations/
+      output_dir: test_data/features/train/chimpanze_synthetic_24000.csv
+      label1: chimpanze
+      label2: train
+    background_mefou:
+      input_dir: test_data/processed_wav_files/background/
+      output_dir: test_data/features/train/background_mefou_24000.csv
+      label1: background
+      label2: train
+    background_synthetic:
+      input_dir: test_data/synth_data/background/
+      output_dir: test_data/features/train/background_synthetic_24000.csv
+      label1: background
+      label2: train
+
 
 model_training:
   model: svm #cnn10 cnn12
