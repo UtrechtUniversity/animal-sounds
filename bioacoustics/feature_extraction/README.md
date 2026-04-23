@@ -21,13 +21,15 @@ The script results in a feature set of 1140 features per audio frame.
 
 ### Running the script
 Use shell script `run_svm.sh` to start `extract_features_svm.py` from the command line. The following arguments should be specified:
-- `--input_dir`; directory where the '.wav' files are located.
-- `--output_dir`; directory where the feature files ('.csv') should be stored.
+- `--config_file`; optional YAML file with reusable defaults and SVM extraction jobs.
+- `--job_name`; optional job name under `feature_extraction_svm.jobs` in the config file.
+- `--input_dir`; directory where the '.wav' files are located. This is typically defined in the selected config job.
+- `--output_dir`; output path for the feature file ('.csv'). This is typically defined in the selected config job.
 - `--frame_length`; subdivide '.wav' files in frames of this length (in number of samples, if the sample rate is 48000 samples per second, choose e.g. 24000 for 0.5 second frames)
 - `--hop_length`; overlap between frames in number of samples per hop
 - `--filter`; butter bandpass filter variables 
 
-In `./config` the user can specify which features to extract.
+In `./config` the user can specify which features to extract and can define reusable SVM extraction defaults such as frame length, hop length, filter settings, number of cores, plus per-job input and output paths.
 
 ### sndfile library
 If you get an error saying something about a 'snd_file' dependency on an ubuntu machine, this can be fixed by installing the following C library:
