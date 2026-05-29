@@ -156,7 +156,7 @@ Activate the python virtual environment and install the bioacoustics packages th
 source .venv/bin/activate
 uv pip install -e .
 ```
-
+### **Usage Scenarios**
 There are two situations in which you can directly apply the scripts in this repository and we tailored the documentation towards these situations:
 1. You have audio data and a set of manual annotations (in e.g. txt or csv format) and want to use the whole pipeline including training your own model. Find getting started instructions for each step in the respective folders: [1_wav_processing](./bioacoustics/wav_processing), [2_feature_extraction](./bioacoustics/feature_extraction) and [3_classifier](./bioacoustics/classifier) 
 

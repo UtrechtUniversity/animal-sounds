@@ -11,7 +11,7 @@
 - [Remarks](#remarks)
 
 ## How does it work
-To train the model using `train.py` the user needs have converted audio data into [features](/bioacoustics/2_feature_extraction].
+To train the model using `train.py` the user needs have converted audio data into [features](/bioacoustics/2_feature_extraction).
 
 ## SVM
 

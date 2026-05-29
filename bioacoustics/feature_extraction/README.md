@@ -3,7 +3,7 @@ The modules in this directory are used to extract acoustic and/or deep learning 
 
 ## Instructions
 
-[Installation instructions](https://github.com/UtrechtUniversity/animal-sounds/tree/documenation_svm#getting-started)
+[Installation instructions](https://github.com/UtrechtUniversity/animal-sounds#getting-started)
 
 ## Audio Preprocessing
 
