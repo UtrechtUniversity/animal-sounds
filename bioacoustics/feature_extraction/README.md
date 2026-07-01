@@ -16,6 +16,7 @@ We extract several feature sets from using:
 - an [Automatic Analysis Architecture](https://doi.org/10.5281/zenodo.1216028)
 
 For our analyses we chunk all recordings into 0.5 second frames (with 0.25 second overlap between the chunks).
+We apply a Butterworth bandpass filter for filtering audio between 100 and 2000 before extracting features. 
 We create MFCC and RASTA-PLPC low level descriptors (LLDs) from the filtered signal. For each horizontal band of the MFCC and RASTA-PLPC representation we calculate $\Delta$ and $\Delta^2$, and extract statistical features from the plain LLDs, $\Delta$ and $\Delta^2$.
 
 We extend the feature set with the features from an [Automatic Analysis Architecture](https://doi.org/10.5281/zenodo.1216028)
