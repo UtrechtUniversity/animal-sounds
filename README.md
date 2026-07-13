@@ -165,7 +165,8 @@ Render the site locally with:
 
 ```
 source .venv/bin/activate
-quarto render output
+cd output
+quarto render
 ```
 
 The website source is configured in `output/_quarto.yml`, and GitHub Pages deployment is handled by `.github/workflows/quarto-publish.yml`.
