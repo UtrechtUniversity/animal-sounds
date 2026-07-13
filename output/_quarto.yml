@@ -1,0 +1,26 @@
+project:
+  type: website
+  output-dir: _site
+  render:
+    - index.qmd
+    - notebooks/model_comparison.ipynb
+
+website:
+  title: Animal Sounds
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - href: notebooks/model_comparison.ipynb
+        text: Model Comparison
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    code-fold: show
+
+execute:
+  echo: true
+  warning: false
+  freeze: false

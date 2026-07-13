@@ -1,0 +1,13 @@
+---
+title: Animal Sounds Analyses
+---
+
+# Model Comparison Website
+
+This site publishes the model comparison analysis from the repository notebook while keeping the tracked notebook source free of stored outputs.
+
+- The analysis page is rendered from `notebooks/model_comparison.ipynb`.
+- Outputs are generated during the GitHub Pages build, not stored in the notebook file in the repository.
+- The published page includes the executed tables and plots.
+
+[Open the model comparison analysis](notebooks/model_comparison.html)
