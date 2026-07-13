@@ -21,6 +21,7 @@ format:
     code-fold: show
 
 execute:
+  enabled: true
   echo: true
   warning: false
   freeze: false
