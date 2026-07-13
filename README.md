@@ -83,6 +83,25 @@ For full technical details, see the [Feature Extraction documentation](./bioacou
 | *Chimpanze vocalization in mel spectrogram representation* |
 
 ### Classification
+<<<<<<< svm-notebook
+**SVM**  
+From the 1140 statistical features from the previous step we select a normalized feature set of 50 features. The selection is based on feature importances computed with an Extra Trees Classifier. We train and optimize the SVM model on those 50 features using 'macro average recall' as evaluation criterion.
+
+**Deep learning**  
+We trained several architectures of Convolutional Neural Networks (CNN). CNN10 is the best performing model.
+
+| Recorder 14a |
+| Trained on| SVM | CNN10 | CNN12 | 
+| --- | --- | --- | --- |
+| Sanctuary | 0.62 | 0.81 | 0.81 |
+| Sanctuary + Synthetic | 0.75 | 0.93 | 0.87 | 
+
+| Recorder 13b |
+| Trained on| SVM | CNN10 | CNN12 | 
+| --- | --- | --- | --- |
+| Sanctuary | 0.51 | 0.85 | 0.85 |
+| Sanctuary + Synthetic | 0.54 | 0.91 | 0.84 | 
+=======
 
 Two classifier families are supported, both taking the extracted features as input:
 
@@ -105,6 +124,7 @@ The following is the results of models, evaluated based on unweighted average re
 | Sanctuary + Synthetic | a|  | 0.93 | 
 | Sanctuary | b |  | 0.84 |
 | Sanctuary + Synthetic | b|  | 0.92 | 
+>>>>>>> main
 
 ### Built with
 
