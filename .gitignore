@@ -119,6 +119,8 @@ venv.bak/
 
 # mkdocs documentation
 /site
+/output/_site
+/output/.quarto
 
 # mypy
 .mypy_cache/
