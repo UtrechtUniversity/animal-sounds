@@ -83,25 +83,6 @@ For full technical details, see the [Feature Extraction documentation](./bioacou
 | *Chimpanze vocalization in mel spectrogram representation* |
 
 ### Classification
-<<<<<<< svm-notebook
-**SVM**  
-From the 1140 statistical features from the previous step we select a normalized feature set of 50 features. The selection is based on feature importances computed with an Extra Trees Classifier. We train and optimize the SVM model on those 50 features using 'macro average recall' as evaluation criterion.
-
-**Deep learning**  
-We trained several architectures of Convolutional Neural Networks (CNN). CNN10 is the best performing model.
-
-| Recorder 14a |
-| Trained on| SVM | CNN10 | CNN12 | 
-| --- | --- | --- | --- |
-| Sanctuary | 0.62 | 0.81 | 0.81 |
-| Sanctuary + Synthetic | 0.75 | 0.93 | 0.87 | 
-
-| Recorder 13b |
-| Trained on| SVM | CNN10 | CNN12 | 
-| --- | --- | --- | --- |
-| Sanctuary | 0.51 | 0.85 | 0.85 |
-| Sanctuary + Synthetic | 0.54 | 0.91 | 0.84 | 
-=======
 
 Two classifier families are supported, both taking the extracted features as input:
 
@@ -124,7 +105,6 @@ The following is the results of models, evaluated based on unweighted average re
 | Sanctuary + Synthetic | a|  | 0.93 | 
 | Sanctuary | b |  | 0.84 |
 | Sanctuary + Synthetic | b|  | 0.92 | 
->>>>>>> main
 
 ### Built with
 
@@ -176,6 +156,20 @@ Activate the python virtual environment and install the bioacoustics packages th
 source .venv/bin/activate
 uv pip install -e .
 ```
+
+### Quarto website
+
+The repository includes a Quarto website that publishes the model comparison notebook to GitHub Pages while keeping the tracked notebook file free of stored outputs.
+
+Render the site locally with:
+
+```
+source .venv/bin/activate
+quarto render output
+```
+
+The website source is configured in `output/_quarto.yml`, and GitHub Pages deployment is handled by `.github/workflows/quarto-publish.yml`.
+
 ### **Usage Scenarios**
 There are two situations in which you can directly apply the scripts in this repository and we tailored the documentation towards these situations:
 1. You have audio data and a set of manual annotations (in e.g. txt or csv format) and want to use the whole pipeline including training your own model. Find getting started instructions for each step in the respective folders: [1_wav_processing](./bioacoustics/wav_processing), [2_feature_extraction](./bioacoustics/feature_extraction) and [3_classifier](./bioacoustics/classifier) 
