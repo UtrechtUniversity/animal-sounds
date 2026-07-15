@@ -1,12 +1,12 @@
 # animal-sounds
 
-<!-- Include Github badges here (optional) -->
-[![DOI](https://zenodo.org/badge/408387579.svg)](https://zenodo.org/badge/latestdoi/408387579)
-<!-- e.g. Github Actions workflow status -->
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7137567.svg)](https://doi.org/10.5281/zenodo.7137567)[![Python package](https://github.com/UtrechtUniversity/animal-sounds/actions/workflows/python-package.yml/badge.svg)](https://github.com/UtrechtUniversity/animal-sounds/actions/workflows/python-package.yml) [![Publish Quarto site](https://github.com/UtrechtUniversity/animal-sounds/actions/workflows/quarto-publish.yml/badge.svg)](https://github.com/UtrechtUniversity/animal-sounds/actions/workflows/quarto-publish.yml)
+
+
 
 This repository provides an end-to-end audio classification pipeline for detecting animal vocalizations in wildlife recordings. It includes audio preprocessing, feature extraction, optional synthetic data generation, classifier training, evaluation, and prediction. The workflow was developed for chimpanzee vocalizations but can be adapted to other species with labeled audio.
 
-![Chimpanzee vocalization in mel spectrogram representation](img/melspectrogram.png)
+![Chimpanzee vocalization in mel spectrogram representation](docs/img/melspectrogram.png)
 
 ## Documentation
 
