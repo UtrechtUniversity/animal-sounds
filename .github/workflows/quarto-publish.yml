@@ -45,7 +45,7 @@ jobs:
         run: |
           source .venv/bin/activate
           cd output
-          quarto render
+          quarto render --execute
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

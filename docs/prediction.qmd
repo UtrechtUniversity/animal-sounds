@@ -78,6 +78,7 @@ This reports metrics such as precision, recall, and F1 score.
 
 ## Related pages
 
+- [Getting Started](getting-started.qmd)
 - [Training workflow](workflow.qmd)
-- [Methods and data overview](methods.qmd)
-- [Model comparison analysis](notebooks/model_comparison.ipynb)
+- [Methods](methods.qmd)
+- [Model comparison analysis](model_comparison.ipynb)

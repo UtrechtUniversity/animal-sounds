@@ -1,0 +1,66 @@
+---
+title: Getting Started
+---
+
+# Getting Started
+
+This page provides instructions for setting up the environment, organizing the data, and creating a configuration file for the training and prediction workflows.
+
+> [!IMPORTANT]
+> Assumption: You have a terminal (aka command line interface). If you are working on a Mac or Linux, you should have an appropriate terminal installed. If you are working on Windows, we recommend installing [Git Bash](https://gitforwindows.org/). If you have no prior experience with the command line, we recommend spending a couple of hours practicing with [navigating files and folders in your terminal](https://utrechtuniversity.github.io/workshop-introduction-to-bash/modules/module2.html).
+
+
+## Environment setup
+
+Clone the repository and create the project environment with `uv`:
+
+```bash
+git clone https://github.com/UtrechtUniversity/animal-sounds.git
+cd animal-sounds
+uv sync
+source .venv/bin/activate
+uv pip install -e .
+```
+
+The project targets Python 3.12 or newer. Core dependencies include NumPy, Pandas, scikit-learn, PyTorch, torchaudio, and librosa.
+
+## Data layout
+
+Organize training data under `data/`:
+
+```text
+animal-sounds/
+├── data/
+│   ├── original_recordings/
+│   ├── processed_wav_files/
+│   │   ├── vocalizations/
+│   │   └── background/
+│   ├── annotation_txt_files/
+│   │   ├── vocalizations/
+│   │   └── background/
+│   ├── condensed_wav_files/
+│   ├── synthetic_intermediate/
+│   ├── features/
+│   ├── models/
+│   └── synth_data/
+└── ...
+```
+
+Annotation exports from Raven should include these columns:
+
+```text
+begin path | end path | class | file offset (s) | start time (s) | end time (s)
+```
+
+If your directory layout differs, update the shell scripts or config file entries before running the pipeline.
+
+## Configuration file
+
+The configuration file is used to define the training dataset, model type, and hyperparameters. The repository provides a sample configuration for testing in `config/testdata.yml`. You can create your own configuration file for your dataset and model choices.
+
+## Related pages
+
+- [Training workflow](workflow.qmd)
+- [Prediction workflow](prediction.qmd)
+- [Methods](methods.qmd)
+- [Model comparison analysis](model_comparison.ipynb)

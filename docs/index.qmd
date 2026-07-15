@@ -1,0 +1,45 @@
+---
+title: Animal Sounds Analyses
+---
+
+# Animal Sounds
+
+This site is the main documentation hub for the repository. It combines the project overview, workflow documentation, and the notebook-backed model comparison in one place.
+
+The repository provides an end-to-end audio classification pipeline for animal vocalizations, including audio preprocessing, feature extraction, augmentation, training, evaluation, and prediction.
+
+![](img/melspectrogram.png){fig-alt="Mel spectrogram example" width="70%"}
+
+## What you can find here
+
+- [Getting Started](getting-started.qmd): environment setup, data layout, and configuration file creation.
+- [Training workflow](workflow.qmd): preprocessing, feature extraction, and training.
+- [Prediction workflow](prediction.qmd): prepare new data, extract features, and run inference or evaluation.
+- [Methods and data](methods.qmd): dataset summary, preprocessing choices, feature representations, and classifier details.
+- [Model comparison](model_comparison.ipynb): rendered notebook with tables and plots.
+
+## Project at a glance
+
+- Two model families are supported: SVM for lightweight deployment and CNN models for higher-capacity learning.
+- The pipeline was developed for chimpanzee vocalization detection and evaluated across distinct acoustic environments.
+- Synthetic data generation is available to improve robustness on target-domain background noise.
+
+## Software stack
+
+- [Python >=3.12](https://www.python.org/)
+- [Sklearn ~1.7.0](https://scikit-learn.org/)
+- [Numpy ~2.2.6](https://numpy.org/)
+- [Pandas ~2.3.0](https://pandas.pydata.org)
+- [torch~2.6.0](https://pytorch.org) 
+- [torchaudio~2.0.2](https://docs.pytorch.org/audio/stable/index.html)
+- [torchlibrosa~0.1.0](https://github.com/qiuqiangkong/torchlibrosa)
+
+## References
+
+- Zwerts, J. A., Treep, J., Kaandorp, C. S., Meewis, F., Koot, A. C., and Kaya, H. (2021). Introducing a central African primate vocalisation dataset for automated species classification.
+- Schuller, B. W., Batliner, A., Bergler, C., Mascolo, C., Han, J., Lefter, I., and others (2021). The INTERSPEECH 2021 Computational Paralinguistics Challenge: COVID-19 cough, COVID-19 speech, escalation and primates.
+- Zwerts, J., Treep, J., Zahedi, P., and Kaandorp, C. (2024). Central African Primate vocalization bioacoustics dataset.
+
+## License
+
+Project code is released under Apache 2.0. Some feature extraction scripts retain their original CeCILL 1.1 licensing; those files contain their own header notices.

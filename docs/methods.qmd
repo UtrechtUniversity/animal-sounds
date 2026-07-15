@@ -38,26 +38,8 @@ The repository provides both handcrafted acoustic features for SVM models and mu
 
 The classification stage supports SVM and CNN workflows. The dedicated [classifier page](classifier.qmd) summarizes data segmentation, feature selection, CNN architecture, augmentation, training configuration, and the standard training, evaluation, and prediction commands.
 
-## Software stack
+## Related pages
 
-- [Python >=3.12](https://www.python.org/)
-- [Sklearn ~1.7.0](https://scikit-learn.org/)
-- [Numpy ~2.2.6](https://numpy.org/)
-- [Pandas ~2.3.0](https://pandas.pydata.org)
-- [torch~2.6.0](https://pytorch.org) 
-- [torchaudio~2.0.2](https://docs.pytorch.org/audio/stable/index.html)
-- [torchlibrosa~0.1.0](https://github.com/qiuqiangkong/torchlibrosa)
-
-## References
-
-- Zwerts, J. A., Treep, J., Kaandorp, C. S., Meewis, F., Koot, A. C., and Kaya, H. (2021). Introducing a central African primate vocalisation dataset for automated species classification.
-- Schuller, B. W., Batliner, A., Bergler, C., Mascolo, C., Han, J., Lefter, I., and others (2021). The INTERSPEECH 2021 Computational Paralinguistics Challenge: COVID-19 cough, COVID-19 speech, escalation and primates.
-- Malfante, M., Mars, J., and Dalla Mura, M. Automatic Analysis Architecture. DOI: 10.5281/zenodo.1216028.
-- McFee, B., and others (2015). librosa: Audio and music signal analysis in Python. Proceedings of the 14th Python in Science Conference.
-- Wang, Y., and others (2017). Trainable frontend for robust and far-field keyword spotting. IEEE International Conference on Acoustics, Speech and Signal Processing.
-- Furui, S. (1986). Speaker-independent isolated word recognition using dynamic features of speech spectrum. IEEE Transactions on Acoustics, Speech, and Signal Processing, 34(1), 52-59.
-- Zwerts, J., Treep, J., Zahedi, P., and Kaandorp, C. (2024). Central African Primate vocalization bioacoustics dataset.
-
-## License
-
-Project code is released under Apache 2.0. Some feature extraction scripts retain their original CeCILL 1.1 licensing; those files contain their own header notices.
+- [Training workflow](workflow.qmd)
+- [Prediction workflow](prediction.qmd)
+- [Model comparison analysis](../output/notebooks/model_comparison.ipynb)

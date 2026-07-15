@@ -10,7 +10,7 @@ project:
     - feature-extraction.qmd
     - condensation.qmd
     - classifier.qmd
-    - notebooks/model_comparison.ipynb
+    - model_comparison.ipynb
 
 website:
   title: Animal Sounds
@@ -24,12 +24,12 @@ website:
         text: Prediction
       - href: methods.qmd
         text: Methods
-      - href: notebooks/model_comparison.ipynb
+      - href: model_comparison.ipynb
         text: Model Comparison
 
 format:
   html:
-    theme: cosmo
+    theme: flatly
     toc: true
     code-fold: show
 

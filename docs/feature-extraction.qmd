@@ -23,7 +23,7 @@ The SVM workflow extracts several feature sets using:
 
 For the analyses in this repository, recordings are chunked into 0.5 second frames with 0.25 second overlap. A Butterworth bandpass filter is applied before feature extraction. MFCC and RASTA-PLP low-level descriptors are computed from the filtered signal. For each horizontal band of the MFCC and RASTA-PLP representation, the pipeline derives $\Delta$ and $\Delta^2$ features and extracts statistical summaries from the base descriptors and their derivatives.
 
-The feature set is extended with Automatic Analysis Architecture features, yielding 1,140 features per audio frame.
+The feature set is extended with Automatic Analysis Architecture features (Malfante et al., 2018), yielding 1,140 features per audio frame.
 
 ### Running the SVM extraction script
 
@@ -55,7 +55,7 @@ A multi-channel feature representation is constructed for each audio recording u
 
 Mel-scaled spectrograms are computed from the filtered audio using a Hamming window with an FFT window length of 750 samples and a hop length of 376 samples, yielding 64 mel-frequency bins. The spectrogram is computed in linear power scale to serve as input for PCEN.
 
-![](../img/melspectrogram.png){fig-alt="Mel spectrogram example" width="70%"}
+![](img/melspectrogram.png){fig-alt="Mel spectrogram example" width="70%"}
 
 ### Per-Channel Energy Normalization
 
@@ -100,6 +100,4 @@ This applies `extract_features_dl.py` to the dataset. The main arguments are:
 
 ## References
 
-1. McFee, B., et al. (2015). librosa: Audio and music signal analysis in Python. Proceedings of the 14th Python in Science Conference.
-2. Wang, Y., et al. (2017). Trainable frontend for robust and far-field keyword spotting. IEEE International Conference on Acoustics, Speech and Signal Processing.
-3. Furui, S. (1986). Speaker-independent isolated word recognition using dynamic features of speech spectrum. IEEE Transactions on Acoustics, Speech, and Signal Processing, 34(1), 52-59.
+- Malfante, M., Mars, J., and Dalla Mura, M. 2018. Automatic Analysis Architecture. DOI: 10.5281/zenodo.1216028.
