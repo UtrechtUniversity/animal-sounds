@@ -1,0 +1,83 @@
+---
+title: Prediction Workflow
+---
+
+# Prediction workflow
+
+This guide covers the lightweight SVM prediction path for labeled evaluation data and for applying an existing model to new recordings.
+
+## When to use this workflow
+
+Use prediction when one of these is true:
+
+- You have labeled data and want to evaluate a trained model.
+- You have new recordings and want model outputs without retraining.
+
+## Data layout
+
+Organize prediction inputs under `predict_data/`:
+
+```text
+animal-sounds/
+├── predict_data/
+│   ├── original_recordings/
+│   ├── processed_wav_files/
+│   │   ├── vocalizations/
+│   │   └── background/
+│   ├── annotation_txt_files/
+│   │   ├── vocalizations/
+│   │   └── background/
+│   ├── features/
+│   └── predictions/
+└── ...
+```
+
+Annotation exports from Raven should include:
+
+```text
+begin path | end path | class | file offset (s) | start time (s) | end time (s)
+```
+
+## Step 1. Create audio segments
+
+Cut annotated segments from the prediction dataset:
+
+```bash
+./bioacoustics/wav_processing/raven_to_wav/raven_to_wav.sh predict_data
+```
+
+## Step 2. Extract prediction features
+
+Generate the same acoustic feature set used by the SVM model:
+
+```bash
+./bioacoustics/feature_extraction/run_feature_extraction_prediction.sh predict_data
+```
+
+This writes feature tables to `predict_data/features/`.
+
+## Step 3. Run prediction
+
+Apply the trained SVM model:
+
+```bash
+python bioacoustics/classifier/predict.py --config_file config/testdata.yml
+```
+
+The outputs are stored in the prediction directory configured for your run.
+
+## Evaluate on labeled data
+
+If you also have ground truth labels for the prediction set, use:
+
+```bash
+python bioacoustics/classifier/evaluate.py --config_file config/testdata.yml
+```
+
+This reports metrics such as precision, recall, and F1 score.
+
+## Related pages
+
+- [Training workflow](workflow.qmd)
+- [Methods and data overview](methods.qmd)
+- [Model comparison analysis](notebooks/model_comparison.ipynb)

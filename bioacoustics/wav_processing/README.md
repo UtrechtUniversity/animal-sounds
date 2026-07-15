@@ -1,12 +1,13 @@
-# 1_wav_processing
+# Wav Processing Module
 
-## [raven_to_wav](./raven_to_wav)
-Raven to wav is used to filter annotated parts from the original `.wav` files based on annotations in table format (e.g. `.txt` or `.csv`).
+This README is now a routing page. The canonical preprocessing and data preparation documentation lives on the website.
 
-## [Condensation](./condensation)
-In condensation we use an energy change based method to filter out low energy parts from the original dataset to make manual annotation/labeling more efficient.
+Use these pages instead:
 
-## [Synthetic data](./synthetic_data)
-In Synthetic data we embed Chimpanze vocalizations in jungle sounds that are labeled as background to create more and more diverse data.
+- [Wav processing module documentation](https://utrechtuniversity.github.io/animal-sounds/wav-processing.html)
 
-Find usage steps in the respective folders.
+Module-specific folders remain documented here:
+
+- [raven_to_wav](./raven_to_wav)
+- [condensation](./condensation)
+- [synthetic_data](./synthetic_data)

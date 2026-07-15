@@ -3,6 +3,13 @@ project:
   output-dir: _site
   render:
     - index.qmd
+    - workflow.qmd
+    - prediction.qmd
+    - methods.qmd
+    - wav-processing.qmd
+    - feature-extraction.qmd
+    - condensation.qmd
+    - classifier.qmd
     - notebooks/model_comparison.ipynb
 
 website:
@@ -11,6 +18,12 @@ website:
     left:
       - href: index.qmd
         text: Home
+      - href: workflow.qmd
+        text: Training Workflow
+      - href: prediction.qmd
+        text: Prediction
+      - href: methods.qmd
+        text: Methods
       - href: notebooks/model_comparison.ipynb
         text: Model Comparison
 

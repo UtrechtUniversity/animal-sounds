@@ -1,0 +1,75 @@
+---
+title: Condensation
+---
+
+# Condensation
+
+To speed up the annotation process on large numbers of recordings, this workflow detects and gathers audio fragments that stand out from the jungle background. These fragments might contain chimpanzee vocalizations. By applying this script, the annotation workload can be reduced by presenting a drastically condensed version of the data.
+
+## How it works
+
+The detection of deviating audio patterns comprises a short-time Fourier transform to produce a power distribution in the time-frequency domain. Depending on the properties of the expected primate vocalizations, redundant frequency bands are discarded. From the remaining bands, the method collects short intervals in which the signal loudness exceeds a species-specific threshold or in which the local cumulative power distribution deviates from a global counterpart.
+
+This collection represents timestamps where disruptions in the ambient noise are expected. Those intervals are extracted from the raw data and bundled into a new audio file with a higher density of candidate vocalizations.
+
+## Software requirements
+
+- Python 3
+- [Librosa ~0.9.1](https://librosa.org/doc/latest/index.html)
+- [Numpy ~1.20.3](https://numpy.org/)
+- [Scipy ~1.8.0](https://scipy.org/)
+- [Soundfile ~0.10.3](https://pysoundfile.readthedocs.io/en/latest/)
+
+## Usage
+
+This folder contains two Python files, a shell script, and test data:
+
+- `extractor.py` contains a class that analyzes WAV files.
+- `condensate.py` applies the `Extractor` class and facilitates batch processing.
+- `extract_chimps.sh` was used to run processing across multiple batches.
+- `test_data/` contains a demonstration WAV file.
+
+### Using the Extractor class
+
+```python
+from extractor import Extractor
+
+data_in = Extractor('./test_data/20191220_190302.WAV')
+
+timestamps = data_in.detect_vocalizations(
+    freqs=[(200, 1000)],
+    min_threshold_db=20,
+    max_threshold_db=30,
+)
+
+extracted = data_in.extract_intervals(
+    timestamps,
+    padding=0.1,
+)
+
+extracted.to_wav('out.wav')
+```
+
+### Using the extractor script
+
+Use `condensate.py` to process a single WAV file or a folder containing multiple WAV files. It produces a WAV file containing all detected anomalies and a CSV file that records where and when they were found.
+
+```bash
+python condensate.py --input="./test_data" \
+    --output-csv="timestamps.csv" \
+    --output-signal="out.wav" \
+    --frequencies="[(200, 1000)]" \
+    --volume="(20, 30)"
+```
+
+### Using the shell script
+
+```bash
+./extract_chimps.sh
+```
+
+## Remarks
+
+Reducing annotation time with the `Extractor` class requires manual tuning. Some experimentation was needed to find the correct frequency band for chimpanzee vocalizations, and differences in background noise between recording batches required different volume thresholds in some cases.
+
+This is not a species-specific detector. Airplanes, doors, and other salient sounds can also be marked as deviations from the background noise. Even with that limitation, the workflow removes a substantial uneventful portion of the dataset and makes annotation more efficient.

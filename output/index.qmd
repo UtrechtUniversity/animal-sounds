@@ -2,12 +2,33 @@
 title: Animal Sounds Analyses
 ---
 
-# Model Comparison Website
+# Animal Sounds
 
-This site publishes the model comparison analysis from the repository notebook while keeping the tracked notebook source free of stored outputs.
+This site is the main documentation hub for the repository. It combines the project overview, workflow documentation, and the notebook-backed model comparison in one place.
 
-- The analysis page is rendered from `notebooks/model_comparison.ipynb`.
-- Outputs are generated during the GitHub Pages build, not stored in the notebook file in the repository.
-- The published page includes the executed tables and plots.
+The repository provides an end-to-end audio classification pipeline for animal vocalizations, including audio preprocessing, feature extraction, augmentation, training, evaluation, and prediction.
 
-[Open the model comparison analysis](notebooks/model_comparison.html)
+![](../img/melspectrogram.png){fig-alt="Mel spectrogram example" width="70%"}
+
+## What you can find here
+
+- [Training workflow](workflow.qmd): environment setup, data layout, preprocessing, feature extraction, and training.
+- [Prediction workflow](prediction.qmd): prepare new data, extract features, and run inference or evaluation.
+- [Methods and data](methods.qmd): dataset summary, preprocessing choices, feature representations, and classifier details.
+- [Model comparison](notebooks/model_comparison.ipynb): rendered notebook with tables and plots.
+
+## Project at a glance
+
+- Two model families are supported: SVM for lightweight deployment and CNN models for higher-capacity learning.
+- The pipeline was developed for chimpanzee vocalization detection and evaluated across distinct acoustic environments.
+- Synthetic data generation is available to improve robustness on target-domain background noise.
+
+## Local rendering
+
+Render the website locally from the repository root with:
+
+```bash
+source .venv/bin/activate
+cd output
+quarto render --execute
+```
