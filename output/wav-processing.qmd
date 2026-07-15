@@ -1,0 +1,29 @@
+---
+title: Wav Processing
+---
+
+# Wav processing
+
+This page documents the preprocessing module that prepares raw recordings for downstream feature extraction and classification.
+
+## Module overview
+
+The wav processing module contains three main components:
+
+- `raven_to_wav`: extracts annotated segments from source recordings using tabular annotation exports.
+- `condensation`: reduces long recordings to shorter candidate-event streams to speed up manual annotation.
+- `synthetic_data`: combines vocalization clips with background recordings to generate augmented training data.
+
+## Subpages
+
+- Condensation details: [condensation](condensation.qmd)
+- End-to-end training context: [training workflow](workflow.qmd)
+- Project-level methods summary: [methods and data](methods.qmd)
+
+## Folder structure
+
+The implementation lives in `bioacoustics/wav_processing/` and its subfolders.
+
+- `raven_to_wav/`
+- `condensation/`
+- `synthetic_data/`
