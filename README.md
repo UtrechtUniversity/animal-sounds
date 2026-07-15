@@ -1,6 +1,6 @@
 # animal-sounds
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7137567.svg)](https://doi.org/10.5281/zenodo.7137567)[![Python package](https://github.com/UtrechtUniversity/animal-sounds/actions/workflows/python-package.yml/badge.svg)](https://github.com/UtrechtUniversity/animal-sounds/actions/workflows/python-package.yml) [![Publish Quarto site](https://github.com/UtrechtUniversity/animal-sounds/actions/workflows/quarto-publish.yml/badge.svg)](https://github.com/UtrechtUniversity/animal-sounds/actions/workflows/quarto-publish.yml)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21379300.svg)](https://doi.org/10.5281/zenodo.21379300)[![Python package](https://github.com/UtrechtUniversity/animal-sounds/actions/workflows/python-package.yml/badge.svg)](https://github.com/UtrechtUniversity/animal-sounds/actions/workflows/python-package.yml) [![Publish Quarto site](https://github.com/UtrechtUniversity/animal-sounds/actions/workflows/quarto-publish.yml/badge.svg)](https://github.com/UtrechtUniversity/animal-sounds/actions/workflows/quarto-publish.yml)
 
 
 
