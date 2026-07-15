@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Treep"
+  given-names: "Jelle"
+  orcid: "https://orcid.org/0000-0003-3196-7954"
+- family-names: "Zahedi"
+  given-names: "Parisa"
+  orcid: "https://orcid.org/0000-0002-1610-3149"
+- family-names: "Kaandorp"
+  given-names: "Casper"
+  orcid: "https://orcid.org/0000-0001-6326-6680"
+- family-names: "Kaya"
+  given-names: "Heysem"
+  orcid: "https://orcid.org/0000-0001-7947-5508"
+- family-names: "Zwerts"
+  given-names: "Joeri"
+  orcid: "https://orcid.org/0000-0003-3841-6389"
+title: "animal-sounds"
+version: 0.1.1
+doi: 10.5281/zenodo.7137567
+date-released: 2026-07-15
+url: "https://github.com/UtrechtUniversity/animal-sounds"
