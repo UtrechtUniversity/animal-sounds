@@ -2,8 +2,6 @@
 title: Wav Processing
 ---
 
-# Wav processing
-
 This page documents the preprocessing module that prepares raw recordings for downstream feature extraction and classification.
 
 ## Module overview

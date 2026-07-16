@@ -2,8 +2,6 @@
 title: Condensation
 ---
 
-# Condensation
-
 To speed up the annotation process on large numbers of recordings, this workflow detects and gathers audio fragments that stand out from the jungle background. These fragments might contain chimpanzee vocalizations. By applying this script, the annotation workload can be reduced by presenting a drastically condensed version of the data.
 
 ## How it works

@@ -2,8 +2,6 @@
 title: Classifier
 ---
 
-# Classifier
-
 ## How it works
 
 To train the model with `train.py`, the user first needs to convert audio data into [features](feature-extraction.qmd).

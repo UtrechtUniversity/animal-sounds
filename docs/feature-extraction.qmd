@@ -2,8 +2,6 @@
 title: Feature Extraction
 ---
 
-# Feature extraction
-
 The modules in this directory are used to extract acoustic and deep learning features from `.wav` files. These features are used as input for the classifier pipelines.
 
 ## Instructions

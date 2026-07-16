@@ -2,8 +2,6 @@
 title: Training Workflow
 ---
 
-# Training workflow
-
 Make sure you have the correct environment and data layout before running the training pipeline (see [Getting Started](getting-started.qmd)). This workflow includes preprocessing, feature extraction, and classifier training.
 
 ### 1. Extract annotated segments

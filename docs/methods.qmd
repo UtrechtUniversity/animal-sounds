@@ -2,8 +2,6 @@
 title: Methods and Data
 ---
 
-# Methods and data
-
 ## Project scope
 
 This repository provides an end-to-end audio classification pipeline for detecting animal vocalizations in wildlife recordings. It covers preprocessing, feature extraction, augmentation, training, evaluation, and prediction. Although developed for chimpanzee vocalizations, the workflow can be adapted to other species when labeled recordings are available.
@@ -42,4 +40,4 @@ The classification stage supports SVM and CNN workflows. The dedicated [classifi
 
 - [Training workflow](workflow.qmd)
 - [Prediction workflow](prediction.qmd)
-- [Model comparison analysis](../output/notebooks/model_comparison.ipynb)
+- [Model comparison analysis](model_comparison.ipynb)

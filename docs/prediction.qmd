@@ -2,8 +2,6 @@
 title: Prediction Workflow
 ---
 
-# Prediction workflow
-
 This guide covers the lightweight SVM prediction path for labeled evaluation data and for applying an existing model to new recordings.
 
 ## When to use this workflow

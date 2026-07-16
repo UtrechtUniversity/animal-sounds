@@ -2,8 +2,6 @@
 title: Getting Started
 ---
 
-# Getting Started
-
 This page provides instructions for setting up the environment, organizing the data, and creating a configuration file for the training and prediction workflows.
 
 > [!IMPORTANT]
