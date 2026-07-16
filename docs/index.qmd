@@ -1,12 +1,8 @@
 ---
-title: Animal Sounds Analyses
+title: Animal Sounds
 ---
 
-# Animal Sounds
-
-This site is the main documentation hub for the repository. It combines the project overview, workflow documentation, and the notebook-backed model comparison in one place.
-
-The repository provides an end-to-end audio classification pipeline for animal vocalizations, including audio preprocessing, feature extraction, augmentation, training, evaluation, and prediction.
+[Animal sounds](https://github.com/UtrechtUniversity/animal-sounds) is a repository  that provides an end-to-end audio classification pipeline for animal vocalizations, including audio preprocessing, feature extraction, data augmentation, training, evaluation, and prediction.
 
 ![](img/melspectrogram.png){fig-alt="Mel spectrogram example" width="70%"}
 
@@ -20,9 +16,9 @@ The repository provides an end-to-end audio classification pipeline for animal v
 
 ## Project at a glance
 
-- Two model families are supported: SVM for lightweight deployment and CNN models for higher-capacity learning.
+- Two model families are supported: SVM for lightweight deployment and CNN models for improved performance when sufficient training data and compute power is available.
 - The pipeline was developed for chimpanzee vocalization detection and evaluated across distinct acoustic environments.
-- Synthetic data generation is available to improve robustness on target-domain background noise.
+- Synthetic data generation is available to improve robustness on target background noise.
 
 ## Software stack
 
