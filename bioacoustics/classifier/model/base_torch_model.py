@@ -375,7 +375,7 @@ class BaseTorchModel(AcousticModel):
 
     def _load_model(self):
         model_path = os.path.join(self.model_dir, "model.pth")
-        self.acoustic_model.load_state_dict(torch.load(model_path))
+        self.acoustic_model.load_state_dict(torch.load(model_path, map_location=self.device))
         self.acoustic_model.to(self.device)
         self.acoustic_model.eval()
 
