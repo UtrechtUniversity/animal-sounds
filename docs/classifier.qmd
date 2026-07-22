@@ -34,7 +34,7 @@ SpecAugment is applied to each training batch to improve model robustness. The a
 
 ### Model architecture
 
-The main deep learning model is CNN10. It consists of four convolutional blocks, each with two convolutional layers using 3x3 kernels and same padding, followed by batch normalization, ReLU activation, average pooling with a 2x2 kernel, and dropout. The number of filters doubles across blocks: 64, 128, 256, and 512. Global average pooling reduces the final feature maps to a 512-dimensional vector, which is passed through a fully connected layer with ReLU activation and dropout, then to a final linear layer with two outputs corresponding to background and chimpanzee classes. Weights are initialized with He normal initialization. A 12-layer variant, CNN12, is also available.
+The main deep learning model is CNN10, based on the architecture introduced in the PANNs paper (Kong et al., 2020). It consists of four convolutional blocks, each with two convolutional layers using 3x3 kernels and same padding, followed by batch normalization, ReLU activation, average pooling with a 2x2 kernel, and dropout. The number of filters doubles across blocks: 64, 128, 256, and 512. Global average pooling reduces the final feature maps to a 512-dimensional vector, which is passed through a fully connected layer with ReLU activation and dropout, then to a final linear layer with two outputs corresponding to background and chimpanzee classes. Weights are initialized with He normal initialization. A 12-layer variant, CNN12, is also available.
 
 ### Training configuration
 
@@ -69,3 +69,6 @@ python bioacoustics/classifier/evaluate.py --config_file "config/testdata.yml"
 ```bash
 python bioacoustics/classifier/predict.py --config_file "config/testdata.yml"
 ```
+
+## References
+- Kong, Q., Cao, Y., Iqbal, T., Wang, Y., Wang, W., & Plumbley, M. D. (2020). PANNs: Large-Scale Pretrained Audio Neural Networks for Audio Pattern Recognition. IEEE/ACM Transactions on Audio, Speech, and Language Processing, 28, 2880–2894.^M
