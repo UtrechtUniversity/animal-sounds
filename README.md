@@ -43,6 +43,20 @@ The detailed project documentation, tutorials and results are on the [project we
 - The pipeline is designed for cross-environment generalization.
 - Synthetic data generation is available for target-domain robustness.
 
+## Pre-trained models
+
+Trained CNN10 and CNN12 chimpanzee vocalization classifiers are published on Hugging Face Hub, ready to use without retraining:
+
+| Model | Training data | Hugging Face |
+|---|---|---|
+| CNN10 | Sanctuary + synthetic (recommended) | [utrechtuniversity/chimp-vocalization-cnn10-synthetic](https://huggingface.co/utrechtuniversity/chimp-vocalization-cnn10-synthetic) |
+| CNN10 | Sanctuary only | [utrechtuniversity/chimp-vocalization-cnn10-sanctuary](https://huggingface.co/utrechtuniversity/chimp-vocalization-cnn10-sanctuary) |
+| CNN12 | Sanctuary + synthetic (recommended) | [utrechtuniversity/chimp-vocalization-cnn12-synthetic](https://huggingface.co/utrechtuniversity/chimp-vocalization-cnn12-synthetic) |
+| CNN12 | Sanctuary only | [utrechtuniversity/chimp-vocalization-cnn12-sanctuary](https://huggingface.co/utrechtuniversity/chimp-vocalization-cnn12-sanctuary) |
+
+Each model repo includes trained weights, a standalone `modeling.py` (no need to install this package), a standalone `preprocess.py` reproducing the exact training-time feature extraction, and cross-environment evaluation results. See the model cards on Hugging Face for architecture details, training data, and usage examples.
+
+
 ## Contact
 
 [Joeri Zwerts](https://www.uu.nl/medewerkers/JAZwerts) - j.a.zwerts@uu.nl
