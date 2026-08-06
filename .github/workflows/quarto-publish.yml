@@ -58,6 +58,9 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    concurrency:
+      group: github-pages-deploy
+      cancel-in-progress: true
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
