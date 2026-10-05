@@ -33,7 +33,7 @@ Synthetic data mixes known vocalizations with target-environment background reco
 ./bioacoustics/wav_processing/synthetic_data/synth_pipeline_background.sh
 ```
 
-The generated files are written to `data/synth_data/`.
+The generated files are written to `data/synth_data/`. See [Synthetic Data](synthetic-data.qmd) for input preparation, configuration, and details about the two generation workflows.
 
 ### 4. Extract features
 
