@@ -30,8 +30,8 @@ class SVM_model(AcousticModel):
             *args,
             **kwargs):
         parameters = [
-            {"kernel": ["rbf"], "gamma": [1e-3, 1e-4], "C": [1, 10, 100, 1000]},
-            {"kernel": ["linear"], "C": [1, 10, 100, 1000]},
+            {"kernel": ["rbf"], "gamma": [1e-3, 1e-4], "C": [1, 10, 100, 1000], "class_weight": ['balanced'], "cache_size": [1000]},
+            {"kernel": ["linear"], "C": [1, 10, 100, 1000], "class_weight": ['balanced'], "cache_size": [1000]},
         ]
 
         self.acoustic_model = GridSearchCV(
