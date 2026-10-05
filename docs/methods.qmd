@@ -28,6 +28,10 @@ Two training configurations are supported:
 
 The preprocessing workflow starts from Raven annotations and can optionally apply a condensation step to shorten long recordings into denser candidate-vocalization streams for annotation. A detailed description of the condensation algorithm, its parameters, and example usage is available on the dedicated [condensation page](condensation.qmd).
 
+### Synthetic data augmentation
+
+Synthetic training examples are made by overlaying sanctuary vocalizations on background recordings from the target environment, with multiple vocalization gain levels. See the [synthetic data methods](synthetic-data.qmd) for details of the mixing approach.
+
 ### Feature extraction
 
 The repository provides both handcrafted acoustic features for SVM models and multi-channel spectrogram features for CNN models. The dedicated [feature extraction page](feature-extraction.qmd) contains the original detailed description of the feature families, preprocessing, parameterization, and command-line usage.

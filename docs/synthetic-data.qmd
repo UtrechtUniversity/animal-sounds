@@ -1,0 +1,15 @@
+---
+title: Synthetic Data
+---
+
+Synthetic samples combine known vocalizations from sanctuary recordings with background recordings from the target environment. This augmentation increases the amount and acoustic variety of training audio when labeled vocalizations from the target environment are limited or unavailable.
+
+## Synthesis method
+
+The pipeline first identifies background intervals in Raven annotations and extracts them as separate audio fragments. It then records the source paths and durations of those fragments and the clips to be augmented. This duration overview allows each source clip to be paired with a sufficiently long background recording.
+
+For each vocalization, a background clip with sufficient duration is selected at random. If a vocalization is longer than every available background clip, it is divided into smaller segments that can be paired with the available backgrounds. The source and background signals are normalized before the vocalization is overlaid on the background.
+
+To represent different relative vocalization levels, four variants are produced with vocalization gain reductions of 0, 3.3, 6.6, and 10 dB. This provides training examples across a range of vocalization-to-background levels.
+
+It is recommended to inspect the generated synthetic samples to ensure that the vocalizations are audible and not masked by the background. If necessary, the gain levels can be adjusted to achieve a better balance between vocalization and background noise.

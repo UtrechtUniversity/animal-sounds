@@ -11,6 +11,7 @@ project:
     - feature-extraction.qmd
     - condensation.qmd
     - classifier.qmd
+    - synthetic-data.qmd
     - model_comparison.ipynb
 
 website:
